@@ -1,0 +1,30 @@
+
+#spatial_query_popup_div{
+    width:520px;
+    background: white;
+    alignment: center;
+    padding: 0px;
+
+}
+
+#query_builder{
+    padding: 4px;
+    margin: 2px;
+    text-align: center;
+    width: 100%;
+    font-family: Verdana;
+    font-size: 12px;
+}
+
+#spatial_query_resp_div{
+    font-family: "Verdana";
+    padding: 1px;
+    alignment: center;
+    width: 100%;
+}
+#result_table{
+    padding: 4px;
+    text-align: center;
+}
+
+

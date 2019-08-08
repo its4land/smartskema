@@ -1,0 +1,78 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">
+        <img src="../static/imgs/smartSkema.png" width="35" height="35" class="d-inline-block align-top" alt="logo">
+        SmartSkeMa
+    </a>
+    <span class="navbar-text">&nbsp;</span>
+    <ul class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto mt-2 mt-xl-0">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only"></span></a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="Preview" href="#" role="button"
+                   aria-haspopup="true" aria-expanded="false"><span class="sr-only"></span>
+                    1. Load Map
+                </a>
+                <div class="dropdown-menu" aria-labelledby="Preview">
+                    <label class="dropdown-item">
+                        <img id="sm1" src="../static/imgs/openSM_file_icon.png" width="25" height="25"  alt="">
+                        <input id="SketchMapInputbutton" type="file"    style="display: none;" onChange="loadSketchMap()"/><span>Load Sketch Map </span>
+
+                    </label>
+                    <label class="dropdown-item">
+                        <img id="mm" src="../static/imgs/openSM_file_icon.png" width="25" height="25" alt="">
+                        <input id="MetrichMapInputbutton" type="file" style="display: none;" onChange="loadMetricMap()" /><span>Load Base Map</span>
+
+                    </label>
+
+                </div>
+            </li>
+            <li class="nav-item active">
+                <a  id="processSketchMap" class="nav-link"  onclick="ProcessSketchMap()">Process Sketch Map <span class="sr-only" ></span></a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="qualify" href="#" role="button"
+                   aria-haspopup="true" aria-expanded="false">
+                    3. Qualify Map
+                </a>
+                <div class="dropdown-menu" aria-labelledby="qualify">
+                    <a class="dropdown-item" href="#">Qualify Sketch Map</a>
+                    <a class="dropdown-item" href="#">Qualify Base Map</a>
+
+                </div>
+            </li>
+
+            <li class="nav-item active">
+                <a class="nav-link" href="#">4. Align Maps <span class="sr-only"></span></a>
+            </li>
+
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Tools <span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#">help <span class="sr-only"></span></a>
+            </li>
+        </ul>
+
+        <form class="form-inline mt-2 mt-md-0">
+
+            <input class="form-control mr-sm-2" type="text" placeholder="Search"
+                   aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0"
+                    type="submit">Search
+            </button>
+        </form>
+
+
+    </ul>
+</nav>
+
+
+

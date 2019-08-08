@@ -1,0 +1,14 @@
+#nonSpatial_query_popup_div {
+    width:350px;
+    background: white;
+
+}
+
+
+#nonSpatial_query_resp_div{
+    padding: 1px;
+    width: 100%;
+    font-family: Verdana;
+    font-size: 12px;
+    text-align: center;
+}

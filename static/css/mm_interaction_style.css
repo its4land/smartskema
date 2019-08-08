@@ -1,0 +1,149 @@
+.GCP{
+    stroke: black;
+    stroke-width: 1px;
+    fill: white;
+}
+
+.linkRoad{
+    stroke: black;
+    stroke-width: 3px;
+    fill: none;
+}
+
+.parcel{
+    stroke: black;
+    stroke-width: 1px;
+    fill: lightgray;
+    opacity: 0.5;
+}
+.referencePoint{
+    stroke: black;
+    fill: black;
+}
+
+.hospital{
+    stroke: black;
+    stroke-width: 1px;
+    fill: saddlebrown;
+}
+.house{
+    stroke: black;
+    stroke-width: 1px;
+    fill: saddlebrown;
+}
+
+.landmark{
+    stroke: black;
+    stroke-width: 1px;
+    fill: #66512c;
+}
+
+
+.boma{
+    stroke: black;
+    stroke-width: 1px;
+    fill: sandybrown;
+}
+.marsh{
+    stroke: gray;
+    stroke-width: 1px;
+    fill: darkseagreen;
+    opacity: 0.5;
+
+
+}
+
+.borehole{
+    stroke: gray;
+    stroke-width: 1px;
+    fill: deepskyblue;
+
+}
+
+.mountain{
+    stroke: gray;
+    stroke-width: 1px;
+    fill: saddlebrown;
+
+}
+
+.river{
+    stroke: #3b78e7;
+    stroke-width: 5px;
+    fill: none;
+
+}
+
+
+.river_mm{
+    stroke: #3b78e7;
+    stroke-width: 3px;
+    fill: none;
+
+}
+
+.boundary{
+    stroke: black;
+    stroke-width: 1px;
+    fill: none;
+    opacity: 0.6;
+
+}
+
+.ranch_boundary{
+    stroke: gray;
+    stroke-width: 1px;
+    fill: none  ;
+    opacity: 0.6;
+
+}
+
+.olopololi{
+    stroke: gray;
+    stroke-width: 1px;
+    fill:mediumseagreen;
+}
+
+.road{
+    stroke: #999996;
+    stroke-width: 3px;
+    fill: none;
+
+}
+
+.road_mm{
+    stroke: red;
+    stroke-width: 3px;
+    fill: none;
+
+}
+
+.path{
+    stroke: black;
+    stroke-width: 1px;
+
+}
+
+.school{
+    stroke: gray;
+    stroke-width: 1px;
+    fill: firebrick;
+}
+
+.church{
+    stroke: gray;
+    stroke-widh: 1px;
+    fill: firebrick;
+}
+
+.pond{
+     stroke: gray;
+     stroke-width: 1px;
+     fill: deepskyblue;
+ }
+
+.beacon{
+    stroke: red;
+    stroke-width: 2px;
+    fill: blue;
+}

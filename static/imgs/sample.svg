@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="100%"
+   height="100%"
+   viewBox="0 0 1046.8837 740.49225"
+   id="svg2"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="sample.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1600"
+     inkscape:window-height="838"
+     id="namedview96"
+     showgrid="false"
+     inkscape:zoom="0.95845783"
+     inkscape:cx="399.30077"
+     inkscape:cy="333.40768"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <defs
+     id="defs4">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern4556"
+       id="pattern3104"
+       patternTransform="matrix(9.9007782,-0.00436415,0.00179042,10.18579,3.3587801,-13.795115)" />
+    <pattern
+       patternTransform="matrix(9.9007782,-0.00436415,0.00179042,10.18579,8.837784,-7.5500258)"
+       id="pattern4556"
+       xlink:href="#Strips1_1" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="2"
+       height="1"
+       patternTransform="translate(0,0) scale(10,10)"
+       id="Strips1_1">
+      <rect
+         style="fill:black;stroke:none"
+         x="0"
+         y="-0.5"
+         width="1"
+         height="2"
+         id="rect4752" />
+    </pattern>
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata> 
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#5880d1;fill-opacity:0.81286549;stroke:none"
+     id="werse"
+	 name=""
+	 description=""
+	 smart_skema_type="river"
+     d="m 133.04884,77.567538 20.28182,73.401582 3.25558,52.82761 -1.31404,11.15156 5.05076,19.19289 8.08122,22.22336 -1.01015,12.12183 c 0,0 -3.03046,24.24366 -1.01015,20.20305 2.0203,-4.04061 6.06091,13.13199 6.06091,13.13199 l 4.04061,9.09137 -4.04061,20.20305 7.07107,22.22336 c 0,0 4.04061,18.18274 6.06092,22.22335 2.0203,4.04061 2.0203,14.14214 2.0203,20.20305 0,6.06092 -1.01015,21.21321 -1.01015,26.26397 0,5.05076 -1.01015,17.17259 -1.01015,17.17259 l 3.03045,18.18275 3.03046,14.14213 -2.0203,19.1929 3.03045,23.23351 0,18.18275 -1.01015,19.19289 2.02031,20.20305 c 0,0 1.01015,0 5.05076,11.11168 4.04061,11.11168 6.06091,16.16244 6.06091,22.22336 0,6.06091 -2.0203,30.30458 -2.0203,30.30458 l -3.03046,10.10152 c 0,0 -1.01015,-6.06091 0,5.05076 1.01015,11.11168 3.03046,17.1726 4.04061,22.22336 1.01015,5.05076 3.03046,9.09137 6.06092,17.17259 3.03045,8.08122 3.03045,12.12183 3.03045,12.12183 l -17.17259,1.01016 -10.10152,-11.11168 c 0,0 -7.07107,-20.20305 -7.07107,-24.24366 0,-4.04061 0,-10.10153 0,-14.14214 0,-4.04061 -1.01015,-9.09137 -1.01015,-15.15229 0,-6.06091 -3.03046,-11.11168 -2.02031,-18.18274 1.01015,-7.07107 4.04061,-6.06092 1.01015,-16.16244 -3.03045,-10.10153 -2.0203,-8.08122 -3.03045,-15.15229 -1.01016,-7.07107 -1.01016,-17.1726 -1.01016,-17.1726 l 4.04061,-10.10152 -1.01015,-10.10153 -5.05076,-12.12183 -3.03046,-14.14213 5.05076,-34.34519 -1.01015,-16.16244 0,-12.12183 c 0,0 -7.07107,-9.09137 -8.08122,-13.13198 -1.01015,-4.04061 -7.07107,-6.06092 -7.07107,-12.12183 0,-6.06092 8.08122,-31.31473 8.08122,-31.31473 0,0 4.04061,-9.09138 -1.01015,-16.16244 -5.05076,-7.07107 -10.10153,-18.18275 -10.10153,-18.18275 0,0 7.07107,-23.23351 8.08122,-27.27412 1.01016,-4.04061 3.03046,-19.1929 3.03046,-19.1929 l 5.05077,-14.14213 -2.02031,-11.11168 c 0,0 -6.06092,-4.04061 -10.10153,-9.09137 -4.04061,-5.05077 -8.08122,-7.07107 -8.08122,-12.12183 0,-5.05077 5.05077,-16.16244 5.05077,-16.16244 0,0 -1.01016,-4.04061 -5.05077,-11.11168 -4.04061,-7.07107 -10.10152,-13.13199 -7.07106,-18.18275 3.03045,-5.05076 -3.59827,-25.55064 -3.59827,-25.55064 1.62722,-8.80897 3.68947,-4.66892 5.69351,-9.55778 l -0.0861,-3.98402 -4.02947,-5.35427 -5.10589,-35.75844 -1.17809,-21.05176 C 111.52288,118.2416 123.49106,118.79409 118.0818,109.81146 l 1.5838,-21.804142 z">
+    <title
+       id="title3086">Werse River</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#97d2c2;fill-opacity:0.29824560000000000;fill-rule:nonzero;stroke:none;stroke-width:0.99999997px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:0.69999999999999996, 0.69999999999999996;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="angelasproperty"
+	 name=""
+	 description=""
+	 smart_skema_type="parcel"
+     d="m 324.52107,329.58676 -7.07107,-14.14213 -5.05076,-4.54569 -41.41625,0.50507 -93.73498,9.09138 c 0.61131,6.94456 -7.28587,15.19686 2.13029,25.22311 0.42061,6.04383 0.78585,12.91821 1.66521,12.08074 8.8206,30.91797 2.63525,64.5733 9.7549,79.46068 l 13.00943,-2.61729 c 0,0 16.10117,-1.47934 29.23315,-2.48949 7.84408,-0.60339 13.74737,-2.81587 19.81316,-4.49984 4.0891,-1.13521 8.25205,-2.03025 13.13319,-2.03025 12.12183,0 37.8256,-7.14286 42.87637,-7.14286 5.05076,0 10.10152,-4.04061 10.10152,-8.08123 0,-4.04061 -3.03046,-14.14213 -4.04061,-19.19289 -1.01015,-5.05077 -2.0203,-15.15229 -2.0203,-15.15229 l 9.09137,-12.12183 c 0,0 1.01015,-7.07107 1.01015,-11.11168 0,-4.04061 1.51523,-23.23351 1.51523,-23.23351 z">
+    <title
+       id="title3123">Angela's Property</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#97d2c2;fill-opacity:0.2982456;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="joysproperty"
+	 name=""
+	 description=""
+	 smart_skema_type="parcel"
+     d="m 609.88917,156.85068 -84.85282,1.01015 c 0,0 -122.22846,8.08122 -128.28937,10.10153 -6.06092,2.0203 -89.90358,8.37709 -89.90358,8.37709 l 18.18275,140.11533 5.05076,48.48732 c 0,0 87.88327,-15.15229 94.95434,-18.18275 7.07107,-3.03045 132.32998,-30.30457 132.32998,-30.30457 l 39.39595,-17.1726 16.16244,-11.11167 c 0,0 2.02031,-22.22336 3.03046,-26.26397 1.01015,-4.04061 3.03046,-96.97464 3.03046,-96.97464 z">
+    <title
+       id="title3076">Joy's Property</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#126b06;fill-opacity:0.2982456;fill-rule:nonzero;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="malumbosproperty"
+	 name=""
+	 description=""
+	 smart_skema_type="parcel"
+     d="m 913.02064,324.79791 c -2.85714,0 -141.35678,-11.94852 -147.07107,-14.09134 -5.71428,-2.14285 -122.14286,-12.14285 -122.14286,-12.14285 l -5.71428,-5 -1.42857,-60.71429 4.28571,-78.57143 236.42857,9.28572 67.85715,15 z">
+    <title
+       id="title3059">Malumbo's Property</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#126b06;fill-opacity:0.2982456;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     id="jansproperty"
+	 name=""
+	 description=""
+	 smart_skema_type="parcel"
+     d="m 853.80672,319.99225 c -3.57143,-0.71429 -127.85714,-10.71429 -127.85714,-10.71429 l -82.85715,-8.57143 -18.4699,20.29587 -39.38724,11.1327 -67.85714,17.14286 3.57142,21.42857 -5,10 -106.42857,18.57143 -21.42857,-2.85714 -3.57143,-21.42857 -37.14285,5 -12.14286,3.57142 12.85714,140.71429 13.57143,45 7.14286,15.71429 11.42857,4.28571 c 0,0 45.71428,-9.28571 50,-9.28571 4.28571,0 87.14286,0.71428 95.71428,-1.42857 8.57143,-2.14286 146.42858,-16.42858 154.28572,-16.42858 7.85714,0 115,-14.28571 115,-14.28571 l 18.57143,-4.28571 12.85714,-139.28572 72.85714,-5 6.42858,-14.28571 7.14285,-60.71429 z">
+    <title
+       id="title3051">Jan's Property</title>
+  </path>
+  <path
+     d="m 895.94957,401.42082 -70,6.42857 -15,157.85715 -122.85714,27.85714 -148.57143,11.42857 -107.85714,7.14286 -55,0 c 0,0 0.71428,44.28571 0.71428,48.57142 0,4.28572 1.81483,57.10913 1.81483,57.10913 l 0.32803,18.07175 c 0,0 28.6268,-6.63755 40,-2.32373 6.72953,2.55252 121.79576,-9.1572 229.10526,-12.94795 126.3242,-4.46244 256.42063,-1.09446 253.75188,-7.76633 0,0 -6.42857,-100.00001 -5.71428,-113.57144 0.71428,-13.57142 -9.28572,-65.71428 -9.28572,-79.28571 0,-13.57143 5.71429,-65 5.71429,-65 z"
+     id="ruisproperty"
+	 name=""
+	 description=""
+	 smart_skema_type="parcel"
+     style="color:#000000;fill:#126b06;fill-opacity:0.2982456;fill-rule:nonzero;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccccccsccsscsscc"
+     inkscape:label="#ruisproperty_">
+    <title
+       id="title3081">Rui's Property</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#4c499e;fill-opacity:0.54970757;stroke:none;display:inline"
+     id="joysplayground"
+	 name=""
+	 description=""
+	 smart_skema_type="play ground"
+     d="m 470.74649,287.59184 -131.08524,11.34627 -5.05076,9.09137 6.7752,42.13055 c 0,0 46.76288,-8.79551 50.80349,-9.80567 4.04061,-1.01015 41.41626,-11.11167 41.41626,-11.11167 l 23.89703,-3.85678 13.84627,-7.31618 5.69326,-10.04025 c 0,0 4.04061,-5.05076 0,-9.09137 -4.04061,-4.04061 -6.29551,-11.34627 -6.29551,-11.34627 z">
+    <title
+       id="title3069">Joy's Playground </title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#c8beb7;stroke:#c8beb7;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="wersetimpen"
+	 name=""
+	 description=""
+	 smart_skema_type="road"
+     d="m 372.33836,671.21993 -1.01016,-50.50762 2.53554,-29.73859 -9.62691,-6.66751 -7.07107,-18.18275 -6.06091,-19.1929 -5.05076,-35.35534 -4.04061,-37.37564 -6.06092,-50.50763 -4.04061,-37.37564 11.11168,-6.06092 25.25381,-1.01015 45.45687,-8.08122 47.47717,-11.11168 49.49747,-9.09137 c 0,0 51.51778,-13.13199 56.56854,-14.14214 5.05077,-1.01015 40.40611,-11.11168 40.40611,-11.11168 16.92043,-2.6261 26.85241,-10.84295 30.30457,-24.24366 l 1.01015,-35.35534 -4.04061,-40.4061 4.04061,-38.38579 0.49768,-43.0383 1.52263,-12.52009 -24.24366,2.0203 1.01015,35.35534 0,55.55839 -2.0203,47.47717 -10.10153,21.2132 -43.43656,20.20305 -91.92388,23.23351 -71.72083,15.15229 -53.53809,11.11168 -23.23351,5.05076 -5.05076,3.03046 c 0,0 -2.0203,2.0203 -2.0203,6.06091 0,4.04061 8.08122,58.58885 8.08122,58.58885 l 3.03045,60.60915 16.16245,86.87312 13.13198,42.42641 -0.64032,25.10588 3.35968,25.10588 -2.64032,51.10588 20.2965,6.23786 z">
+    <title
+       id="title3121">Wersetimpen</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#c8beb7;stroke:#c8beb7;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="offwersetimpen"
+	 name=""
+	 description=""
+	 smart_skema_type="road"
+     d="m 372.55948,606.27095 36.7361,-3.69063 45.15265,-1.03844 c 0,0 83.13673,-3.17548 90.20779,-3.17548 7.07107,0 131.73825,-8.96882 139.81947,-8.96882 8.08122,0 70.71068,-15.15229 78.7919,-15.15229 8.08122,0 43.43656,-13.13198 43.43656,-13.13198 0,0 5.05076,-10.20305 5.05076,-16.26397 l -16.18274,6.12183 -29.29443,4.04061 -60.60915,8.08122 -63.63961,5.05076 -53.53808,5.05077 -77.78175,7.07107 -83.84266,4.04061 -53.00255,6.66751 z">
+    <title
+       id="title3117">Off Wersetimpen</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#c8beb7;stroke:#c8beb7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     id="warendorferstrasse"
+	 name=""
+	 description=""
+	 smart_skema_type="road"
+     d="m 873.34375,96.40625 -101,2.03125 -109.09375,-1.03125 -41.4375,0 -76.75,8.09375 -72.75,7.0625 -70.6875,3.03125 -76.78125,6.0625 -51.53125,11.125 -38.375,1 -65.65625,14.125 L 121.8125,155 l 2,27.25 75.78125,-9.0625 62.625,-15.15625 55.5625,-5.0625 c 0,0 33.32582,-1.02109 44.4375,-2.03125 11.11167,-1.01015 66.65625,-5.03125 66.65625,-5.03125 l 40.40625,-4.03125 34.34375,-4.0625 40.40625,-1 39.40625,-4.03125 24.25,0 24.09375,-0.4375 23.375,-2.59375 42.4375,-2.03125 65.65625,2.03125 64.65625,-3.03125 c 0,0 56.55393,7.0625 63.625,7.0625 l -18.1875,-37.375 z">
+    <title
+       id="title3119">Warendorfer Strasse</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:url(#pattern3104);stroke-width:7.95699978;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+     id="railtrack"
+	 name=""
+	 description=""
+	 smart_skema_type="rail road"
+     d="m 133.41066,185.36294 39.00397,-6.19072 58.00606,-8.25694 59.00621,-8.25738 56.00635,-5.16928 67.00778,-5.17413 76.00896,-5.17809 73.00892,-3.11897 65.00826,-1.05756 83.01002,-4.15227 77.00981,-1.06287 152.02168,11.25111 3.00202,9.25896 -151.02066,-6.10695 -111.01493,-3.03784 -55.00731,-1.00467 -76.00966,1.06243 -66.00712,8.26046 -57.00703,2.08297 -75.00882,5.17766 -71.00703,12.37833 -71.00813,6.20484 -38.00383,6.19026 -39.01709,10.97524 z">
+    <title
+       id="title3088"
+       style="stroke:url(#pattern3104)">Railway Track</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#657706;fill-opacity:0.61988304;stroke:none"
+     id="joysfence"
+	 name=""
+	 description=""
+	 smart_skema_type="hedges"
+     d="m 333.44957,351.77796 15,-1.42857 26.07143,-4.64286 35.71429,-8.21428 39.64285,-10.71429 26.78572,-6.07143 16.42857,1.42858 33.57143,-9.64286 46.78571,-15.35714 21.42857,-11.42858 6.42858,-12.14285 0.71428,-11.42857 3.21429,-6.42858 5.35714,-1.07142 2.5,1.42857 0.35714,23.21428 -5.35714,12.85715 -35.71429,21.07142 -31.07142,8.57143 c 0,0 -53.57143,10.35715 -55,10.35715 -1.42858,0 -61.78572,17.5 -65.71429,17.5 -3.92857,0 -69.28572,12.85714 -69.28572,12.85714 l -16.78571,1.78571 -2.85714,-5.35714 z">
+    <title
+       id="title3072">Joy's Fence</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#657706;fill-opacity:0.61988304;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="angelasfence"
+	 name=""
+	 description=""
+	 smart_skema_type="hedges"
+     d="m 175.23529,320.34939 c 0,0 3.92857,-7.14286 5.71428,-6.78571 1.78572,0.35714 2.14286,3.92857 2.14286,3.92857 l 4.28571,-2.85714 7.85715,-1.42858 6.42857,-4.28571 1.07143,3.92857 5,-2.14286 c 0,0 4.64285,-3.21428 6.07142,-1.07142 1.42858,2.14285 3.21429,3.57142 4.64286,3.57142 1.42857,0 5.71429,-1.07142 5.71429,-1.07142 l 4.64285,-3.57143 10.35715,1.07143 c 0,0 -1.78572,-3.21429 2.14285,-2.14286 3.92858,1.07143 6.42858,1.07143 6.42858,1.07143 l 5.71428,-1.42857 3.57143,0 c 0,0 1.42857,1.42857 2.85714,2.14285 1.42857,0.71429 2.85715,0 5,-0.35714 2.14286,-0.35714 8.21429,-2.85714 8.21429,-2.85714 l 2.5,-0.35715 3.21428,2.14286 c 0,0 2.5,0.35714 4.28572,0.35714 1.78571,0 10.71428,-1.78571 12.5,-1.78571 1.78571,0 6.42857,-1.42857 7.85714,-0.35714 1.42857,1.07143 6.07143,0.35714 8.21429,0 2.14285,-0.35715 6.07143,1.78571 6.07143,1.78571 0,0 1.42857,-2.14286 2.5,1.07143 3.76532,3.82843 2.21909,10.67434 -5,7.14286 -2.14286,-1.07143 -5,-3.21429 -8.21429,-3.21429 -3.21429,0 -11.07143,-0.71428 -14.28571,-0.35714 -3.21429,0.35714 -5.35715,0.35714 -7.85715,0.35714 -2.5,0 0,-0.35714 -7.5,0 -7.5,0.35714 -12.14285,-1.07143 -16.78571,0.35714 -4.64286,1.42858 -10,1.78572 -13.92857,2.5 -3.92857,0.71429 -16.07143,2.14286 -21.07143,2.5 -5,0.35715 -5.35714,0.71429 -9.64286,0.71429 -4.28571,0 -7.5,-1.07143 -11.78571,0.35714 -4.28572,1.42857 -10,1.78572 -11.78572,2.5 -1.78571,0.71429 -6.07143,0.71429 -6.07143,0.71429 0,0 -0.71428,0 -2.85714,0.35714 -2.14286,0.35714 -5,0.71429 -7.14286,0.35714 -2.14285,-0.35714 -1.07142,-2.85714 -1.07142,-2.85714 z">
+    <title
+       id="title3084">Angela's fence</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#657706;fill-opacity:0.61988304;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="malumbojanboundary"
+	 name=""
+	 description=""
+	 smart_skema_type="forest"
+     d="m 876.38417,322.6767 -24.24366,-11.11168 -56.56854,0 -41.41626,-5.05076 c 0,0 -16.16244,-8.08122 -25.25381,-8.08122 -9.09137,0 -50.50763,1.01015 -50.50763,1.01015 l -38.38579,-6.06092 2.0203,11.11168 20.20305,5.05076 c 0,0 31.31473,0 37.37565,0 6.06091,0 16.16244,2.02031 21.2132,2.02031 5.05076,0 40.4061,1.01015 40.4061,1.01015 0,0 23.23351,6.06092 29.29443,6.06092 6.06091,0 27.27411,-1.01016 35.35533,0 8.08123,1.01015 32.32489,3.03045 38.3858,3.03045 6.06092,0 17.17259,-1.01015 12.12183,1.01016 z">
+    <title
+       id="title3057">Malumbo and Jan's Boundary</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#657706;fill-opacity:0.61988304;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="jansboundarywoods"
+	 name=""
+	 description=""
+	 smart_skema_type="forest"
+     d="m 358.17592,462.07775 c -2.02031,-4.04061 -8.08122,-32.32488 -8.08122,-32.32488 l -1.01016,-14.14214 -1.01015,-15.15229 c 0,0 3.03046,-13.13198 -1.01015,-14.14213 -4.04061,-1.01016 -14.14214,-3.03046 -14.14214,-3.03046 0,0 5.05077,20.20305 5.05077,25.25381 0,5.05077 1.01015,45.45687 1.01015,45.45687 l 4.04061,36.36549 6.06091,43.43656 7.07107,32.32488 12.12183,14.14214 1.01015,-20.20306 -3.03045,-41.41625 c 0,0 -8.08122,-20.20305 -8.08122,-27.27412 0,-7.07107 0,-29.29442 0,-29.29442 z">
+    <title
+       id="title3053">Jan's Boundary Woods </title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#657706;fill-opacity:0.61988304;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="ruisboundarywoods"
+	 name=""
+	 description=""
+	 smart_skema_type="forest"
+     d="m 391.42857,723.34939 c 1.42857,-10 12.85714,-10.71428 12.85714,-10.71428 l 13.57143,4.28571 12.14286,-5.71429 21.42857,-1.42857 9.28572,3.57143 12.14285,-0.71428 7.14286,-2.14286 5,10 7.85714,-10.71429 c 0,0 5,-8.57143 7.85715,-2.14285 2.85714,6.42857 13.57142,6.42857 13.57142,6.42857 0,0 7.14286,-7.14286 12.14286,-5.71429 5,1.42857 15,0.71429 22.14286,2.14286 7.14286,1.42857 25,1.42857 29.28571,1.42857 4.28572,0 12.85715,-2.85714 17.85715,-2.85714 5,0 7.14285,-0.71429 15.71428,1.42857 8.57143,2.14286 25.71429,1.42857 28.57143,0 2.85714,-1.42857 7.14286,-3.57143 12.85714,-2.85714 5.71429,0.71428 7.14286,0.71428 12.14286,0.71428 5,0 15.71429,8.57143 15.71429,8.57143 l -21.42858,5 c 0,0 -24.28571,1.42857 -31.42857,1.42857 -7.14285,0 -7.85714,-0.71428 -17.14285,0 -9.28572,0.71429 -21.42858,4.28572 -27.85715,4.28572 -6.42857,0 -17.85714,0.71428 -31.42857,0 -13.57143,-0.71429 -18.57143,-0.71429 -26.42857,-0.71429 -7.85714,0 -14.28571,2.85714 -21.42857,3.57143 -7.14286,0.71428 -17.14286,0.71428 -25.71429,0.71428 -8.57143,0 -12.14285,0 -16.42857,0 -4.28571,0 -13.57143,0 -13.57143,0 0,0 -10.71428,1.42858 -14.28571,1.42858 -3.57143,0 -5,0 -11.42857,0 -6.42857,0 -6.42857,0 -10,0 -3.57143,0 -17.85715,-1.42858 -17.85715,-1.42858 z">
+    <title
+       id="title3074">Rui's Boundary Woods</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#374845;fill-opacity:0.92982459;stroke:none"
+     id="angelastank"
+	 name=""
+	 description=""
+	 smart_skema_type="water tank"
+     d="m 292.15886,332.06393 -17.8256,0.71429 -11.11168,0 -5.05077,9.09137 4.04061,7.07107 c 0,0 6.06092,3.03046 11.11168,3.03046 5.05077,0 23.23351,-3.03046 23.23351,-3.03046 l 1.66317,-11.47933 z">
+    <title
+       id="title3078">Angela's Tank</title>
+  </path>
+  <rect
+     style="color:#000000;fill:#c077a7;stroke:#c077a7;stroke-width:2.30000002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.98245616000000002;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;fill-opacity:0.35449733000000000;fill-rule:nonzero"
+     id="joysrestuarant"
+	 name=""
+	 description=""
+	 smart_skema_type="restaurant"
+     y="201.4584"
+     x="495.55667"
+     height="60.609047"
+     width="97.984749">
+    <title
+       id="title3067">Joy's Restuarant</title>
+  </rect>
+  <rect
+     style="color:#000000;fill:#c077a7;stroke:#c077a7;stroke-width:2.30000002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.98245616000000002;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;fill-opacity:0.35449733000000000;fill-rule:nonzero"
+     id="malumboshouse"
+	 name=""
+	 description=""
+	 smart_skema_type="house"
+     y="236.81378"
+     x="646.57446"
+     height="46.971985"
+     width="38.38575">
+    <title
+       id="title3063">Malumbo's House</title>
+  </rect>
+  <rect
+     style="color:#000000;fill:#c077a7;stroke:#c077a7;stroke-width:2.29999995000000010;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.98245616000000002;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;fill-opacity:0.35449734"
+     id="angelashouse"
+	 name=""
+	 description=""
+	 smart_skema_type="house"
+     y="351.21356"
+     x="215.74443"
+     height="46.971985"
+     width="38.38575">
+    <title
+       id="title3082">Angela's House</title>
+  </rect>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#127706;fill-opacity:0.61988304;fill-rule:nonzero;stroke:none;stroke-width:2.29999995;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="malumbosforest"
+	 name=""
+	 description=""
+	 smart_skema_type="forest"
+     d="m 643.03894,161.05229 c 33.09264,-3.55875 41.0496,0.4232 56.54752,2.14286 l 3.57143,22.56037 c 4.61023,0.18328 9.37542,-0.40825 12.14286,8.98895 -4.14682,7.70366 -3.81981,23.59368 -15,18.98894 l -5.71429,17.56038 -38.6309,1.42857 -12.20233,-16.42857 c -6.88278,-18.41383 -2.92613,-36.82767 -0.71429,-55.2415 z">
+    <title
+       id="title3061">Malumbo's Forest</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#127706;fill-opacity:0.61988304;stroke:none;stroke-width:2.29999995;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="jansforest"
+	 name=""
+	 description=""
+	 smart_skema_type="forest"
+     d="m 631.92726,368.13356 c 17.17259,-10.10152 14.14213,-27.27412 14.14213,-27.27412 l -3.03046,-22.22335 -13.13198,4.04061 -23.23351,12.12183 -31.31473,8.08122 -21.2132,8.08122 c 0,0 -11.11168,2.0203 -7.07107,11.11168 4.04061,9.09137 13.13199,24.24366 13.13199,24.24366 l 15.15228,8.08122 c 0,0 20.20305,-3.03046 28.28427,-5.05077 8.08123,-2.0203 22.22336,-8.08122 22.22336,-8.08122 z">
+    <title
+       id="title3055">Jan's Forest</title>
+  </path>
+  <path
+     inkscape:connector-curvature="0"
+     style="color:#000000;fill:#ffa183;fill-opacity:1;stroke:none;stroke-width:13.19999981;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     id="joyscarpark"
+	 name=""
+	 description=""
+	 smart_skema_type="parking"
+     d="m 590.511,264.08785 -32.32488,5.05076 -34.34519,2.02031 -22.22335,6.06091 -12.12183,4.04061 -2.02031,12.12183 3.03046,13.13199 2.0203,14.14213 c 0,0 24.24367,-9.09137 28.28428,-9.09137 4.04061,0 35.35534,-10.10153 39.39595,-12.12183 4.04061,-2.02031 23.2335,-6.06092 23.2335,-6.06092 l 11.11168,-8.08122 4.04061,-11.11168 z">
+    <title
+       id="title3065">Joy's Car Parking </title>
+  </path>
+</svg>

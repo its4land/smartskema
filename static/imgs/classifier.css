@@ -1,0 +1,241 @@
+
+#sketchmapplaceholder  {
+	width:550px;
+	height:550px;
+	border: none;
+	margin-left: 05px;
+	
+}
+
+#metricmapplaceholder {
+	width:550px;
+	height:500px;
+	border: none;
+	margin-left: 05px;
+	
+}
+
+#sketchmapplaceholder_img  {
+	width:550px;
+	height:500px;
+	border: none;
+	margin-left: 05px;
+	
+}
+
+#metricmapplaceholder_img {
+	width:550px;
+	height:500px;
+	border: none;
+	margin-left: 05px;
+	
+}
+
+
+.my-label {
+    position: absolute;
+    width:1000px;
+    font-size:20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.jumbotron {
+	padding-top:0;
+	padding-bottom:5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.nav-pills li {
+	padding: 2px;
+}
+
+#table-intro th {
+	background-color:#D9EDF7;
+	color: #31708F;
+}
+
+#table-intro td {
+	border:1px solid #D9EDF7;
+	width: 25%;
+}
+
+.nav-pills li a.arrowright {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.nav-pills li a.arrowleft {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+/* add small arrows to navbar items */
+.nav-pills li a.arrowright::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  margin-top: -19px;
+  border-top: 19px solid transparent;
+  border-bottom: 19px solid transparent;
+  border-left: 1em solid;
+  right: -1em;
+}
+.nav-pills li a.arrowright::after{   z-index: 4;  border-left-color: #428BCA;   }
+/*.nav-pills li a.greenarrowright::after{   z-index: 4;  border-left-color: #5CB85C;   } */
+.nav-pills li a.greenarrowright::after{   z-index: 4;  border-left-color: #428BCA;   }
+
+.nav-pills li a.arrowleft::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  margin-top: -19px;
+  border-top: 19px solid transparent;
+  border-bottom: 19px solid transparent;
+  border-left: 1em solid;
+  left: 0em;
+}
+
+.nav-pills li a.arrowleft::before{   z-index: 2;  border-left-color: #fff;   }
+/* kill bootstrap responsiveness */
+.container {
+	width: 1570px !important;
+}
+
+.nav-pills li {
+  float:none;
+  display:table-cell;
+  width:1%;
+  text-align:center;
+}
+
+.page-header {
+	padding: 0;
+	padding-top: 5px;
+	margin: 0;
+}
+.objectRecognitionSkethHolderThumnail{
+	position: relative;
+	padding: 10px;
+	
+}
+
+.loadMapThumbnail{
+	position: relative;
+	padding: 2px
+}
+
+.loadMapThumbnail span {
+	position: absolute;
+	top:0px;
+	z-index: 99;
+	margin-top: 2px;
+}
+
+.loadMapThumbnail img {
+	width:140px;
+	height:100px;
+	border:1px solid black;
+}
+
+#table-intro table td.LoadedMaps {
+	width:10%;
+}
+
+#table-intro table td.mapHolders {
+	width:80%;
+}
+
+#table-intro table td.links {
+	width:10%;
+}
+
+.nav-pills li ul li {
+    display:block;
+    width:auto;	
+}
+/* i changed ths #5CB85C to #428BCA */
+.nextstep {
+	background-color:#428BCA;
+	color:#fff;
+}
+
+.hideMe {
+	display:none;
+}
+
+#SketchQcnPlaceholder textarea,
+#MetricQcnPlaceholder textarea {
+	font-family:monospace;
+	width: 500px;
+	height:80px;
+	border: 1px solid #999;
+	background-color: #efefef;
+	margin-bottom: 20px;
+}
+
+#matchingResultPlaceholder textarea {
+	font-family:monospace;
+	width: 500px;
+	height:100px;
+	border: 1px solid #999;
+	background-color: #efefef;
+	margin-bottom: 20px;
+}
+#matchingResultMapPlaceholder  textarea{
+	font-family:monospace;
+	width: 500px;
+	height:100px;
+	border: 1px solid #999;
+	background-color: #efefef;
+	margin-bottom: 20px;
+}
+#segSketchHolder  {
+	margin-top: 20px;
+	position: relative;
+	width:140px;
+	height:140px;
+	border: 1px solid #999;
+	margin-bottom: 20px;
+}
+#class1SketchHolder  {
+	margin-top: 20px;
+	position: relative;
+	width:140px;
+	height:140px;
+	border: 1px solid #999;;
+	margin-bottom: 20px;
+}
+#class2SketchHolder  {
+	margin-top: 20px;
+	position: relative;
+	width:140px;
+	height:140px;
+	border: 1px solid #999;
+	margin-bottom: 20px;
+}
+div.scrollbar {
+    width: 170px;
+    max-height: 650px;
+  	overflow-y: scroll;
+}
+

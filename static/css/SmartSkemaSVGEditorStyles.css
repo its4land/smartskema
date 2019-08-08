@@ -1,0 +1,68 @@
+
+
+
+
+#referencePoints_popup_div {
+    border: 1px solid;
+    padding: 1px;
+    width:300px;
+    text-align:right;
+    box-shadow: 2px 2px #888888;
+}
+
+
+/*svg {
+    border: 1px solid grey;
+}*/
+
+line {
+    stroke: steelblue;
+    stroke-width: 1px;
+    stroke-linecap: round;
+}
+
+/*path {
+
+    stroke-width: 2px;
+    stroke: red;
+
+}*/
+
+.anchor {
+  fill: #0000cd;
+ }
+
+.active {
+  stroke: #c9daff;
+  stroke-width: 1px;
+}
+
+.selected {
+    stroke: red;
+}
+
+/*.polygon {
+    fill: sandybrown;
+    stroke-width: 2px;
+    stroke: black;
+
+}
+
+.polyline {
+    stroke-width: 20px;
+    fill: none;
+    stroke: red;
+}*/
+
+ul#number-btns {
+  color: #fff;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul#number-btns li{
+  display: inline-block;
+  padding: 2px 8px;
+  background: #00B0DD;
+}

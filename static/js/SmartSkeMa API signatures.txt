@@ -1,0 +1,38 @@
+#### sketchMapDisplayManager ####
+init: init,
+rasterFromURL: loadSketchMapRasterFromURL,
+rasterFromContent: loadSketchMapRasterFromContent, //PENDING
+vectorFromSVGURL: loadSketchMapVectorFromURL,
+vectorFromSVGContent: loadSketchMapVectorFromContent,
+addVector: appendVectorElement, //PENDING
+addVectors: appendVectorElements, //PENDING
+getRaster: getRasterSelection,
+getVectors: getVectorSelection,
+getVectorSVG: getVectorAsSVG //PENDING
+
+#### baseMapDisplayManager ####
+vectorFromGeoJSONContent(layerName, geojson)
+tilesFromURL(url, sourceFormat)
+getRaster()
+getVectorLayer(layer)
+
+#### nonsense text ####
+[1] Compare FAO http://www.fao.org/docrep/005/y4307e/y4307e05.htm .
+
+Compare FAO http://www.fao.org/docrep/005/y4307e/y4307e05.htm .
+
+console.log();
+
+
+        map
+            .call(zoom)
+            .call(zoom.transform, initial_zoom)
+            .call(zoom.translateBy, translate_x, translate_y)
+            .call(zoom.scaleBy, bounds_scale)
+			
+        map
+            .call(zoom)
+            .call(zoom.transform, d3.zoomIdentity
+                .translate(width / 2, height / 2)
+                .scale(1 << 19)
+                .translate(-center[0], -center[1]));

@@ -1,0 +1,407 @@
+
+#edit_svg_popup_div {
+    border: 1px solid;
+    padding: 1px;
+    width:300px;
+    text-align:right;
+    box-shadow: 2px 2px #888888;
+}
+
+
+#orthophoto_file_loader{
+    background: white;
+}
+
+#orthophoto_project_div{
+    width: 450px;
+    padding-top:1px;
+    margin: auto;
+}
+
+
+
+#file_loader{
+    background: white;
+}
+#SM_project_div{
+    width: 450px;
+    padding-top:2px;
+    margin: auto;
+}
+
+
+
+#editor_div{
+    position: relative;
+    padding: 2px;
+    margin: auto;
+}
+#edit_div{
+    position: relative;
+    width: inherit;
+    padding: inherit;
+    margin: auto;
+
+}
+#editor_tools_row{
+    margin: 1px;
+
+}
+
+#editor_tools_col_left{
+
+}
+
+#editor_tools_col_right{
+
+}
+
+#svg_edit_bnts{
+    position: absolute;
+    margin: 1px;
+    alignment: center;
+}
+#ladm_interaction_bnts{
+    position: absolute;
+    margin: 1px;
+    alignment: center;
+
+}
+#json_edit_bnts{
+    margin: 1px;
+    alignment: center;
+}
+
+
+
+th {
+    font-weight:bold;
+
+}
+
+
+.w3_container_div{
+    padding-left: 1px;
+    padding-right: 1px;
+}
+.vl {
+    border-left: 3px solid #2d6987;
+    height: 700px;
+    padding: 0px;
+}
+
+#mapholders_div{
+    padding-left: 2px;
+    padding-right: 1px;
+    text-align: center;
+
+
+}
+
+#load_complexStructure_map_div{
+    text-align: right;
+    padding-right: 6px;
+    padding-bottom: 1px;
+    visibility: hidden;
+
+}
+
+#complexStructure_div{
+    width: 650px;
+    height: 650px;
+    background: white;
+    visibility: hidden;
+}
+
+#complexStructureMapholder{
+    width: 520px;
+    height: 520px;
+    background: white;
+    padding: 0px;
+    text-align: center;
+}
+
+/*#ladm_rrrs_popup_div{
+    width: 350px;
+    background: white;
+}*/
+
+#popup_div {
+    border: 1px solid;
+    padding: 2px;
+    width:350px;
+    text-align:right;
+    box-shadow: 2px 2px #888888;
+}
+
+
+/*#nonSpatial_query_popup_div {
+    width:350px;
+    background: white;
+
+}*/
+
+#relations_div_test {
+    width:300px;
+    background: white;
+
+
+}
+
+#relatin_div_test{
+    width: 100%;
+    font-family: Verdana;
+    font-size: 12px;
+    text-align: center;
+}
+/*
+#nonSpatial_query_resp_div{
+    padding: 1px;
+    width: 100%;
+    font-family: Verdana;
+    font-size: 12px;
+    text-align: center;
+}*/
+
+#approximate_loc_query_div{
+    position: absolute;
+    width:500px;
+    alignment: center;
+    background: white;
+    left: 55%;
+    top: 55%;
+
+}
+
+#approx_loc_query_builder{
+    position: relative;
+    padding: 4px;
+    margin: 4px;
+    alignment: inherit;
+    width:inherit;
+    font-family: Verdana;
+    font-size: 14px;
+}
+
+
+.dash{
+    border: 1px solid lightseagreen;
+    width: 200px;
+    height: 1px;
+
+}
+
+.dash_1{
+    border: 1px solid lightseagreen;
+    width: 220px;
+    height: 1px;
+
+}
+
+
+
+
+#boma_rels{
+    alignment: left;
+    font-size: 12px;
+    font-family: Verdana;
+
+
+}
+
+#school_rels{
+    alignment: left;
+    font-size: 12px;
+    font-family: Verdana;
+
+
+}
+
+
+#main_table{
+    width:100%;
+    padding: auto;
+    position: relative;
+    border: 0px;
+
+}
+
+#sketchmapplaceholder{
+    width:50%;
+    /*text-align: left;*/
+    /*padding: 0px;*/
+
+}
+#metricmapplaceholder{
+    width:49%;
+    /*text-align: right;*/
+    /*padding: 0px;*/
+}
+#divider{
+    width:1%;
+    padding: 0px;
+    text-align: center;
+
+}
+
+/*
+#sketchmapplaceholder{
+    position: relative;
+
+}
+
+#metricmapplaceholder {
+    position: relative;
+
+}*/
+
+.navbar a {
+     float: right;
+     padding: 08px;
+     color: white;
+     text-decoration: none;
+     font-size: 14px;
+    font-family: sans-serif;
+ }
+.navbar a:hover {
+    background-color: #000;
+    color: white;
+}
+
+li.nav-item  a {
+    float: right;
+    padding: 15px;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-family: sans-serif;
+}
+li.nav-item a :hover {
+    background-color: #000;
+    color: white;
+}
+
+.navbar-brand  a {
+    float: right;
+    padding: 05px;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    font-family: sans-serif;
+
+}
+
+/*#edit_div{
+    height: 60px;
+}*/
+
+/*.btn {*/
+
+    /*color: black;*/
+    /*padding: 05px 16px;*/
+    /*font-size: 16px;*/
+    /*cursor: pointer;*/
+    /*background: lightgray;*/
+/*}*/
+
+
+
+
+
+/*.w3-panel{
+    margin-top: 5px;
+    margin-bottom: 15px;
+}*/
+
+
+/* Darker background on mouse-over */
+.btn-outline-info:hover {
+    background-color: #17a2b8;
+}
+
+
+
+.panel-footer{
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px  gray;
+    background-color: lightgray;
+    height:80px;
+}
+
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+label.dropdown-item{
+    float: right;
+    padding: 0px;
+    color: black;
+    text-decoration: none;
+    font-size: 12px;
+    font-family: sans-serif;
+
+}
+label.dropdown-item:hover {
+    background-color: #17a2b8;
+    color: white;
+}
+div.dropdown-menu{
+    padding-top: 5px;
+    padding-bottom: 0px;
+}
+
+
+#processRing{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    background: whitesmoke;
+
+    border-top: 16px solid lightgray;
+    border-right: 16px solid #2d6987;
+    border-bottom: 16px solid lightgray;
+    border-left: 16px solid #2d6987;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,747 @@
+
+{% extends 'layout_SmartSkeMa.html'%}
+{{ JSGlue.include() }}
+{% block body %}
+<div class="container-fluid">
+    <div>
+        <nav class="navbar navbar-expand-xl navbar-dark bg-dark ">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                <a class="navbar-brand" href="#">
+                    <img src="../static/imgs/smartSkema.png" width="35" height="35" class="d-inline-block align-top"
+                         alt="logo">
+                    SmartSkeMa
+                </a>
+            </button>
+
+            <ul class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto mt-2 mt-xl-0">
+                    <li class="nav-item dropdown active">
+                        <a class="dropdown-toggle " class="nav-link" href="#" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="true">
+                            Select Project Type
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="Preview">
+                            <label class="dropdown-item">
+                                <img id="sm_project" src="../static/imgs/openSM_file_icon.png" width="20" height="20"
+                                     alt="">
+                                <input id="SketchMapProjectInputbutton" role="button" style="display: none;"
+                                       onclick="loadSketchMapProject(event)"><span>Sketch Map Project </span>
+                            </label>
+
+                            <label class="dropdown-item">
+                                <img id="ortho_project" src="../static/imgs/openSM_file_icon.png" width="20" height="20"
+                                     alt="">
+                                <input id="OrthoMapProjectInputbutton" role="button" style="display: none;"
+                                       onclick="loadOrthophotoProject(event)"/><span>Orthophoto Project </span>
+
+                            </label>
+
+                        </div>
+
+                    </li>
+                    <!-- <li class="nav-item dropdown active">
+
+                         <a class="dropdown-toggle " class="nav-link" href="#" data-toggle="dropdown" role="button"
+                            aria-haspopup="true" aria-expanded="true">
+                             Load Files
+                         </a>
+                         <div class="dropdown-menu" aria-labelledby="Preview">
+                             <label class="dropdown-item">
+                                 <img id="sm1" src="../static/imgs/openSM_file_icon.png" width="20" height="20" alt="">
+                                 <input id="SketchMapInputbutton" type="file" style="display: none;"
+                                        onChange="loadSketchMap()"/><span>Load Sketch Map </span>
+
+                             </label>
+                             <label class="dropdown-item">
+                                 <img id="sm1" src="../static/imgs/openSM_file_icon.png" width="20" height="20" alt="">
+                                 <input id="SketchMapInputbutton1" type="file" style="display: none;"
+                                        onChange="loadSatelliteImage()"/><span>Load Satellite Image </span>
+
+                             </label>
+                             <label class="dropdown-item">
+                                 <img id="digt_sm" src="../static/imgs/openSM_file_icon.png" width="20" height="20" alt="">
+                                 <input id="DigitizedMapInputbutton" type="file" style="display: none;"
+                                        onChange="loadSatelliteDrawingMap()"/><span>Load Drawing on Satellite Image</span>
+
+                             </label>
+                             <label class="dropdown-item">
+                                 <div class="dash"></div>
+                                 <img id="mm" src="../static/imgs/openSM_file_icon.png" width="20" height="20" alt="">
+                                 <input id="MetrichMapInputbutton" type="file" style="display: none;"
+                                        onChange="loadMetricMap()"/><span>Load Base Map</span>
+
+                             </label>
+
+                             <label class="dropdown-item">
+                                 <div class="dash"></div>
+                                 <img id="LADM" src="../static/imgs/openSM_file_icon.png" width="20" height="20" alt="">
+                                 <input id="LADMInputbutton" type="file" accept=".owl, .OWL" style="display: none;"
+                                        onChange="loadLADMFile()"/><span>Load Local Domain Model</span>
+
+                             </label>
+                             <label class="dropdown-item">
+                                 <div class="dash"></div>
+                                 <img id="paty" src="../static/imgs/party.png" width="20" height="20" alt="">
+                                 <input id="PartyInputbutton" type="file" accept=".json, .JSON" style="display: none;"
+                                        onChange="loadPartyFile()"/><span>Load Parties</span>
+                             </label>
+
+                         </div>
+
+                     </li>-->
+
+                    <li class="nav-item dropdown active">
+                        <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="processImage"
+                           role="button"
+                           aria-haspopup="true" aria-expanded="true">
+                            Vectorize Image
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="Preview">
+                            <label class="dropdown-item">
+                                <img id="p_sm" src="../static/imgs/process.png" width="20" height="20" alt="">
+                                <input id="processSketchMap" type="" style="display: none;"
+                                       onclick="processSketchMap()"/><span>Vectorize Sketch Map </span>
+
+                            </label>
+                            <label class="dropdown-item">
+                                <img id="p_mm" src="../static/imgs/process.png" width="20" height="20" alt="">
+                                <input id="processSatelliteMap" type="" style="display: none;"
+                                       onclick="processSketchMap()"/><span>Vectorize Orthophoto Drawing </span>
+
+                            </label>
+
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active">
+                        <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="tool"
+                           role="button"
+                           aria-haspopup="true" aria-expanded="true">
+                            Edit
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="Preview">
+                            <label class="dropdown-item">
+                                <img id="editor_sm_img" src="../static/imgs/sm_tool.png" width="20" height="20" alt="">
+                                <input id="editor_sm" type="" style="display: none;"
+                                       onclick="enable_svg_edit_tool()"/><span>Edit Sketch Map </span>
+
+                            </label>
+
+                            <label class="dropdown-item">
+                                <img id="editor_orth_img" src="../static/imgs/sm_tool.png" width="20" height="20"
+                                     alt="">
+                                <input id="editor_ortho" type="" style="display: none;"
+                                       onclick="enable_json_svg_edit_tool()"/><span>Edit Base Map  </span>
+
+                            </label>
+
+                            <label class="dropdown-item">
+                                <img id="editor_ladm" src="../static/imgs/ladm_tool_1.png" width="20" height="20"
+                                     alt="">
+                                <input id="editor_ladm_input" type="" style="display: none;"
+                                       onclick="enable_ladm_bnts()"/><span>  Edit Non-spatial Information  </span>
+
+                            </label>
+
+                            <label class="dropdown-item">
+                                <img id="add_complexMap_img" src="../static/imgs/ladm_tool_1.png" width="20" height="20"
+                                     alt="">
+                                <input id="add_complexStruMap_bnt" type="" style="display: none;"
+                                       onclick="add_complexStruMap_bnt()"/><span>  Add Complex Structure Map  </span>
+
+                            </label>
+
+                        </div>
+                    </li>
+                    <!-- <li class="nav-item dropdown active">
+                         <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="qualify"
+                            role="button"
+                            aria-haspopup="true" aria-expanded="true">
+                             Qualify Map
+                         </a>
+                         <div class="dropdown-menu" aria-labelledby="Preview">
+                             <label class="dropdown-item">
+                                 <img id="q-sm" src="../static/imgs/qcn_sm1.png" width="20" height="20" alt="">
+                                 <input id="qualifySM" type="" style="display: none;"
+                                        onclick="qualify_SM()"/><span>Qualify Sketch Map </span>
+
+                             </label>
+                             <label class="dropdown-item">
+                                 <img id="q-mm" src="../static/imgs/qcn_mm1.png" width="20" height="20" alt="">
+                                 <input id="qualifyMM" type="" style="display: none;"
+                                        onclick="qualify_MM()"/><span>Qualify Base Map </span>
+
+                             </label>
+
+                         </div>
+                     </li>-->
+
+                    <li class="nav-item dropdown active">
+                        <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="align"
+                           role="button"
+                           aria-haspopup="true" aria-expanded="true">
+                            Align-to-Geometry
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="Preview">
+                            <label class="dropdown-item">
+                                <img id="align_sm_img" src="../static/imgs/align_St_drawing.png" width="20" height="20"
+                                     alt="">
+                                <input id="align_sm" type="" style="display: none;"
+                                       onclick="align_Sketch_Map()"/><span>Align Sketch Map </span>
+                            </label>
+                            <label class="dropdown-item">
+                                <img id="align_mm_img" src="../static/imgs/align_St_drawing.png" width="20" height="20"
+                                     alt="">
+                                <input id="align_mm" type="" style="display: none;"
+                                       onclick="align_Satellite_Drawing()"/><span>Align Orthophoto Drawing </span>
+                            </label>
+                            <label class="dropdown-item">
+                                <img id="toggle_interaction_img" src="../static/imgs/toggle_interaction.png" width="25"
+                                     height="25"
+                                     alt="">
+                                <input id="toggle_interaction" type="" style="display: none;"
+                                       onclick="toggle_interaction()"/><span>Toggle Interaction</span>
+                            </label>
+
+                        </div>
+                    </li>
+
+                    <!--              <li class="nav-item active">
+                                      <a id="alignMap" class="nav-link" href="#" role="button"
+                                         aria-haspopup="true" aria-expanded="true" onclick="align_Maps()">Align Maps </a>
+                                  </li>
+              -->
+                    <!--        <li class="nav-item dropdown active">
+                                <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="tool"
+                                   role="button"
+                                   aria-haspopup="true" aria-expanded="true">
+                                    Tools
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="Preview">
+                                    <label class="dropdown-item">
+                                        <img id="editorimg" src="../static/imgs/tool.png" width="25" height="25" alt="">
+                                        <input id="editor" type="" style="display: none;"
+                                               onclick="visibleEditor()"/><span>Editor </span>
+
+                                    </label>
+
+                                </div>
+                            </li>-->
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">help <span class="sr-only"></span></a>
+                    </li>
+                </ul>
+
+                <div class="navbar">
+                    <a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
+                    <a class="active" href="#"><i class="fa fa-fw fa-home"></i>Home</a>
+                    <a class="active" href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+                    <a class="active" href="#"><i class="fa fa-fw fa-user"></i> Login</a>
+
+                </div>
+
+
+            </ul>
+        </nav>
+    </div>
+
+    <div id="editor_div" class=container style="visibility: hidden">
+        <div id="edit_div" class="w3-panel w3-round w3-card">
+            <div id="editor_tools_row" class="row">
+                <div id="editor_tools_col_left" class="col">
+
+                    <div id="svg_edit_bnts" style="visibility: hidden">
+                        <button id="draw_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Draw Geometry" onclick="">
+                            <img id="draw_geom_img" src="../static/imgs/draw_geom.png" width="22" height="20">
+                        </button>
+                        <button id="edit_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Edit Geometry">
+                            <img id="edit_geom_img" src="../static/imgs/edit_geom.png" width="22" height="20">
+                        </button>
+                        <button id="join_endPoints" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Join EndPoints">
+                            <img id="join_endPoints_img" src="../static/imgs/join_endPoints.png" width="22" height="20">
+                        </button>
+                        <button id="split_endPoints" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Move Object">
+                            <img id="split_endPoints_img" src="../static/imgs/split_endPoints.png" width="20"
+                                 height="20">
+                        </button>
+                        <button id="delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Delete">
+                            <img id="delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20">
+                        </button>
+                         <button id="save_edits" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Save" height="20" onclick="">
+                            Save
+                        </button>
+                    </div>
+                    <!-- div for ladm interaction buttons-->
+                    <div id="ladm_interaction_bnts" style="visibility: hidden">
+                        <button id="ladm_interaction_for_RRR_bnt" type="button" class="btn btn-outline-info"
+                                onclick="ladm_interaction_for_RRR()">Add RRRs
+                        </button>
+                        <button id="nonSpatial_query_processor_bnt" type="button" class="btn btn-outline-info"
+                                onclick="nonSpatial_query_processor()">Non-spatial Query
+                        </button>
+                        <button id="spatial_query_processor_bnt" type="button" class="btn btn-outline-info"
+                                onclick="spatial_query_processor()">Spatial Query
+                        </button>
+                        <button id="reasoner_query_spatial_bnt" type="button" class="btn btn-outline-info"
+                                onclick="reasoner_process_spatial_queries()">Reasoner
+                        </button>
+                    </div>
+                </div>
+                <div id="editor_tools_col_right" class="col">
+                    <!-- div for geoJson interaction buttons-->
+                    <div id="json_edit_bnts" align="right" style="visibility: hidden">
+                        <button id="json_draw_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Draw Geometry" onclick="">
+                            <img id="json_draw_geom_img" src="../static/imgs/draw_geom.png" width="22" height="20">
+                        </button>
+                        <button id="json_edit_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Edit Geometry">
+                            <img id="json_edit_geom_img" src="../static/imgs/edit_geom.png" width="22" height="20">
+                        </button>
+                        <button id="json_join_endPoints" type="button" class="btn btn-outline-info"
+                                data-toggle="tooltip"
+                                data-placement="bottom" title="Join EndPoints">
+                            <img id="json_join_endPoints_img" src="../static/imgs/join_endPoints.png" width="22"
+                                 height="20">
+                        </button>
+                        <button id="json_split_endPoints" type="button" class="btn btn-outline-info"
+                                data-toggle="tooltip"
+                                data-placement="bottom" title="Move Object">
+                            <img id="json_split_endPoints_img" src="../static/imgs/split_endPoints.png" width="20"
+                                 height="20">
+                        </button>
+                        <button id="json_delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Delete">
+                            <img id="json_delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20">
+                        </button>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="w3_container_div" class="container-fluid">
+        <!--<div id= "mapholders_div" class="w3-panel w3-card-2">-->
+        <table id="main_table" class="table">
+
+            <tr>
+                <td id="sketchmapplaceholder" style="position: relative;padding: auto">
+                    <!-- <div id="1sketchmapplaceholder" align="left"></div>-->
+                </td>
+                <td id="divider" class="vl" style="position: relative">
+                </td>
+
+                <td id="metricmapplaceholder" style="position: relative;padding: auto">
+                    <!--<div id="metricmapplaceholder" align="left"></div>-->
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    <div class="navbar navbar-expand-xl navbar-dark bg-dark">
+        <a href="https://its4land.com" target="_blank">its4land</a> | <a
+            href="https://ifgi.uni-muenster.de" target="_blank">Institute
+        for Geoinformatics, Munster</a> | <a
+            href="https://www.uni-muenster.de/Geoinformatics/en/sil/index.html"
+            rel="nofollow">Spatial Intelligence Lab Munster</a>
+    </div>
+
+
+    <!--</div>-->
+
+    <div id="relations_div_test" class="w3-card-4 w3-round" style="visibility: visible">
+        <header class="w3-panel w3-round w3-teal">
+            <h6 style="padding-top:3px "><b>Spatial Relations:</b><a> of selected feature</a></h6>
+        </header>
+        <div id="relatin_div_test" class="w3-container">
+            <div>
+                <a style="padding: inherit"><b>Selected Feature Id:</b>
+                    <span id="featureID" style="text-align:right;color: teal;font-size: 14px"> Boma1 </span></a>
+            </div>
+            <div>
+                <a><b> Feature Type:</b>
+                    <span id="featureType" style="text-align:right;color: teal;font-size: 14px">boma </span>
+                </a>
+            </div>
+            <div>
+                <br>
+                <label  class="btn btn-outline-info active" style="padding: 1px;"
+                        onclick="">Left_of (Ngatatek River)
+                </label>
+
+                <label  class="btn btn-outline-info active" style="padding: 1px"
+                        onclick="">Inside (Ranch1 boundary)
+                </label>
+
+            </div>
+
+        </div>
+    </div>
+    <div id="complexStructure_div" class="w3-card-4 w3-round">
+        <header class="w3-panel w3-round w3-teal">
+            <h6 style="padding-top:3px "><b>Complex Structure : </b><a> Detail drawing of Home State called "Boma"</a>
+            </h6>
+        </header>
+        <div class="row" style="padding-left: 5px;padding-right: 5px;padding-top: 0px">
+            <div class="col-8">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="complexStr_drawing_checked"
+                           disabled="disabled">
+                    <label class="custom-control-label" for="complexStr_drawing_checked"><i> Load Detail
+                        Drawing...</i></label>
+                </div>
+            </div>
+            <div class="col-4">
+                <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                    Browse
+                    <input id="ComplexStrMapInputbutton" accept=".png, .jpeg, .jpg" style="display: none" type="file"
+                           onchange="loadComplexStructureDrawingMap()">
+                </label>
+
+            </div>
+        </div>
+        <div id="complexStructureMapholder">
+        </div>
+        <div id = "load_complexStructure_map_div">
+            <button id="load_complexStructureMap_bnd"  type="button" class="btn btn-outline-info"
+                    onclick="load_complexStructureMap_bnd()">Load Map
+            </button>
+        </div>
+
+    </div>
+    <div id="ladm_rrrs_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+        <header class="w3-panel w3-round w3-teal">
+            <h6 style="padding-top:3px "><b>Party & Rights : </b><a> Rights are extracted from LDM</a>
+            </h6>
+        </header>
+        <div class="container" style="padding-right: 2px;padding-top: 2px">
+            <div style="padding-top:4px;padding-bottom: 4px">
+                <select id="party_selector" class="chosen" style="width: 70%">
+
+                </select>
+                <span class="text-info"><b><i>Social Unit </i></b></span>
+            </div>
+
+            <div class="dash_1"></div>
+
+            <div style="padding-top:4px;padding-bottom: 4px">
+                <select id="ownership_selector" class="chosen" style="width: 70%">
+
+                </select>
+                <span class="text-info"><b><i>Relationship </i></b></span>
+            </div>
+
+            <div class="dash_1"></div>
+
+            <div style="padding-top:4px;padding-bottom: 4px">
+                <select id="other_rrrs_selector" class="chosen" style="width: 70%">
+
+                </select>
+                <span class="text-info"><b><i>Condition </i></b></span>
+            </div>
+            <div>
+                <form style="text-align: center">
+                    <input type="radio" name="Right" value="Right"> Right
+                    <input type="radio" name="Responsibility" value="Responsibility"> Responsibility
+                    <input type="radio" name="Restrictions" value="Restrictions"> Restrictions
+                </form>
+            </div>
+        </div>
+        <div style="text-align: right;padding: 6px">
+            <button id="add_land_tenure_record_bnt" type="button" class="btn btn-outline-info"
+                    onclick="add_land_tenure_record()">Add Record
+            </button>
+
+            <button id="save_land_tenure_record_bnt" type="button" class="btn btn-outline-info"
+                    onclick="save_land_tenure_record()">Save Record
+            </button>
+
+        </div>
+    </div>
+    <div id="popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden">
+    </div>
+    <div id="nonSpatial_query_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+        <header class="w3-panel w3-round w3-teal">
+            <h6><b>Query Result:</b><a> Land Tenure Record</a></h6>
+        </header>
+        <div id="nonSpatial_query_resp_div" class="w3-container">
+
+        </div>
+    </div>
+    <div id="processRing" style="visibility: hidden"></div>
+    <div id="edit_svg_popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden">
+    </div>
+    <div id="referencePoints_popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden">
+    </div>
+    <div id="spatial_query_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+        <header class="w3-panel w3-round w3-teal">
+            <h6 style="padding: 4px;margin: 2px;"><b>Query Result:</b><a> Select relation to visualize approximate
+                location</a>
+            </h6>
+        </header>
+
+        <div id="query_builder">
+            <div>
+                <a style="padding: inherit;margin: inherit"><b>Selected Feature Id:</b>
+                    <span id="featureID_spatial_query" style="text-align:right;color: teal;font-size: 14px"> </span></a>
+            </div>
+            <div>
+                <a style="padding: inherit;margin: inherit"><b> Feature Type:</b>
+                    <span id="featureType_spatial_query" style="text-align:right;color: teal;font-size: 14px"> </span>
+                </a>
+            </div>
+
+            <div style="float: right;padding: 1px">
+                <label id="submit_query"  class="btn btn-outline-info" style="padding: 2px" onclick="qualitative_spatial_queries()">
+                    Get Spatial Relations
+                </label>
+            </div>
+        </div>
+        <div id="spatial_query_resp_div">
+            <div>
+                <br>
+                <h6 style="padding: 5%;margin: 2px"><b>Query Result:</b></h6>
+                <table id="result_table" class="table">
+                    <tr>
+                        <th style="padding: inherit"><span style="font-size: 11px">LeftRight Relations</span></th>
+                        <th style="padding: inherit"><span style="font-size: 11px">Topological Relations</span></th>
+                        <th style="padding: inherit"><span style="font-size: 11px">Relative Distances</span></th>
+                    </tr>
+                    <tr>
+                        <td id="leftRight_rels_div" style="padding: inherit"></td>
+                        <td id="topo_rels_div" style="padding: inherit"></td>
+                        <td id="relDist_rels_div" style="padding: inherit"></td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+    <div id="SM_project_div" class="w3-card-4 w3-round " style="visibility: hidden">
+        <header class="w3-container w3-round w3-teal" style="padding: 2px;margin: auto">
+            <h6>
+                <b style="margin: 2px">Sketch Map Project :</b><a> Load required inputs for the project</a>
+                <button id="close_bnt" aria-label="Close Account Info Modal Box" style="float: right; padding: 2px;"
+                        onclick="document.getElementById('SM_project_div').style.display='none'">&times;
+                </button>
+            </h6>
+
+        </header>
+        <div id="file_loader" class="w3-container w3-round">
+            <div class="row" style="padding: 1px">
+                <div class="col-8">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="SM_checked" disabled="disabled">
+                        <label class="custom-control-label" for="SM_checked"><i> Load Sketch Map...</i></label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                        Browse
+                        <input id="SketchMapInputbutton" accept=".png, .jpeg" style="display: none" type="file"
+                               onchange="loadSketchMap()">
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="row" style="padding: 1px">
+                <div class="col-8">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="MM_checked" disabled="disabled">
+                        <label class="custom-control-label" for="SM_checked"><i> Load Base Map...</i></label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                        Browse
+                        <input id="MetrichMapInputbutton" accept=".geojson, .GEOJSON" style="display: none" type="file"
+                               onchange="loadMetricMap()">
+                    </label>
+                </div>
+            </div>
+
+            <div class="row" style="padding: 1px">
+                <div class="col-8" style="width: 60%">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="LADM_checked" disabled="disabled">
+                        <label class="custom-control-label" for="SM_checked"><i> Load Local Domain Model...</i></label>
+
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                        Browse
+                        <input id="LADMInputbutton" accept=".owl, .OWl" style="display: none" type="file"
+                               onchange="loadLADMFile()">
+                    </label>
+                </div>
+            </div>
+            <div class="row" style="padding: 1px">
+
+                <div class="col-8" style="width: 60%">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="Party_checked" disabled="disabled">
+                        <label class="custom-control-label" for="SM_checked"><i> Load Parties...</i></label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                        Browse
+                        <input id="PartyInputbutton" accept=".JSON, .json" style="display: none" type="file"
+                               onchange="loadPartyFile()">
+                    </label>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!--  <footer class="w3-container w3-round w3-teal">
+              <h6>The loaded files will be process</h6>
+          </footer>-->
+
+    </div>
+    <div id="orthophoto_project_div" class="w3-card-4 w3-round " style="visibility: hidden">
+        <header class="w3-container w3-round w3-teal" style="padding: 2px">
+            <h6><b style="margin:20px">Orthophoto Project :</b><a> Load required inputs for the project</a>
+                <button id="orthophoto_close_bnt" aria-label="Close Account Info Modal Box"
+                        style="float: right; padding: 2px;"
+                        onclick="document.getElementById('orthophoto_project_div').style.display='none'">&times;
+                </button>
+            </h6>
+        </header>
+        <div id="orthophoto_file_loader" class="w3-container w3-round">
+            <div class="row" style="padding: 1px">
+                <div class="col-8">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="orthphoto_drawing_checked"
+                               disabled="disabled">
+                        <label class="custom-control-label" for="orthphoto_drawing_checked"><i> Load Orthophoto
+                            Drawing...</i></label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                        Browse
+                        <input id="DigitizedMapInputbutton" accept=".png, .jpeg" style="display: none" type="file"
+                               onchange="loadSketchMap()">
+                    </label>
+
+                </div>
+
+            </div>
+            <div class="row" style="padding: 1px">
+
+                <div class="col-8" style="width: 60%">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="ortho_GCP_checked"
+                               disabled="disabled">
+                        <label class="custom-control-label" for="ortho_GCP_checked"><i> Load Base Map GCPs...</i></label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                        Browse
+                        <input id="orth_GCP_Inputbutton" accept=".GEOJSON, .geojson" style="display: none" type="file"
+                               onchange="loadMetricMap()">
+                    </label>
+                </div>
+            </div>
+
+            <!--<div class="row" style="padding: 1px">
+                <div class="col-8">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="orthophoto_as_base_map_checked"
+                               disabled="disabled">
+                        <label class="custom-control-label" for="orthophoto_as_base_map_checked"><i> Load Orthophoto as
+                            Base
+                            Map...</i></label>
+
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                        Browse
+                        <input id="orthophotoAsMetrichMapInputbutton" accept=".png, .jpeg" style="display: none"
+                               type="file"
+                               onchange="loadOrthophoto_as_MetricMap()">
+                    </label>
+                </div>
+
+            </div>-->
+            <div class="row" style="padding: 1px">
+                <div class="col-8" style="width: 60%">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="ortho_LADM_checked" disabled="disabled">
+                        <label class="custom-control-label" for="ortho_LADM_checked"><i> Load Local Domain Model...</i></label>
+
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                        Browse
+                        <input id="ortho_LADMInputbutton" accept=".owl, .OWl" style="display: none" type="file"
+                               onchange="ortho_loadLADMFile()">
+                    </label>
+                </div>
+            </div>
+            <div class="row" style="padding: 1px">
+
+                <div class="col-8" style="width: 60%">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="ortho_Party_checked"
+                               disabled="disabled">
+                        <label class="custom-control-label" for="ortho_Party_checked"><i> Load Parties...</i></label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                        Browse
+                        <input id="orth_PartyInputbutton" accept=".JSON, .json" style="display: none" type="file"
+                               onchange="ortho_loadPartyFile()">
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="approximate_loc_query_div" class="w3-card-4 w3-round" style="visibility: hidden">
+        <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: 1px">
+            <h6><b>Query Builder:</b><a> Select relations and primary object to find the approximate location of main
+                object</a>
+            </h6>
+        </header>
+        <div id="approx_loc_query_builder" class="w3-card-2">
+            <br>
+            <div>
+                <h6>Qualitative Spatial Relations of Selected Feature(i.e. Beacon)...</h6>
+            </div>
+            <br>
+            <div>
+                <h6>Primary Object...</h6>
+                <select id="primary_feature" class="custom-select" size="2">
+
+                    <option value="river">River/Wildlife Corridor</option>
+                    <option value="mountain">mountain</option>
+
+                </select>
+            </div>
+            <br>
+
+        </div>
+
+    </div>
+
+
+</div>
+{% endblock%}

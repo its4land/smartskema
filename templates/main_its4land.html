@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+    <title>its4land:Draw and Make</title>
+    <meta http-equiv="pragma" content="no-cashe">
+    <meta http-equiv="Expires" content="-1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Cache-Control"
+          content="no-store; no-cache; must-revalidate">
+    <meta http-equiv="Cache-Control" content="post-check=0; pre-check=0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+
+    <link href="../static/css/classifier.css" rel="stylesheet">
+    <link href="../static/css/leaflet.css" rel="stylesheet">
+    <link href="../static/css/leaflet.draw.css" rel="stylesheet">
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
+    <!--
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"</script>
+        integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+        crossorigin="">
+    -->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.1.1/d3.min.js"></script>-->
+    <!--<script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>-->
+    <!--<script src="https://unpkg.com/leaflet-draw@0.4.9/dist/leaflet.draw.js"></script>-->
+    <!--	<script src="https://d3js.org/d3.v4.min.js"></script>-->
+    <script src="../static/js/d3/d3.v4.min.js"></script>
+    <script src="../static/js/d3/d3-geo.js"></script>
+    <script src="../static/js/d3/topojson.js"></script>
+    <script src="../static/js/jquery-1.11.1.min.js"></script>
+
+
+    <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-draw@0.4.9/dist/leaflet.draw.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
+    <script src="../static/js/leaflet.geometryutil.js"></script>
+    <script src="../static/js/leaflet.snap.js"></script>
+    <script src="../static/js/leaflet.ajax.js"></script>
+
+
+  <script src="../static/js/leaflet-svg-shape-markers.js"></script>
+    <!--  <script src="../static/js/L.Map.Sync.js"></script>
+    <script src="../static/js/L.D3SvgOverlay.min.js"></script>
+    <script src="../static/js/L.SvgScaleOverlay.js"></script>-->
+    <script src="../static/js/L.D3SvgOverlay.min.js"></script>
+
+    <!--<script src="../static/js/classifier.js"></script>-->
+    <script src="../static/js/old/interaction_old.js"></script>
+    <script src="../static/js/old/MMClassifier2_old.js"></script>
+    <script src="../static/js/SMClassifier2.js"></script>
+
+
+
+    <!--<script src="../static/js/jquery-1.11.1.min.js"></script>-->
+    <style>
+		.leaflet-overlay-pane svg path{
+			pointer-events: auto;
+		}
+
+		.on {
+			fill: pink;
+			stroke: red;
+			stroke-width: 2;
+		}
+
+
+    </style>
+
+</head>
+
+<body id="body">
+
+<div id="header_div" class="container">
+    <br> <img src="../static/imgs/wwu.jpg" align=right class="img-rounded"
+              width="120" height="55"> <img src="../static/imgs/its4land.png"
+                                            align=left class="img-rounded" width="110" height="55">
+    <div class="panel-header text-center">
+        <h2>
+            <b><font color="white">its4land: "Draw and Make"</font></b>
+        </h2>
+        <h3>
+            <font color="white">A tool that converts hand drawn sketches
+                into computer-ready boundary maps</font>
+        </h3>
+    </div>
+</div>
+<div>
+    <br>
+    <div id="buttons">
+        <div id="button_div" class="container" align=center>
+            <button id="processSketchMap" type="button" class="btn btn-primary btn-arrow-right "
+                    onclick="ProcessSketchMap()"><span class="badge badge-inverse"> 1 </span> <span>  </span> Process
+                Sketch Map <span>  </span></button>
+            <button id="qualify_SM" type="button" class="btn btn-primary btn-arrow-right"
+                    onclick="qualify_SM()"><span class="badge badge-inverse"> 2 </span><span>  </span> Qualify
+                Sketch Map
+            </button>
+            <button id="qualify_MM" type="button" class="btn btn-primary btn-arrow-right"
+                    onclick="qualify_MM()"><span class="badge badge-inverse"> 3 </span> <span>  </span> Qualify
+                Base Map
+            </button>
+            <button id="align_Maps" type="button" class="btn btn-primary btn-arrow-right"
+                    onclick="align_Maps()"><span class="badge badge-inverse"> 4 </span> <span>  </span> Map Alignment
+            </button>
+        </div>
+    </div>
+    <p>
+</div>
+
+<div id=main>
+    <div id="main_div" class="container-fluid">
+        <div class="table" id="table-intro">
+            <table id="main_body" class="table">
+                <tbody>
+                <tr>
+                    <th><h5>
+                        <font face="Courier New"><b>Hand Drawn Map</b></font>
+                    </h5></th>
+                    <th><h5>
+                        <font face="Courier New"><b>Geo-referenced Map</b></font>
+                    </h5></th>
+                </tr>
+                <tr>
+                    <td id="LoadedSketchMap">
+
+                        <div id="loadMapThumbnail1" class="loadMapThumbnail">
+                            <label> <input id="SketchMapInputbutton" type="file"
+                                           style="display: none;" onChange="loadSketchMap()"/><span
+                                    class="badge badge-inverse" id="span_sm1">load sketch </span>
+                                <img id="sm1" src="../static/imgs/empsketch.png" alt="">
+                            </label>
+                        </div>
+                    </td>
+                    <td id="LoadedBaseMap">
+                        <div id="loadMapThumbnail" class="loadMapThumbnail">
+                            <label> <input id="MetrichMapInputbutton" type="file"
+                                           style="display: none;" onChange="loadMetricMap()" multiple><span
+                                    class="badge badge-inverse" id="span_mm">load base Map</span>
+                                <img id="mm" src="../static/imgs/MM.png" alt="">
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="sketchMapHolder" align="center">
+                        <div id="sketchmapplaceholder1" align=center></div>
+                    </td>
+
+                    <td id="baseMapHolder" align="center">
+                        <div id="metricmapplaceholder" align=center></div>
+                    </td>
+                </tr>
+
+
+                <!--<td id="mapHolders" align=center>
+
+                    <div id="sketchmapplaceholder1" align=left></div>
+                    &lt;!&ndash;<div class="map-panel" id="panel">
+                        <div class="map-pane-top" id="sketch4"></div>
+                    </div>&ndash;&gt;
+                    <hr style="border-top: 2px double solid block" />
+                    <div id=metricmapplaceholder align="Center"></div>
+
+                    <div id="resultholder" class="hideMe">
+                        <table class="table" style="width: 100%">
+                            <tr>
+                                <th><font face="Courier New"><b>Spaital
+                                            objects</b></font></th>
+                                <th><font face="Courier New"><b>Accuracy</b></font></th>
+                                <th><font face="Courier New"><b>Detail</b></font></th>
+                            </tr>
+                            <tr>
+                                <td>..........</td>
+                                <td>..........</td>
+                                <td><font face="Courier New"> <a href="#child4">neo4J
+                                            results</a>
+                                </font></td>
+                            </tr>
+                            <tr>
+                                <td>......</td>
+                                <td>.........</td>
+                                <td><a href="#child4">......</a></td>
+                            </tr>
+                            <tr>
+                                <td>......</td>
+                                <td>.........</td>
+                                <td><a href="#child4">......</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>-->
+
+                <!--<td id="links" align="left">
+                    &lt;!&ndash; links for sketch maps &ndash;&gt;
+                    <div id=SMLinks class="hideMe">
+                        <h6>
+                            <font face="Courier New"><b>Display Labels</b></font>
+                        </h6>
+                        <div>
+                            <label class="radio-inline"> <input type="radio"
+                                name="showLabelsSM" id="showLabelsSM" onclick="showLabelsSM()"><font
+                                face="Courier New">Show Labels</font></label>
+                        </div>
+                        <div>
+                            <label class="radio-inline"> <input type="radio"
+                                name="hideLabelsSM" id="hideLabelsSM" checked="checked"
+                                onclick="hideLabelsSM()"><font face="Courier New">Hide
+                                    Labels</font></label>
+                        </div>
+                        <br />
+
+                        <h6>
+                            <font face="Courier New"><b>Downloads</b></font>
+                        </h6>
+                        <div>
+                            <a href='#' id='exportSketchFeatures'
+                                onclick="downloadJsonSM()" style="color: green"><font
+                                face="Courier New">GeoJson Sketch</font></a>
+                        </div>
+                    </div> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
+                    <br /> <br /> <br /> <br /> <br /> <br /> &lt;!&ndash; links for metric maps &ndash;&gt;
+                    <div id=MMLinks class="hideMe">
+                        <h6>
+                            <font face="Courier New"><b>Display Labels</b></font>
+                        </h6>
+                        <div>
+                            <label class="radio-inline"> <input type="radio"
+                                name="showLabelsMM" id="showLabelsMM" onclick="showLabelsMM()"><font
+                                face="Courier New">Show Labels</font></label>
+                        </div>
+                        <div>
+                            <label class="radio-inline"> <input type="radio"
+                                name="hideLabelsMM" id="hideLabelsMM" checked="checked"
+                                onclick="hideLabelsMM()"><font face="Courier New">Hide
+                                    Labels</font></label>
+                        </div>
+                        <br />
+                        <h6>
+                            <font face="Courier New"><b>Downloads</b></font>
+                        </h6>
+                        <div>
+                            <a href='#' id='exportMetricFeatures'
+                                onclick="downloadJsonMM()" style="color: green"><font
+                                face="Courier New">GeoJson Metric</font></a>
+                        </div>
+
+                    </div>
+
+                </td>-->
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="footer">
+    <div class="container">
+        <div class="panel-footer text-center">
+            <a href="https://its4land.com" target="_blank">its4land</a> | <a
+                href="https://ifgi.uni-muenster.de" target="_blank">Institute
+            for Geoinformatics, Munster</a> | <a
+                href="https://www.uni-muenster.de/Geoinformatics/en/sil/index.html"
+                rel="nofollow">Spatial Intelligence Lab Munster</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
