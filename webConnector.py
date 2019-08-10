@@ -233,7 +233,7 @@ def getParty():
 #
 #     return ""
 
-@app.route("/qualitative_spatial_queries", methods=["POST","GET"])
+@app.route("/qualitative_spatial_queries", methods=["POST", "GET"])
 def qualitative_spatial_queries():
     global OUTPUT_DIR_PATH
     global SKETCH_MAP_QCN
@@ -402,69 +402,14 @@ def get_approx_location_from_relations():
     return json.dumps({"geoJson_tiles": geoJson_tiles, "geoJson_tiles_type": geoJson_tiles_type})
 
 
-@app.route("/get_approx_location_lr",methods = ["POST","GET"])
+@app.route("/get_approx_location_lr",methods = ["POST", "GET"])
 def get_approx_location_lr():
 
     lr_relations = json.loads(request.args.get('clicked_relations'))
 
-    print("that is i am here ",lr_relations)
+    print("that is i am here ", lr_relations)
 
     return ""
-
-
-
-
-
-@app.route("/qualitative_spatial_queries_old",methods =["POST","GET"])
-def qualitative_spatial_queries_old():
-    relation_type = request.args.get('relation_type')
-    primary_object = request.args.get('primary_object')
-    other_features = request.form.getlist('other_features')
-
-    print(relation_type,primary_object,other_features)
-    try:
-        smQCNFilePath = os.path.join(OUTPUT_DIR_PATH, SKETCH_MAP_QCN)
-
-    except IOError:
-        print("sketchmap_qcn.json path has problem ")
-
-    if(relation_type=="Left_Right" and primary_object=="river"):
-
-        river_boma_relation = []
-        river_school_relation = []
-        with io.open(smQCNFilePath, 'r+') as smJson:
-            sketchMapQCNs = json.loads(smJson.read())
-            river_id = get_river_sm(sketchMapQCNs)
-            boma_list = get_bomas_sm(sketchMapQCNs)
-            school_list = get_school_sm(sketchMapQCNs)
-            leftRightRelations = getTotalLeftRightRelations_sm(sketchMapQCNs)
-            print(boma_list,river_id,school_list,leftRightRelations)
-
-            for i in range(len(boma_list)):
-                for j in leftRightRelations:
-                    obj2 = j["obj_2"]
-                    if(boma_list[i]==obj2):
-                        river_boma_relation.append(j)
-
-            for i in range(len(school_list)):
-                for j in leftRightRelations:
-                    obj2 = j["obj_2"]
-                    if(school_list[i]==obj2):
-                       river_school_relation.append(j)
-
-            print(river_school_relation)
-
-            print(river_boma_relation)
-            list1=[]
-            #schoolRels = set(river_school_relation)
-            #bomaRels = set(river_boma_relation)
-
-            #print(schoolRels^bomaRels)
-            #if (schoolRels^bomaRels!=set()):
-            #    return("Wildlife corridor intersects school path!")
-            #else:
-             #   return ("School path is Safe!")
-    return json.dumps({"schoolRel":river_school_relation,"bomaRel":river_boma_relation})
 
 @app.route("/get_tenure_record",methods =["POST","GET"])
 def get_tenure_record():
