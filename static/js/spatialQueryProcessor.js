@@ -7,6 +7,9 @@
 
 var main_feat_id = "";
 var main_feat_type = "";
+var vector13;
+var vector14;
+var vector15;
 
 function spatial_query_processor_mode() {
 
@@ -21,7 +24,7 @@ function spatial_query_processor_mode() {
 
     $(document).on('keydown', function (e) {
         if (e.keyCode === 27) { // ESC
-            $('#').hide();
+            $('#spatial_query_popup_div').hide();
         }
     });
 }
@@ -55,13 +58,15 @@ function get_spatial_query_popup() {
 
     x = d3.event.pageX;
     y = d3.event.pageY;
+    console.log("x, y :",x, y);
+
+    $('#spatial_query_popup_div').offset({
+        top: y,
+        left: x
+    });
 
 }
 
-$('#spatial_query_popup_div').offset({
-    top: y,
-    left: x
-});
 
 /**
  * Function takes the id and get possible relations
@@ -72,7 +77,7 @@ function qualitative_spatial_queries() {
     var topo_relations = "";
     var relDist_relations= "";
     $('#leftRight_rels_div').empty();
-    $('#lr_relation').empty();
+    $('#relDist_rels_div').empty();
     $('#topo_rels_div').empty();
 
     loc = document.getElementById("metricmapplaceholder");
@@ -103,8 +108,9 @@ function qualitative_spatial_queries() {
  */
 function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) {
     deleteProcessingRing(loc);
-    for (i in lr_relations) {
 
+    for (i in lr_relations) {
+        var presentation = "left_right";
         $('#leftRight_rels_div').append(
             "<div id='lr_relation'>" +
             "<span style='padding-right: 10px'>" + lr_relations[i].obj_1 + "</span>" +
@@ -118,11 +124,12 @@ function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) 
         $('#lr_relation' + i).prop("style", "padding:2px");
 
 
-        $('#lr_relation' + i).attr("onclick", "get_qualitative_approximate_location(" + JSON.stringify(lr_relations[i]) + ")");
+        $('#lr_relation' + i).attr("onclick", "get_qualitative_approximate_location(" + JSON.stringify(presentation)+','+JSON.stringify(lr_relations[i]) + ")");
 
     }
 
     for (i in topo_relations) {
+        var presentation = "RCC8";
         $('#topo_rels_div').append(
             "<div id='topo_relations'>" +
             "<span style='padding-right: 10px;'>" + topo_relations[i].obj_1 + "</span>" +
@@ -133,12 +140,12 @@ function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) 
         $('#topo_relations').prop("id", "topo_relations" + i);
         $('#topo_relations' + i).prop("class", "btn btn-outline-info");
         $('#topo_relations' + i).prop("style", "padding:2px");
-        $('#topo_relations' + i).attr("onclick", "get_qualitative_approximate_location(" + JSON.stringify(topo_relations[i]) + ")");
+        $('#topo_relations' + i).attr("onclick", "get_qualitative_approximate_location(" +JSON.stringify(presentation)+','+ JSON.stringify(topo_relations[i]) + ")");
 
     }
 
     for (i in relDist_relations) {
-
+        var presentation = "REL_DIST";
         $('#relDist_rels_div').append(
             "<div id='relDist_relations'>" +
             "<span style='padding-right: 10px;'>" + relDist_relations[i].obj_1 + "</span>" +
@@ -149,7 +156,7 @@ function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) 
         $('#relDist_relations').prop("id", "relDist_relations" + i);
         $('#relDist_relations' + i).prop("class", "btn btn-outline-info");
         $('#relDist_relations' + i).prop("style", "padding:2px");
-        $('#relDist_relations' + i).attr("onclick", "get_qualitative_approximate_location(" + JSON.stringify(relDist_relations[i]) + ")");
+        $('#relDist_relations' + i).attr("onclick", "get_qualitative_approximate_location(" +JSON.stringify(presentation)+','+ JSON.stringify(relDist_relations[i]) + ")");
 
     }
 }
@@ -159,19 +166,95 @@ function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) 
  * of the click object in the base map
  *
  */
-function get_qualitative_approximate_location(rel) {
-    console.log("single relation lr", rel);
+function get_qualitative_approximate_location(rep, rel) {
+
     $.ajax({
-        url: '/get_approx_location_lr',
+        url: '/get_approx_location_from_relations',
         type: 'GET',
         data: {
-            clicked_relations: JSON.stringify(rel)
+            clicked_relations: JSON.stringify({representation:rep, relation: rel, relatum: mapmatches[rel["obj_1"]], main_feat_id: main_feat_id,
+                main_feat_type: main_feat_type})
         },
         contentType: 'text/plain',
         success: function (resp) {
-            // var relations = JSON.parse(resp);
+            tilesAsjson_and_type = JSON.parse(resp);
+            console.log("tilesAsjson_and_type...:",tilesAsjson_and_type);
+
+            tilesType = tilesAsjson_and_type.geoJson_tiles_type;
+            tilesAsjson = tilesAsjson_and_type.geoJson_tiles;
+
+            //loadGeojsonAsSVG();
+            load_computed_tiles_as_svg(tilesType,tilesAsjson);
 
         }
     });
+
+}
+
+function load_computed_tiles_as_svg(tilesType,tilesAsjson){
+    //console.log("here is computed tile",tilesAsjson);
+
+    var topo = topojson.topology({foo: tilesAsjson});
+    //console.log("topo feat_type",topo.objects.foo.geometries[0].properties.feat_type);
+
+
+    zoom = d3.zoom()
+        .scaleExtent([1 << 15, 1 << 30])
+        .on("zoom", function () {
+            metricZoomCallback(false)
+        });
+    path = d3.geoPath()
+        .projection(projection);
+
+  /*  path = d3.geoPath()
+        .projection(projection);*/
+
+    json_svg = d3.select("#json_svg").append("g");
+
+    if (tilesType ==="left_right"){
+
+        vector13 =json_svg.selectAll("path")
+            .data(topojson.feature(topo, topo.objects.foo).features, function (a, b) {
+                return a !== b;
+            })
+            .enter()
+            .append("svg:path")
+            .attr("feat_type", function (d, i) {
+                return topo.objects.foo.geometries[i].properties.feat_type
+            })
+            .attr("d",function(d) { return path(d.geometry) })
+            .attr("class","approximate_tile_LR");
+
+    }if (tilesType ==="RCC8"){
+        vector14  = json_svg.selectAll("path")
+            .data(topojson.feature(topo, topo.objects.foo).features, function (a, b) {
+                return a !== b;
+            })
+            .enter()
+            .append("path")
+            .attr("feat_type", function (d, i) {
+                return topo.objects.foo.geometries[i].properties.feat_type
+            })
+            .attr("d",function(d) { return path(d.geometry) })
+            .attr("class","approximate_tile_RCC");
+    }else{
+        vector15  = json_svg.selectAll("path")
+            .data(topojson.feature(topo, topo.objects.foo).features, function (a, b) {
+                return a !== b;
+            })
+            .enter()
+            .append("path")
+            .attr("feat_type", function (d, i) {
+                return topo.objects.foo.geometries[i].properties.feat_type
+            })
+            .attr("d",function(d) { return path(d.geometry) })
+            .attr("class","approximate_tile_relDist");
+
+    }
+
+
+
+
+
 
 }
