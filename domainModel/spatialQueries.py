@@ -118,7 +118,7 @@ def get_main_feature_relDist_(main_feat_id,relDist_relations):
         obj1 = k["obj_1"]
         obj2 = k["obj_2"]
         rel = k["relation"]
-        if ((main_feat_id == obj1 and rel == "near")or(main_feat_id == obj2 and rel == "near")):
+        if (main_feat_id == obj2 and rel == "near"):
             main_feat_relDist_rel.append(k)
 
     return main_feat_relDist_rel
@@ -139,3 +139,16 @@ def getTotalRelDistRelations_sm(sm_qcns):
     if sm_qcns['properties']['map_type'] == "sketch_map":
         constriantList_relDist = get_relDist_constraints(sm_qcns['constraint_collection'])
     return constriantList_relDist
+
+
+
+def get_relatum_feat_type(relatum, mmJson):
+    featurType_obj1= ""
+    try:
+        for item in mmJson:
+            if (relatum == item["attributes"]['ssm_id']):
+                featurType_obj1= item["attributes"]['feat_type']
+    except IOError:
+         print("NO feature type")
+    return featurType_obj1
+
