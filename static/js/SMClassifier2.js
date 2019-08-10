@@ -158,6 +158,7 @@ function renderSketchMapRaster(image) {
         url: '/uploadSketchMap',
         type: 'POST',
         data: {
+                ...this,
                 imageContent: originalImageContent
         }
     };

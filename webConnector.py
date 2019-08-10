@@ -4,6 +4,7 @@ Created on Mon Apr 30 15:51:54 2018
 
 @author: s_jan001
 """
+import shutil
 from docutils.nodes import image
 from flask import Flask, render_template, request, redirect, url_for
 from matcher.matching_preprocessor import compute_similarity_matrix
@@ -28,7 +29,8 @@ import logging
 from logging.handlers import RotatingFileHandler
 from matplotlib import pyplot as plt
 import base64
-from svgpathtools import CubicBezier, Line, QuadraticBezier, Arc, svg2paths2
+
+from lib import svg2paths
 from pathlib import Path
 from sketchProcessor.helperLibraries.utils import draw
 from sketchProcessor.helperLibraries.utils import contour_classification as cc
@@ -298,7 +300,7 @@ def get_approx_location_from_relations():
     print(" main_feat_id..:", main_feat_id)
     print(" main_feat_type..:", main_feat_type)
 
-    geo_data_properties, data_geom = load_geo(read_map_data(mm_json_FilePath, "geojson"), "geojson")
+    geo_data_properties, data_geom = load_geo(read_map_data_from_string(mm_json_FilePath, "geojson"), "geojson")
     relatum_feat_type = get_relatum_feat_type(relatum, data_geom)
 
     print("relatum_feat_type", relatum_feat_type)
@@ -605,6 +607,7 @@ def uploadSketchMap():
 
     project_files_path = path_to_project(request.form);
 
+    imageFileName = request.form.get('fileName')
     imageContent = request.form.get('imageContent')
     imageContent = imageContent.replace("data:image/png;base64,", "")
     imageContent = imageContent.encode('utf-8')
@@ -631,6 +634,21 @@ def uploadSketchMap():
         resized_image = cv2.resize(img, (int(newX), int(newY)))
         img_path = Path(modified_filepath)
         cv2.imwrite(modified_filepath, resized_image)
+
+        """ comment out if using full alignment in debug mode """
+        if app.debug:
+            """ copy folder with fileName to currentUserSession/projectType"""
+            preRunFiles = os.path.join("preRunSessions", imageFileName)
+            #dst =
+            try:
+                shutil.rmtree(project_files_path, ignore_errors=False, onerror=None)
+                shutil.copytree(preRunFiles, project_files_path)
+            # Directories are the same
+            except shutil.Error as e:
+                print('Directory not copied. Error: %s' % e)
+            # Any error saying that the directory doesn't exist
+            except OSError as e:
+                print('Directory not copied. Error: %s' % e)
 
         return json.dumps({"imgPath": img_path.as_posix(), "imgHeight": newY, "imgWidth": newX})
 
