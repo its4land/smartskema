@@ -299,7 +299,7 @@ def get_approx_location_from_relations():
     print(" main_feat_id..:", main_feat_id)
     print(" main_feat_type..:", main_feat_type)
 
-    geo_data_properties, data_geom = load_geo(read_map_data_from_path(mm_json_FilePath, "geojson"), "geojson")
+    geo_data_properties, data_geom = load_geo(read_map_data(mm_json_FilePath, "geojson"), "geojson")
     relatum_feat_type = get_relatum_feat_type(relatum, data_geom)
 
     print("relatum_feat_type", relatum_feat_type)
@@ -591,7 +591,6 @@ def postLADM():
         print("problem in Writing JSON file to the location...")
 
     return owlContent
-
 
 @app.route("/get_domain_model_ownerships",methods =["POST","GET"])
 def get_domain_model():
