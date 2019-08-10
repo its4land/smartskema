@@ -95,7 +95,6 @@ def path_to_project(d):
 """
 
 
-
 @app.route("/")
 def main_page():
     return render_template("smartSkeMa.html")
@@ -206,25 +205,25 @@ def getParty():
     return json.dumps(party)
 
 
-@app.route ("/postGCP", methods=["POST"])
-def postGCP():
-    global UPLOADED_DIR_PATH
-
-    fileName_full = request.form.get('loadedGCPFileName')
-    GCPJsonContent = json.loads(request.form.get('GCPJsonContent'))
-    print(GCPJsonContent)
-    try:
-        uploaded_filepath = os.path.join(UPLOADED_DIR_PATH, VECTOR_BASEMAP)
-        if os.path.exists(uploaded_filepath):
-            os.remove(uploaded_filepath)
-        f = open(uploaded_filepath, "w")
-        f.write(json.dumps(GCPJsonContent, indent=4))
-        f.close()
-
-    except IOError:
-        print("problem in Writing JSON file to the location...")
-
-    return ""
+# @app.route ("/postGCP", methods=["POST"])
+# def postGCP():
+#     global UPLOADED_DIR_PATH
+#
+#     fileName_full = request.form.get('loadedGCPFileName')
+#     GCPJsonContent = json.loads(request.form.get('GCPJsonContent'))
+#     print(GCPJsonContent)
+#     try:
+#         uploaded_filepath = os.path.join(UPLOADED_DIR_PATH, VECTOR_BASEMAP)
+#         if os.path.exists(uploaded_filepath):
+#             os.remove(uploaded_filepath)
+#         f = open(uploaded_filepath, "w")
+#         f.write(json.dumps(GCPJsonContent, indent=4))
+#         f.close()
+#
+#     except IOError:
+#         print("problem in Writing JSON file to the location...")
+#
+#     return ""
 
 @app.route("/qualitative_spatial_queries", methods=["POST","GET"])
 def qualitative_spatial_queries():
