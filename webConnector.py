@@ -228,6 +228,7 @@ def getParty():
 @app.route("/qualitative_spatial_queries", methods=["POST","GET"])
 def qualitative_spatial_queries():
     global OUTPUT_DIR_PATH
+    global SKETCH_MAP_QCN
     main_feat_id = request.args.get('main_feat_id')
     main_feat_type = request.args.get('main_feat_type')
     print(main_feat_id, main_feat_type)
@@ -235,7 +236,7 @@ def qualitative_spatial_queries():
     selected_feat_rcc8_rel = []
     selected_feat_relDist_rel = []
     try:
-        smQCNFilePath = os.path.join(OUTPUT_DIR_PATH,"sketchmap_qcn.json")
+        smQCNFilePath = os.path.join(OUTPUT_DIR_PATH, SKETCH_MAP_QCN)
 
     except IOError:
         print("sketchmap_qcn.json path has problem ")
@@ -291,7 +292,7 @@ def qualitative_spatial_queries_old():
 
     print(relation_type,primary_object,other_features)
     try:
-        smQCNFilePath = os.path.join(OUTPUT_DIR_PATH, "sketchmap_qcn.json")
+        smQCNFilePath = os.path.join(OUTPUT_DIR_PATH, SKETCH_MAP_QCN)
 
     except IOError:
         print("sketchmap_qcn.json path has problem ")
