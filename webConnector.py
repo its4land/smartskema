@@ -192,7 +192,6 @@ def reasoner_process_spatial_queries():
     return result
 
 
-
 @app.route("/getParty", methods =["POST","GET"])
 def getParty():
     global UPLOADED_DIR_PATH
@@ -411,6 +410,7 @@ def get_approx_location_lr():
 
     return ""
 
+
 @app.route("/get_tenure_record",methods =["POST","GET"])
 def get_tenure_record():
     global OUTPUT_DIR_PATH
@@ -460,7 +460,6 @@ def get_tenure_record():
             return "None"
 
 
-
 @app.route("/getMapMatches", methods=["POST","GET"])
 def getMapMatches():
     global OUTPUT_DIR_PATH
@@ -474,7 +473,6 @@ def getMapMatches():
     with open(matchesFilePath) as matches:
         matches = json.loads(matches.read())
     return  json.dumps(matches)
-
 
 
 @app.route("/add_tenure_record", methods =["POST","GET"])
