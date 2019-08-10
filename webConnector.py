@@ -805,7 +805,7 @@ def align_plain_sketch_map():
                 file.write(loadedSketch)
                 file.close()
 
-            qualified_sketch_map = load_map_qualify(sketchid, read_map_data_from_string(loadedSketch,
+            qualified_sketch_map = load_map_qualify(metricid, read_map_data_from_string(loadedSketch,
                                                                             "svg"), "svg", "sketch_map")
         else:
             qualified_sketch_map = load_map_qualify(sketchid, read_map_data_from_path(svg_file_path,
@@ -824,10 +824,10 @@ def align_plain_sketch_map():
                 file.write(loadedMetric)
                 file.close()
 
-            qualified_metric_map = load_map_qualify(sketchid, read_map_data_from_string(loadedMetric,
+            qualified_metric_map = load_map_qualify(metricid, read_map_data_from_string(loadedMetric,
                                                                             "geojson"), "geojson", "metric_map")
         else:
-            qualified_metric_map = load_map_qualify(sketchid, read_map_data_from_path(geojson_file_path,
+            qualified_metric_map = load_map_qualify(metricid, read_map_data_from_path(geojson_file_path,
                                                                             "geojson"), "geojson", "metric_map")
 
         if os.path.exists(qualified_metric_map_file_path):
