@@ -1,16 +1,15 @@
-
 {% extends 'layout_SmartSkeMa.html'%}
 {{ JSGlue.include() }}
 {% block body %}
 <div class="container-fluid">
     <div>
         <nav class="navbar navbar-expand-xl navbar-dark bg-dark ">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-                <a class="navbar-brand" href="#">
+            <button class="btn btn-outline-success my-2 my-sm-0">
+                <span>
                     <img src="../static/imgs/smartSkema.png" width="35" height="35" class="d-inline-block align-top"
                          alt="logo">
                     SmartSkeMa
-                </a>
+                </span>
             </button>
 
             <ul class="collapse navbar-collapse" id="navbarCollapse">
@@ -233,6 +232,7 @@
                 </ul>
 
                 <div class="navbar">
+                    <a class="active" href=""><i class="fa fa-fw fa-upload"></i> Upload @ PnS</a>
                     <a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
                     <a class="active" href="#"><i class="fa fa-fw fa-home"></i>Home</a>
                     <a class="active" href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
@@ -271,10 +271,6 @@
                         <button id="delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
                                 data-placement="bottom" title="Delete">
                             <img id="delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20">
-                        </button>
-                         <button id="save_edits" type="button" class="btn btn-outline-info" data-toggle="tooltip"
-                                data-placement="bottom" title="Save" height="20" onclick="">
-                            Save
                         </button>
                     </div>
                     <!-- div for ladm interaction buttons-->
@@ -346,45 +342,76 @@
 
         </table>
     </div>
-    <div class="navbar navbar-expand-xl navbar-dark bg-dark">
-        <a href="https://its4land.com" target="_blank">its4land</a> | <a
-            href="https://ifgi.uni-muenster.de" target="_blank">Institute
-        for Geoinformatics, Munster</a> | <a
-            href="https://www.uni-muenster.de/Geoinformatics/en/sil/index.html"
-            rel="nofollow">Spatial Intelligence Lab Munster</a>
+    <!--    <div class="navbar navbar-expand-xl navbar-dark bg-dark">
+            <a href="https://its4land.com" target="_blank">its4land</a> | <a
+                href="https://ifgi.uni-muenster.de" target="_blank">Institute
+            for Geoinformatics, Munster</a> | <a
+                href="https://www.uni-muenster.de/Geoinformatics/en/sil/index.html"
+                rel="nofollow">Spatial Intelligence Lab Munster</a>
+        </div>-->
+
+    <div id="footer_div" class="navbar navbar-expand-xl navbar-dark bg-dark">
+        <table class = "footer_table" style="width: 100%">
+            <tr >
+                <td align="left">
+                    <span>
+                         <img src="../static/imgs/wwu.jpg" width="85" height="35" class="d-inline-block"
+                              alt="logo">
+                        <a style="color: white"><b>Institut für Geoinformatik |</b> <i>Heisenbergstraße 2
+                            48149 Münster, Germany </i></a>
+                    </span>
+                </td>
+                <td >
+                    <span>
+                        <a style="color: white"><b>Spatial Intelligence Lab |</b> <i>Institute for
+                            Geoinformatics</i></a>
+                    </span>
+                </td>
+                <td align="right">
+                    <span>
+                        <img src="../static/imgs/its4land.png" width="85" height="35" class="d-inline-block"
+                             alt="logo">
+                        <a style="color: white"><b>its4Land |</b> <i>Hengelosestraat 99 Enschede,Netherlands</i></a>
+                    </span>
+                </td>
+            </tr>
+        </table>
     </div>
 
+
+</div>
 
     <!--</div>-->
 
-    <div id="relations_div_test" class="w3-card-4 w3-round" style="visibility: visible">
-        <header class="w3-panel w3-round w3-teal">
-            <h6 style="padding-top:3px "><b>Spatial Relations:</b><a> of selected feature</a></h6>
-        </header>
-        <div id="relatin_div_test" class="w3-container">
-            <div>
-                <a style="padding: inherit"><b>Selected Feature Id:</b>
-                    <span id="featureID" style="text-align:right;color: teal;font-size: 14px"> Boma1 </span></a>
-            </div>
-            <div>
-                <a><b> Feature Type:</b>
-                    <span id="featureType" style="text-align:right;color: teal;font-size: 14px">boma </span>
-                </a>
-            </div>
-            <div>
-                <br>
-                <label  class="btn btn-outline-info active" style="padding: 1px;"
-                        onclick="">Left_of (Ngatatek River)
-                </label>
+    <!--    <div id="relations_div_test" class="w3-card-4 w3-round" style="visibility: hidden">
+            <header class="w3-panel w3-round w3-teal">
+                <h6 style="padding-top:3px "><b>Spatial Relations:</b><a> of selected feature</a></h6>
+            </header>
+            <div id="relatin_div_test" class="w3-container">
+                <div>
+                    <a style="padding: inherit"><b>Selected Feature Id:</b>
+                        <span id="featureID" style="text-align:right;color: teal;font-size: 14px"> Boma1 </span></a>
+                </div>
+                <div>
+                    <a><b> Feature Type:</b>
+                        <span id="featureType" style="text-align:right;color: teal;font-size: 14px">boma </span>
+                    </a>
+                </div>
+                <div>
+                    <br>
+                    <label  class="btn btn-outline-info active" style="padding: 1px;"
+                            onclick="">Left_of (Ngatatek River)
+                    </label>
 
-                <label  class="btn btn-outline-info active" style="padding: 1px"
-                        onclick="">Inside (Ranch1 boundary)
-                </label>
+                    <label  class="btn btn-outline-info active" style="padding: 1px"
+                            onclick="">Inside (Ranch1 boundary)
+                    </label>
+
+                </div>
 
             </div>
+        </div>-->
 
-        </div>
-    </div>
     <div id="complexStructure_div" class="w3-card-4 w3-round">
         <header class="w3-panel w3-round w3-teal">
             <h6 style="padding-top:3px "><b>Complex Structure : </b><a> Detail drawing of Home State called "Boma"</a>
@@ -410,8 +437,8 @@
         </div>
         <div id="complexStructureMapholder">
         </div>
-        <div id = "load_complexStructure_map_div">
-            <button id="load_complexStructureMap_bnd"  type="button" class="btn btn-outline-info"
+        <div id="load_complexStructure_map_div">
+            <button id="load_complexStructureMap_bnd" type="button" class="btn btn-outline-info"
                     onclick="load_complexStructureMap_bnd()">Load Map
             </button>
         </div>
@@ -477,8 +504,29 @@
         </div>
     </div>
     <div id="processRing" style="visibility: hidden"></div>
-    <div id="edit_svg_popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden">
+    <div id="edit_svg_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+        <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: auto">
+            <h6 style="margin: 2px"><b>New Feature:</b><a> Add feature id and type</a>
+            </h6>
+        </header>
+
+            <label style="padding-top: 6px; margin-left: 6px">
+                <input id ="feature_id" class="input-group-sm">
+                <span style="color: #009688"><b><i>&nbsp; &nbsp; feature id</i></b></span>
+            </label>
+
+            <label style="padding-top: 2px;margin-left: 6px">
+                <input  id = "feature_type" class="input-group-sm">
+                <span style="color: #009688"><b><i>&nbsp; &nbsp; feature type</i></b></span>
+            </label>
+            <div>
+            <label id="save_bnt" class="btn btn-outline-info" style="float: right;margin-right: 5px"
+                   onclick="save_svg_new_feature_attrs.feature_attr_ok_clicked()">
+                Save data
+            </label>
+            </div>
     </div>
+
     <div id="referencePoints_popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden">
     </div>
     <div id="spatial_query_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
@@ -500,7 +548,8 @@
             </div>
 
             <div style="float: right;padding: 1px">
-                <label id="submit_query"  class="btn btn-outline-info" style="padding: 2px" onclick="qualitative_spatial_queries()">
+                <label id="submit_query" class="btn btn-outline-info" style="padding: 2px"
+                       onclick="qualitative_spatial_queries()">
                     Get Spatial Relations
                 </label>
             </div>
@@ -559,6 +608,7 @@
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="MM_checked" disabled="disabled">
                         <label class="custom-control-label" for="SM_checked"><i> Load Base Map...</i></label>
+
                     </div>
                 </div>
                 <div class="col-4">
@@ -634,7 +684,7 @@
                     <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
                         Browse
                         <input id="DigitizedMapInputbutton" accept=".png, .jpeg" style="display: none" type="file"
-                               onchange="loadSketchMap()">
+                               onchange="loadSatelliteDrawingMap()">
                     </label>
 
                 </div>
@@ -646,14 +696,15 @@
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="ortho_GCP_checked"
                                disabled="disabled">
-                        <label class="custom-control-label" for="ortho_GCP_checked"><i> Load Base Map GCPs...</i></label>
+                        <label class="custom-control-label" for="ortho_GCP_checked"><i> Load Base Map
+                            GCPs...</i></label>
                     </div>
                 </div>
                 <div class="col-4">
                     <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
                         Browse
                         <input id="orth_GCP_Inputbutton" accept=".GEOJSON, .geojson" style="display: none" type="file"
-                               onchange="loadMetricMap()">
+                               onchange="ortho_load_GCP_File()">
                     </label>
                 </div>
             </div>
@@ -743,5 +794,4 @@
     </div>
 
 
-</div>
 {% endblock%}
