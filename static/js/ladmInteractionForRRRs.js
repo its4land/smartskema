@@ -19,7 +19,20 @@ function loadPartyFile(element) {
     fileReader.readAsText(partyfile);
     fileReader.onload = function () {
         partyJson = JSON.parse(fileReader.result);
-        $.ajax({
+        let ajaxParams = {
+            url: '/getParty',
+            type: 'POST',
+            data: {
+                loadedPartyFile: loadedPartyFile,
+                partyJson: JSON.stringify(partyJson)
+            }
+        };
+        new communicator(ajaxParams).sendRequest({}, function(resp){
+            var party = JSON.parse(resp)
+        });
+
+
+    /*    $.ajax({
             url: '/getParty',
             type: 'GET',
             data: {
@@ -30,7 +43,7 @@ function loadPartyFile(element) {
             success: function (resp) {
                 var party = JSON.parse(resp)
             }
-        });
+        });*/
 
         party_checked = new Boolean($("#Party_checked").prop("checked", true));
 
@@ -48,6 +61,19 @@ function ortho_loadPartyFile(element) {
     fileReader.onload = function () {
         partyJson = JSON.parse(fileReader.result);
 
+        let ajaxParams = {
+            url: '/getParty',
+            type: 'POST',
+            data: {
+                loadedPartyFile: loadedPartyFile,
+                partyJson: JSON.stringify(partyJson)
+            }
+        };
+        new communicator(ajaxParams).sendRequest({}, function(resp){
+            var party = JSON.parse(resp)
+        });
+        ortho_party_checked = new Boolean($("#ortho_Party_checked").prop("checked", true));
+/*
         $.ajax({
             url: '/getParty',
             type: 'GET',
@@ -60,7 +86,7 @@ function ortho_loadPartyFile(element) {
                 var party = JSON.parse(resp)
             }
         });
-        ortho_party_checked = new Boolean($("#ortho_Party_checked").prop("checked", true));
+        ortho_party_checked = new Boolean($("#ortho_Party_checked").prop("checked", true));*/
         //console.log("partycontant", partyJson);
     };
 
@@ -111,7 +137,16 @@ function read_LADM_file_contants(ladmFile) {
         var extension = fName[1];
         if (extension == "owl") {
 
-            $.ajax({
+            let ajaxParams = {
+                url: '/postLADM',
+                type: 'POST',
+                data: {
+                    LDMFileName: LDM_fileName_full,
+                    LDMContent: LDMContent
+                }
+            };
+            new communicator(ajaxParams).sendRequest({}, function(resp){});
+            /*$.ajax({
                 url: '/postLADM',
                 type: 'POST',
                 data: {
@@ -123,7 +158,7 @@ function read_LADM_file_contants(ladmFile) {
                 success: function (resp) {
 
                 }
-            });
+            });*/
         }else{
             $.alert({
                 title: 'Info: Wrong File',
@@ -142,7 +177,7 @@ function ladm_interaction_for_RRR_mode() {
     $('#edit_ladm_bnt').prop('disabled', true);
     $('#query_ladm_bnt').prop('disabled', false);
 
-    var svg_elements = d3.select("#loadedSVG").selectAll("path,polygon,circle,rect,line,polyline");
+    var svg_elements = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
 
     svg_elements.on('mouseover', ladm_mouse_over);
     svg_elements.on('mouseout', ladm_mouse_out);
@@ -241,7 +276,28 @@ function get_popup_contents() {
 function get_DM_rights() {
     rights_list = [];
     var resp = "";
-    //pass the features_type on click
+
+    let ajaxParams = {
+        url: '/get_domain_model_ownerships',
+        type: 'POST',
+        data: {
+            LDMFileName: LDM_fileName_full,
+            feat_type: feat_type
+        }
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+        rights_list.push("Select Ownership...");
+        rights_list.push("Rest Calves");
+
+        var json_rights = JSON.parse(resp);
+        for (var i = 0; i < json_rights.length; i++) {
+            rights_list.push(json_rights[i].item);
+        }
+        generate_rights_options(rights_list);
+    });
+
+
+    /*//pass the features_type on click
     $.ajax({
         url: '/get_domain_model_ownerships',
         type: 'GET',
@@ -263,7 +319,7 @@ function get_DM_rights() {
             }
             generate_rights_options(rights_list);
         }
-    });
+    });*/
     return rights_list;
 }
 
@@ -275,10 +331,29 @@ function get_DM_parties() {
     party_list = [];
     resp = "";
 
-    $.ajax({
+    let ajaxParams = {
+    url: '/getParty',
+        type: 'POST',
+        data: {
+            loadedPartyFile: loadedPartyFile,
+            partyJson: JSON.stringify(partyJson)
+        }
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+         party_list.push("Select Party...");
+            var json_party = JSON.parse(resp);
+
+            for (var i = 0; i < json_party.length; i++) {
+                party_list.push(json_party[i]);
+            }
+            generate_parties_option(party_list);
+    });
+
+ /*   $.ajax({
         url: '/getParty',
         type: 'GET',
         data: {
+            ...this,
             loadedPartyFile: loadedPartyFile,
             partyJson: JSON.stringify(partyJson)
         },
@@ -292,7 +367,7 @@ function get_DM_parties() {
             }
             generate_parties_option(party_list);
         }
-    });
+    });*/
     return party_list;
 }
 
@@ -302,26 +377,47 @@ function get_DM_parties() {
 function get_RRRs() {
     rrr_list = [];
     resp = "";
-    //pass the features_type on click
-    $.ajax({
+
+    let ajaxParams = {
         url: '/get_domain_model_rrrs',
-        type: 'GET',
+        type: 'POST',
         data: {
             LDMFileName: LDM_fileName_full
-        },
-        contentType: 'text/plain',
-        success: function (resp) {
-            rrr_list.push("Select Other RRRs...");
-            rrr_list.push("Pastures Depleted Ranch1");
-
-            var json_rrr = JSON.parse(resp);
-
-            for (var i = 0; i < json_rrr.length; i++) {
-                rrr_list.push(json_rrr[i].item);
-            }
-            generate_rrrs_option(rrr_list);
         }
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+        rrr_list.push("Select Other RRRs...");
+        rrr_list.push("Pastures Depleted Ranch1");
+
+        var json_rrr = JSON.parse(resp);
+
+        for (var i = 0; i < json_rrr.length; i++) {
+            rrr_list.push(json_rrr[i].item);
+        }
+        generate_rrrs_option(rrr_list);
+
     });
+
+    // //pass the features_type on click
+    // $.ajax({
+    //     url: '/get_domain_model_rrrs',
+    //     type: 'GET',
+    //     data: {
+    //         LDMFileName: LDM_fileName_full
+    //     },
+    //     contentType: 'text/plain',
+    //     success: function (resp) {
+    //         rrr_list.push("Select Other RRRs...");
+    //         rrr_list.push("Pastures Depleted Ranch1");
+    //
+    //         var json_rrr = JSON.parse(resp);
+    //
+    //         for (var i = 0; i < json_rrr.length; i++) {
+    //             rrr_list.push(json_rrr[i].item);
+    //         }
+    //         generate_rrrs_option(rrr_list);
+    //     }
+    // });
     return rrr_list;
 }
 
@@ -428,7 +524,23 @@ function add_land_tenure_record() {
  **/
 function save_land_tenure_record() {
 
-    $.ajax({
+    let ajaxParams = {
+        url: '/save_tenure_record',
+        type: 'POST',
+        data: {
+            feat_id: feat_id
+        }
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+        var json = resp;
+        $.alert({
+            title: 'Info: Tenure Information!',
+            content: 'The land tenure record is Saved as a *.json file'
+        });
+
+        $('#ladm_rrrs_popup_div').hide();
+    });
+  /*  $.ajax({
         url: '/save_tenure_record',
         type: 'GET',
         data: {
@@ -443,6 +555,5 @@ function save_land_tenure_record() {
             });
             $('#ladm_rrrs_popup_div').hide();
         }
-    });
-
+    });*/
 }
