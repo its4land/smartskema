@@ -354,10 +354,26 @@ function nonSpatial_query_processor(){
  * get the matching Dict.
  */
 function getMapMatches() {
-     $.ajax({
+
+    let ajaxParams = {
+            url: '/getMapMatches',
+            type: 'POST',
+            data: {
+
+                     feat_id: "",
+                    feat_type: ""
+        }
+
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+        let json = JSON.parse(resp);
+        mapmatches = json;
+    });
+   /*$.ajax({
         url: '/getMapMatches',
-        type: 'GET',
+        type: 'POST',
         data: {
+            ...this,
             feat_id: "",
             feat_type: ""
         },
@@ -369,38 +385,10 @@ function getMapMatches() {
             mapmatches = json;
             console.log("mapMatches", mapmatches);
         }
-    });
+    });*/
 }
 
-function createTenureRecordTable(record) {
-    queryResult_div = document.getElementById("nonSpatial_query_resp_div");
-    $(queryResult_div).empty();
 
-    var table = document.createElement("table");
-    table.setAttribute("width", "100%");
-    table.setAttribute("border-collapse", "collapse");
-    table.setAttribute("border", "1px lightslategray");
-    table.setAttribute("word-wrap", "break-word-all");
-    table.setAttribute("table-layout", "fixed");
-    var th1 = document.createElement("th");
-    th1.innerHTML = "KEY";
-    var th2 = document.createElement("th");
-    th2.innerHTML = "VALUE";
-    var tr = table.insertRow(-1);
-    tr.appendChild(th1);
-    tr.appendChild(th2);
-
-    for (var i = 0; i < record.length; i++) {
-        for (var key in record[i]) {
-            var row = table.insertRow(-1);
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
-            cell1.innerHTML = key;
-            cell2.innerHTML = record[i][key];
-        }
-    }
-    queryResult_div.appendChild(table);
-}
 
 function downloadJsonSM() {
     SMGeoJsonData = drawnItems_sm.toGeoJSON();
@@ -621,7 +609,7 @@ function set_svg_features_color() {
 $(".chosen").chosen();
 
 function add_complexStruMap_bnt() {
-    var SVG_ELE = d3.select("#loadedSVG").selectAll("path,polygon,circle,rect,line,polyline");
+    var SVG_ELE = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
 
     SVG_ELE.on('click', loadComplexStructureMap_mouseClick);
 

@@ -65,7 +65,7 @@ mimetypes.add_type('image/svg+xml', '.svg')
 
 DEBUG_SESSID = "39bb2657-d663-4a78-99c5-a66c152693b2"
 
-STATIC_DIR = os.path.join("static", "usessions")
+STATIC_DIR = os.path.join("./static", "usessions")
 UPLOADED_DIR_PATH = "uploaded"
 MODIF_DIR_PATH = "modified"
 OUTPUT_DIR_PATH = "output"
@@ -77,13 +77,18 @@ INPUT_RASTER_SKETCH = "input_sketch_image.png"
 REDUCED_RASTER_SKETCH = "reduced_sketch_image.png"
 VECTORIZED_SKETCH = "vectorized_sketch_svg.svg"
 
-VECTOR_BASEMAP = "vector_base_map.json"
+VECTOR_BASEMAP = "vector_base_map.geojson"
 
 GEOREFERENCED_SKETCH_FEATURES = "georeferenced_sketch_features.json"
 MATCHED_FEATURES = "matches.json"
 
 SKETCH_MAP_QCN = "sketchmap_qcn.json"
 BASEMAP_QCN = "basemap_qcn.json"
+
+PARTIES_FILE = "parties.json"
+LADM_FILE = "ladm.owl"
+TENURE_RECORD_FILE = "tenureRecord.json"
+APROX_TILE = "approx_tile_file.geojson"
 
 app = Flask(__name__)
 
@@ -95,6 +100,7 @@ def build_path(path_list):
 
 
 def path_to_project(d):
+    #print("d",d)
     return os.path.join(STATIC_DIR, d.get("sessID"), d.get("projectType"))
 
 """/getSessionID
@@ -118,6 +124,7 @@ def get_session_id():
     """ comment out if using full alignment in debug mode """
     if app.debug:
         print("using predefined session ID!")
+        #print("here session id",debug_get_session_id())
         return debug_get_session_id()
 
     sess_id = str(uuid.uuid4())
@@ -139,16 +146,18 @@ def debug_get_session_id():
     return DEBUG_SESSID
 
 
-@app.route("/setProjectType", methods=["POST", "GET"])
+@app.route("/setProjectType", methods=["POST"])
 def setProjectType():
     global UPLOADED_DIR_PATH
     global MODIF_DIR_PATH
     global OUTPUT_DIR_PATH
     global SVG_DIR_PATH
+    global PROJ_DIR_PATH
 
     try:
+        #print("request.form",request.form)
         proj_type_dir_path = path_to_project(request.form)
-
+        PROJ_DIR_PATH = proj_type_dir_path
         if not (os.path.exists(proj_type_dir_path)):
             os.mkdir(proj_type_dir_path)
             os.mkdir(os.path.join(proj_type_dir_path, UPLOADED_DIR_PATH))
@@ -194,14 +203,20 @@ def reasoner_process_spatial_queries():
     return result
 
 
-@app.route("/getParty", methods =["POST","GET"])
+@app.route("/getParty", methods =["POST"])
 def getParty():
     global UPLOADED_DIR_PATH
-    fileName_full = request.args.get('loadedPartyFile')
-    partyJson = json.loads(request.args.get('partyJson'))
+    global PARTIES_FILE
+    global PROJ_DIR_PATH
+    proj_type_dir_path = path_to_project(request.form)
+    fileName_full = request.form.get('loadedPartyFile')
+    partyJson = json.loads(request.form.get('partyJson'))
+    #print("project to path",proj_type_dir_path)
+    #fileName_full = request.args.get('loadedPartyFile')
+    #partyJson = json.loads(request.args.get('partyJson'))
     party = partyJson.get("parties")
     try:
-        uploaded_filepath = os.path.join(UPLOADED_DIR_PATH, fileName_full)
+        uploaded_filepath = os.path.join(proj_type_dir_path, UPLOADED_DIR_PATH, PARTIES_FILE) 
         if os.path.exists(uploaded_filepath):
             os.remove(uploaded_filepath)
         f = open(uploaded_filepath, "w")
@@ -214,21 +229,23 @@ def getParty():
     return json.dumps(party)
 
 
-@app.route("/qualitative_spatial_queries", methods=["POST", "GET"])
+@app.route("/qualitative_spatial_queries", methods=["POST"])
 def qualitative_spatial_queries():
     global OUTPUT_DIR_PATH
     global SKETCH_MAP_QCN
-    main_feat_id = request.args.get('main_feat_id')
-    main_feat_type = request.args.get('main_feat_type')
-    print(main_feat_id, main_feat_type)
     selected_feat_lr_rel = []
     selected_feat_rcc8_rel = []
     selected_feat_relDist_rel = []
     try:
-        smQCNFilePath = os.path.join(OUTPUT_DIR_PATH, SKETCH_MAP_QCN)
+        main_feat_id = request.form.get('main_feat_id')
+        main_feat_type = request.form.get('main_feat_type')
+        proj_type_dir_path = path_to_project(request.form)
+        #print(main_feat_id, main_feat_type)
+        smQCNFilePath = os.path.join(proj_type_dir_path,OUTPUT_DIR_PATH, SKETCH_MAP_QCN)
 
     except IOError:
         print("sketchmap_qcn.json path has problem ")
+
     with open(smQCNFilePath) as smJson:
         smQCNs = json.loads(smJson.read())
 
@@ -260,30 +277,42 @@ def qualitative_spatial_queries():
     return json.dumps({"selected_feat_lr_rel":selected_feat_lr_rel,"selected_feat_rcc8_rel":selected_feat_rcc8_rel,"selected_feat_relDist_rel":selected_feat_relDist_rel})
 
 
-@app.route("/get_approx_location_from_relations", methods=["POST", "GET"])
+@app.route("/get_approx_location_from_relations", methods=["POST"])
 def get_approx_location_from_relations():
-    global main_feat_type
-    global UPLOADED_DIR_PATH, MM_fileName_full
+    #global main_feat_type
+    global OUTPUT_DIR_PATH
+    global UPLOADED_DIR_PATH
+    global VECTOR_BASEMAP
+    global APROX_TILE
+    #global UPLOADED_DIR_PATH, MM_fileName_full
+
+    try:
+        proj_type_dir_path = path_to_project(request.form)
+        lr_relations = json.loads(request.form.get('clicked_relations'))
+        mm_json_FilePath = os.path.join(proj_type_dir_path, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
+        print("here basemap json",mm_json_FilePath)
+        relatum = lr_relations['relatum']
+        representation = lr_relations['representation']
+        main_feat_id = lr_relations['main_feat_id']
+        main_feat_type = lr_relations['main_feat_type']
+        lr_relations = lr_relations['relation']
+
+    except IOError:
+        print("sketchmap_qcn.json path has problem ")
 
     # mm_json_FilePath = os.path.join(UPLOADED_DIR_PATH,MM_fileName_full)
-    mm_json_FilePath = "./static/metric_map_v6.geojson"
+    #mm_json_FilePath = "./static/metric_map_v6.geojson"
 
-    lr_relations = json.loads(request.args.get('clicked_relations'))
-    relatum = lr_relations['relatum']
-    representation = lr_relations['representation']
-    main_feat_id = lr_relations['main_feat_id']
-    main_feat_type = lr_relations['main_feat_type']
-    lr_relations = lr_relations['relation']
     print("relatum..:", relatum)
     print("rellations ..:", lr_relations)
     print(" representaiton..:", representation)
     print(" main_feat_id..:", main_feat_id)
     print(" main_feat_type..:", main_feat_type)
 
-    geo_data_properties, data_geom = load_geo(read_map_data_from_string(mm_json_FilePath, "geojson"), "geojson")
+    geo_data_properties, data_geom = load_geo(read_map_data_from_path(mm_json_FilePath, "geojson"), "geojson")
     relatum_feat_type = get_relatum_feat_type(relatum, data_geom)
 
-    print("relatum_feat_type", relatum_feat_type)
+    #print("relatum_feat_type", relatum_feat_type)
 
     geoJson_tiles_type = ""
     if representation == "left_right":
@@ -369,8 +398,10 @@ def get_approx_location_from_relations():
 
     geoJson_tiles = json.dumps(geoJson_tiles)
     geoJson_tiles = json.loads(geoJson_tiles)
+
     try:
-        outputFilePath = os.path.join("./output", "geoJson_tiles.geojson")
+        outputFilePath = os.path.join(proj_type_dir_path, OUTPUT_DIR_PATH, APROX_TILE)
+        #outputFilePath = os.path.join("./output", "geoJson_tiles.geojson")
         if os.path.exists(outputFilePath):
             os.remove(outputFilePath)
         f = open(outputFilePath, "w")
@@ -393,19 +424,29 @@ def get_approx_location_lr():
     return ""
 
 
-@app.route("/get_tenure_record",methods =["POST","GET"])
+@app.route("/get_tenure_record",methods =["POST"])
 def get_tenure_record():
     global OUTPUT_DIR_PATH
+    global MATCHED_FEATURES
+    global TENURE_RECORD_FILE
     matchedRecord=""
-    feat_id = request.args.get('feat_id')
-    feat_type = request.args.get('feat_type')
-    print("feat_id in tenurerecord:", feat_id)
+    try:
+        feat_id = request.form.get('feat_id')
+        feat_type = request.form.get('feat_type')
+        proj_type_dir_path = path_to_project(request.form)
+
+        matchesDictFile = os.path.join(proj_type_dir_path,OUTPUT_DIR_PATH,MATCHED_FEATURES)
+        tenureRecoredFilePath = os.path.join(proj_type_dir_path,OUTPUT_DIR_PATH, TENURE_RECORD_FILE)
+
+    except IOError:
+        print("problem in reading matches file and tenure recored in the /get_tenure_record()..")
+
     matched_feat = ""
-    matchesDictFile = os.path.join(OUTPUT_DIR_PATH,"matches.json")
-    print(matchesDictFile)
+
+    #print(matchesDictFile)
     with open(matchesDictFile) as matches:
         matches = json.loads(matches.read())
-        print(matches)
+        #print(matches)
         for key, value in matches.items():
             if key==feat_id:
                 matched_obj = value
@@ -414,9 +455,10 @@ def get_tenure_record():
                 else:
                     matched_feat="NONE"
 
-    print(matched_feat)
     #print(matched_feat)
-    tenureRecoredFilePath = os.path.join(OUTPUT_DIR_PATH,"tenureRecord.json")
+    #print(matched_feat)
+    #tenureRecoredFilePath = os.path.join(OUTPUT_DIR_PATH,"tenureRecord.json")
+
     with open(tenureRecoredFilePath) as record_json:
         records = json.loads(record_json.read())
         for record in records:
@@ -425,7 +467,7 @@ def get_tenure_record():
                 if feature_ID == feat_id:
                     matchedRecord = record
 
-        print("empity recored",matchedRecord)
+        #print("empity recored",matchedRecord)
         if (matchedRecord !=""):
             record_no = matchedRecord["record_no"]
             spatial_source = matchedRecord["spatial_source"]
@@ -442,16 +484,25 @@ def get_tenure_record():
             return "None"
 
 
-@app.route("/getMapMatches", methods=["POST","GET"])
+@app.route("/getMapMatches", methods=["POST"])
 def getMapMatches():
     global OUTPUT_DIR_PATH
+    global MATCHED_FEATURES
+    global PROJ_DIR_PATH
     #matchedRecord = ""
-    feat_id = request.args.get('feat_id')
-    feat_type = request.args.get('feat_type')
+
+    #print("request.form", request.form)
+    proj_type_dir_path = path_to_project(request.form)
+
+    #print("project path in the getMapMatches",proj_type_dir_path)
+    #feat_id = request.args.get('feat_id')
+    #feat_type = request.args.get('feat_type')
     #print("feat_id in tenurerecord:", feat_id)
     mm_feature_id = ""
-    print("output file path",OUTPUT_DIR_PATH)
-    matchesFilePath = os.path.join(OUTPUT_DIR_PATH,"matches.json")
+    #print("output file path",OUTPUT_DIR_PATH)
+    matchesFilePath = os.path.join(proj_type_dir_path, OUTPUT_DIR_PATH, MATCHED_FEATURES)
+    #print("here matches file path",matchesFilePath)
+    #matchesFilePath = os.path.join(OUTPUT_DIR_PATH,"matches.json")
     with open(matchesFilePath) as matches:
         matches = json.loads(matches.read())
     return  json.dumps(matches)
@@ -481,15 +532,18 @@ def add_tenure_record():
     return "Rights are recorded! "
 
 
-@app.route("/save_tenure_record", methods =["POST","GET"])
+@app.route("/save_tenure_record", methods =["POST"])
 def save_tenure_record():
     global OUTPUT_DIR_PATH
+    global TENURE_RECORD_FILE
 
-    filepath = os.path.join(OUTPUT_DIR_PATH, "tenureRecord.json")
-    #print("final file path mm...", filepath)
+    proj_type_dir_path = path_to_project(request.form)
+
+    tenurefilepath = os.path.join(proj_type_dir_path,OUTPUT_DIR_PATH, TENURE_RECORD_FILE)
+    #print("final tenure record path...", tenurefilepath)
 
     try:
-        f = open(filepath, "w")
+        f = open(tenurefilepath, "w")
         f.write(json.dumps(RecordList, indent=4))
         #f.write(record_json)
         f.close()
@@ -499,13 +553,18 @@ def save_tenure_record():
     return "Records are saved as a JSON file"
 
 
-@app.route("/postLADM",methods =["POST","GET"])
+@app.route("/postLADM",methods =["POST"])
 def postLADM():
     global UPLOADED_DIR_PATH
-
+    global LADM_FILE
+    global PROJ_DIR_PATH
+    proj_type_dir_path = path_to_project(request.form)
+    #print("proj to path",proj_type_dir_path)
     fileName_full = str(request.form.get('LDMFileName'))
     owlContent = request.form.get('LDMContent')
-    uploaded_filepath = os.path.join(UPLOADED_DIR_PATH, fileName_full)
+
+    uploaded_filepath = os.path.join(proj_type_dir_path, UPLOADED_DIR_PATH, LADM_FILE)
+    #uploaded_filepath = os.path.join(UPLOADED_DIR_PATH, fileName_full)
     try:
         if os.path.exists(uploaded_filepath):
             os.remove(uploaded_filepath)
@@ -518,13 +577,17 @@ def postLADM():
 
     return owlContent
 
-@app.route("/get_domain_model_ownerships",methods =["POST","GET"])
+@app.route("/get_domain_model_ownerships",methods =["POST"])
 def get_domain_model():
     global UPLOADED_DIR_PATH
-    fileName_full = request.args.get('LDMFileName')
-    feat_type = request.args.get('feat_type')
+    global LADM_FILE
     try:
-        uploaded_filepath = os.path.join(UPLOADED_DIR_PATH, fileName_full)
+        fileName_full = request.form.get('LDMFileName')
+        feat_type = request.form.get('feat_type')
+        proj_type_dir_path = path_to_project(request.form)
+
+        uploaded_filepath = os.path.join(proj_type_dir_path,UPLOADED_DIR_PATH, LADM_FILE)
+
         ontology = get_ontology(uploaded_filepath).load()
     except IOError:
         print("problem in Reading Owl file in the Function: /get_domain_model_ownerships...")
@@ -547,12 +610,17 @@ def get_domain_model():
     return "Please select the drawn object!"
 
 
-@app.route("/get_domain_model_rrrs",methods =["POST","GET"])
+@app.route("/get_domain_model_rrrs",methods =["POST"])
 def get_domain_model_rrrs():
     global UPLOADED_DIR_PATH
-    fileName_full = request.args.get('LDMFileName')
+    global LADM_FILE
+
     try:
-        uploaded_filepath = os.path.join(UPLOADED_DIR_PATH, fileName_full)
+        fileName_full = request.form.get('LDMFileName')
+        proj_type_dir_path = path_to_project(request.form)
+        #print("project path:",proj_type_dir_path)
+        uploaded_filepath = os.path.join(proj_type_dir_path,UPLOADED_DIR_PATH, LADM_FILE)
+        #uploaded_filepath = os.path.join(UPLOADED_DIR_PATH, fileName_full)
         ontology = get_ontology(uploaded_filepath).load()
 
         rrrs = get_has_rrr(ontology)
@@ -601,8 +669,13 @@ def uploadSketchMap():
         """ comment out if using full alignment in debug mode """
         if app.debug:
             """ copy folder with fileName to currentUserSession/projectType"""
+<<<<<<< HEAD
             print(imageFileName)
             preRunFiles = os.path.join("./preRunSessions", imageFileName)
+=======
+            print("here is file name",imageFileName)
+            preRunFiles = os.path.join("preRunSessions", imageFileName)
+>>>>>>> a0400c6ee56205b88d5589a198f3bc65f5ef5f69
             #dst =
             try:
                 print("copying from preRun", project_files_path)
@@ -743,7 +816,7 @@ def processSketchMap():
 """
     - return alignment results 
 """
-@app.route("/align_plain", methods =["POST","GET"])
+@app.route("/align_plain", methods =["POST"])
 def align_plain_sketch_map():
 
     global OUTPUT_DIR_PATH
@@ -756,7 +829,7 @@ def align_plain_sketch_map():
 
     project_files_path = path_to_project(request.form)
     matches_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, MATCHED_FEATURES)
-
+    print(matches_file_path)
     """ comment out if using full alignment in debug mode """
     if app.debug:
         return debug_align_plain_sketch(matches_file_path)
@@ -765,18 +838,20 @@ def align_plain_sketch_map():
     geojson_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)
     qualified_sketch_map_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, SKETCH_MAP_QCN)
     qualified_metric_map_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, BASEMAP_QCN)
-
+    print ("here i am ")
     sketchid = "_".join(("sketch", request.form.get("sessID"), request.form.get("projectType")))
     metricid = "_".join(("metric", request.form.get("sessID"), request.form.get("projectType")))
     loadedSketch, loadedMetric = None, None
 
     try:
         loadedSketch = str(request.form.get('svgData'))
+        print(loadedSketch)
     except KeyError:
         pass
 
     try:
         loadedMetric = str(request.form.get('geojsonData'))
+        print(loadedMetric)
     except KeyError:
         pass
 
@@ -794,12 +869,12 @@ def align_plain_sketch_map():
                 file.write(loadedSketch)
                 file.close()
 
-            qualified_sketch_map = load_map_qualify(metricid, read_map_data_from_string(loadedSketch,
+            qualified_sketch_map = load_map_qualify(sketchid, read_map_data_from_string(loadedSketch,
                                                                             "svg"), "svg", "sketch_map")
         else:
             qualified_sketch_map = load_map_qualify(sketchid, read_map_data_from_path(svg_file_path,
                                                                             "svg"), "svg", "sketch_map")
-
+        print("SM_QCN...:", qualified_sketch_map)
         if os.path.exists(qualified_sketch_map_file_path):
             os.remove(qualified_sketch_map_file_path)
         with io.open(qualified_sketch_map_file_path, 'w', encoding='utf8') as file:
@@ -815,10 +890,11 @@ def align_plain_sketch_map():
 
             qualified_metric_map = load_map_qualify(metricid, read_map_data_from_string(loadedMetric,
                                                                             "geojson"), "geojson", "metric_map")
+
         else:
             qualified_metric_map = load_map_qualify(metricid, read_map_data_from_path(geojson_file_path,
                                                                             "geojson"), "geojson", "metric_map")
-
+        print("MM_QCN...:", qualified_metric_map)
         if os.path.exists(qualified_metric_map_file_path):
             os.remove(qualified_metric_map_file_path)
         with io.open(qualified_metric_map_file_path, 'w', encoding='utf8') as file:

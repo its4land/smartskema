@@ -15,7 +15,7 @@ function spatial_query_processor_mode() {
 
     console.log("in the spatial query processor MODE...");
 
-    svg_elem = d3.select("#loadedSVG").selectAll("path,polygon,circle,rect,line,polyline");
+    svg_elem = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
     //console.log("svg elements:", svg_elements);
     svg_elem.on('mouseover', spatial_query_mouse_over);
     svg_elem.on('mouseout', spatial_query_mouse_out);
@@ -73,6 +73,7 @@ function get_spatial_query_popup() {
  */
 
 function qualitative_spatial_queries() {
+    deleteProcessingRing();
     var lr_relations = "";
     var topo_relations = "";
     var relDist_relations= "";
@@ -80,9 +81,28 @@ function qualitative_spatial_queries() {
     $('#relDist_rels_div').empty();
     $('#topo_rels_div').empty();
 
-    loc = document.getElementById("metricmapplaceholder");
+    let ajaxParams = {
+        url: '/qualitative_spatial_queries',
+        type: 'POST',
+        data: {
+            main_feat_id: main_feat_id,
+            main_feat_type: main_feat_type
+
+        }
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+        var relations = JSON.parse(resp);
+
+        //console.log(relations);
+        lr_relations = relations.selected_feat_lr_rel;
+        topo_relations = relations.selected_feat_rcc8_rel;
+        relDist_relations = relations.selected_feat_relDist_rel;
+        setTimeout(visualize_computed_rels(lr_relations,topo_relations,relDist_relations), 10);
+
+    });
+
     //createProcessingRing(loc);
-    $.ajax({
+   /* $.ajax({
         url: '/qualitative_spatial_queries',
         type: 'GET',
         data: {
@@ -100,14 +120,15 @@ function qualitative_spatial_queries() {
             relDist_relations = relations.selected_feat_relDist_rel;
             setTimeout(visualize_computed_rels(lr_relations,topo_relations,relDist_relations), 10);
         }
-    });
+    });*/
 }
 
 /**
  * function visualies the relations got from the server side
  */
 function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) {
-    deleteProcessingRing(loc);
+    createProcessingRing();
+    deleteProcessingRing();
 
     for (i in lr_relations) {
         var presentation = "left_right";
@@ -167,8 +188,28 @@ function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) 
  *
  */
 function get_qualitative_approximate_location(rep, rel) {
+    deleteProcessingRing();
+    let ajaxParams = {
+        url: '/get_approx_location_from_relations',
+        type: 'POST',
+        data: {
+            clicked_relations: JSON.stringify({representation:rep, relation: rel, relatum: mapmatches[rel["obj_1"]], main_feat_id: main_feat_id,
+                main_feat_type: main_feat_type})
+        }
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+        tilesAsjson_and_type = JSON.parse(resp);
+        console.log("tilesAsjson_and_type...:",tilesAsjson_and_type);
 
-    $.ajax({
+        tilesType = tilesAsjson_and_type.geoJson_tiles_type;
+        tilesAsjson = tilesAsjson_and_type.geoJson_tiles;
+
+        //loadGeojsonAsSVG();
+        load_computed_tiles_as_svg(tilesType,tilesAsjson);
+
+    });
+
+   /* $.ajax({
         url: '/get_approx_location_from_relations',
         type: 'GET',
         data: {
@@ -187,29 +228,29 @@ function get_qualitative_approximate_location(rep, rel) {
             load_computed_tiles_as_svg(tilesType,tilesAsjson);
 
         }
-    });
+    });*/
 
 }
 
 function load_computed_tiles_as_svg(tilesType,tilesAsjson){
     //console.log("here is computed tile",tilesAsjson);
-
+    deleteProcessingRing();
     var topo = topojson.topology({foo: tilesAsjson});
     //console.log("topo feat_type",topo.objects.foo.geometries[0].properties.feat_type);
 
 
-    zoom = d3.zoom()
+   /* zoom = d3.zoom()
         .scaleExtent([1 << 15, 1 << 30])
         .on("zoom", function () {
             metricZoomCallback(false)
         });
     path = d3.geoPath()
-        .projection(projection);
+        .projection(projection);*/
 
   /*  path = d3.geoPath()
         .projection(projection);*/
 
-    json_svg = d3.select("#json_svg").append("g");
+    json_svg = d3.select("#baseSVG").select("#baseLayer").append("g");
 
     if (tilesType ==="left_right"){
 
@@ -249,12 +290,6 @@ function load_computed_tiles_as_svg(tilesType,tilesAsjson){
             })
             .attr("d",function(d) { return path(d.geometry) })
             .attr("class","approximate_tile_relDist");
-
     }
-
-
-
-
-
 
 }

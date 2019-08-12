@@ -17,7 +17,7 @@ function nonSpatial_query_processor_mode() {
     popup.style.visibility = "hidden";
 
 
-    var svg_elements = d3.select("#loadedSVG").selectAll("path,polygon,circle,rect,line,polyline");
+    var svg_elements = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
     svg_elements.on('mouseover', nonSpatial_query_mouse_over);
     svg_elements.on('mouseout', nonSpatial_query_mouse_out);
     svg_elements.on('click', nonSpatial_query_result_popup);
@@ -94,7 +94,29 @@ $(document).on('keydown', function (e) {
 });
 
 function get_tenure_record(feat_id, feat_type) {
+    let ajaxParams = {
+        url: '/get_tenure_record',
+        type: 'POST',
+        data: {
+            feat_id: feat_id,
+            feat_type: feat_type
+        }
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+        console.log("receiver Record", resp);
+        if (resp != "None") {
+            var json = "";
+            json = JSON.parse(resp);
+            //console.log("received record:",json);
+            record = json;
+            createTenureRecordTable(record);
+            //create_record_table(record);
+        } else {
+            $('#nonSpatial_query_popup_div').hide();
+        }
 
+    });
+/*
     $.ajax({
         url: '/get_tenure_record',
         type: 'GET',
@@ -118,6 +140,35 @@ function get_tenure_record(feat_id, feat_type) {
             }
 
         }
-    });
+    });*/
+}
 
+function createTenureRecordTable(record) {
+    queryResult_div = document.getElementById("nonSpatial_query_resp_div");
+    $(queryResult_div).empty();
+
+    var table = document.createElement("table");
+    table.setAttribute("width", "100%");
+    table.setAttribute("border-collapse", "collapse");
+    table.setAttribute("border", "1px lightslategray");
+    table.setAttribute("word-wrap", "break-word-all");
+    table.setAttribute("table-layout", "fixed");
+    var th1 = document.createElement("th");
+    th1.innerHTML = "KEY";
+    var th2 = document.createElement("th");
+    th2.innerHTML = "VALUE";
+    var tr = table.insertRow(-1);
+    tr.appendChild(th1);
+    tr.appendChild(th2);
+
+    for (var i = 0; i < record.length; i++) {
+        for (var key in record[i]) {
+            var row = table.insertRow(-1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            cell1.innerHTML = key;
+            cell2.innerHTML = record[i][key];
+        }
+    }
+    queryResult_div.appendChild(table);
 }
