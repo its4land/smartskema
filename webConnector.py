@@ -65,7 +65,7 @@ mimetypes.add_type('image/svg+xml', '.svg')
 
 DEBUG_SESSID = "39bb2657-d663-4a78-99c5-a66c152693b2"
 
-STATIC_DIR = os.path.join("./static", "usessions")
+STATIC_DIR = os.path.join("static", "usessions")
 UPLOADED_DIR_PATH = "uploaded"
 MODIF_DIR_PATH = "modified"
 OUTPUT_DIR_PATH = "output"
@@ -586,7 +586,7 @@ def uploadSketchMap():
     global INPUT_RASTER_SKETCH
     global REDUCED_RASTER_SKETCH
 
-    project_files_path = path_to_project(request.form);
+    project_files_path = path_to_project(request.form)
 
     imageFileName = request.form.get('fileName')
     imageContent = request.form.get('imageContent')
@@ -597,11 +597,34 @@ def uploadSketchMap():
     modified_filepath = os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_SKETCH)
 
     try:
-        if os.path.exists(upload_filepath):
-            os.remove(upload_filepath)
-        f = open(upload_filepath, "wb")
-        f.write(base64.decodebytes(imageContent))
-        f.close()
+
+        """ comment out if using full alignment in debug mode """
+        if app.debug:
+            """ copy folder with fileName to currentUserSession/projectType"""
+            print(imageFileName)
+            preRunFiles = os.path.join("./preRunSessions", imageFileName)
+            #dst =
+            try:
+                print("copying from preRun", project_files_path)
+                shutil.rmtree(project_files_path, ignore_errors=False, onerror=None)
+                shutil.copytree(preRunFiles, project_files_path)
+            # Directories are the same
+            except shutil.Error as e:
+                print('Directory not copied. Error: %s' % e)
+            # Any error saying that the directory doesn't exist
+            except OSError as e:
+                print('Directory not copied. Error: %s' % e)
+        else:
+            if os.path.exists(upload_filepath):
+                os.remove(upload_filepath)
+
+            # f = open(upload_filepath, "wb")
+            # f.write(base64.decodebytes(imageContent))
+            # f.close()
+
+            os.makedirs(os.path.dirname(upload_filepath), exist_ok=True)
+            with open(upload_filepath, "w") as f:
+                f.write(base64.decodebytes(imageContent))
 
         w = 800
 
@@ -616,27 +639,11 @@ def uploadSketchMap():
         img_path = Path(modified_filepath)
         cv2.imwrite(modified_filepath, resized_image)
 
-        """ comment out if using full alignment in debug mode """
-        if app.debug:
-            """ copy folder with fileName to currentUserSession/projectType"""
-            print(imageFileName)
-            preRunFiles = os.path.join("preRunSessions", imageFileName)
-            #dst =
-            try:
-                shutil.rmtree(project_files_path, ignore_errors=False, onerror=None)
-                shutil.copytree(preRunFiles, project_files_path)
-            # Directories are the same
-            except shutil.Error as e:
-                print('Directory not copied. Error: %s' % e)
-            # Any error saying that the directory doesn't exist
-            except OSError as e:
-                print('Directory not copied. Error: %s' % e)
-
         return json.dumps({"imgPath": img_path.as_posix(), "imgHeight": newY, "imgWidth": newX})
 
     except IOError:
-        print(IOError)
-        return json.dumps({"error": IOError})
+        print("couldn't write data\n", IOError)
+        return json.dumps({"error": IOError.__module__})
 
 
 """
