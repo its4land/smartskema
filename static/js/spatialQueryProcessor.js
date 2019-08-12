@@ -73,14 +73,13 @@ function get_spatial_query_popup() {
  */
 
 function qualitative_spatial_queries() {
+    deleteProcessingRing();
     var lr_relations = "";
     var topo_relations = "";
     var relDist_relations= "";
     $('#leftRight_rels_div').empty();
     $('#relDist_rels_div').empty();
     $('#topo_rels_div').empty();
-
-    loc = document.getElementById("metricmapplaceholder");
 
     let ajaxParams = {
         url: '/qualitative_spatial_queries',
@@ -128,7 +127,8 @@ function qualitative_spatial_queries() {
  * function visualies the relations got from the server side
  */
 function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) {
-    deleteProcessingRing(loc);
+    createProcessingRing();
+    deleteProcessingRing();
 
     for (i in lr_relations) {
         var presentation = "left_right";
@@ -188,7 +188,7 @@ function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) 
  *
  */
 function get_qualitative_approximate_location(rep, rel) {
-
+    deleteProcessingRing();
     let ajaxParams = {
         url: '/get_approx_location_from_relations',
         type: 'POST',
@@ -234,7 +234,7 @@ function get_qualitative_approximate_location(rep, rel) {
 
 function load_computed_tiles_as_svg(tilesType,tilesAsjson){
     //console.log("here is computed tile",tilesAsjson);
-
+    deleteProcessingRing();
     var topo = topojson.topology({foo: tilesAsjson});
     //console.log("topo feat_type",topo.objects.foo.geometries[0].properties.feat_type);
 
