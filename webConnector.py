@@ -669,14 +669,7 @@ def uploadSketchMap():
         """ comment out if using full alignment in debug mode """
         if app.debug:
             """ copy folder with fileName to currentUserSession/projectType"""
-<<<<<<< HEAD
-            print(imageFileName)
-            preRunFiles = os.path.join("./preRunSessions", imageFileName)
-=======
-            print("here is file name",imageFileName)
             preRunFiles = os.path.join("preRunSessions", imageFileName)
->>>>>>> a0400c6ee56205b88d5589a198f3bc65f5ef5f69
-            #dst =
             try:
                 print("copying from preRun", project_files_path)
                 shutil.rmtree(project_files_path, ignore_errors=False, onerror=None)
