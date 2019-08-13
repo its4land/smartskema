@@ -750,15 +750,21 @@ def uploadSketchMap():
         w = 800
 
         img = cv2.imread(upload_filepath, -1)
-        height, width, depth = img.shape
+        if img is not None:
+            height, width, depth = img.shape
+            imgScale = w/width
 
-        imgScale = w/width
+            newX, newY = img.shape[1] * imgScale, img.shape[0] * imgScale
 
-        newX, newY = img.shape[1] * imgScale, img.shape[0] * imgScale
-
-        resized_image = cv2.resize(img, (int(newX), int(newY)))
-        img_path = Path(modified_filepath)
-        cv2.imwrite(modified_filepath, resized_image)
+            resized_image = cv2.resize(img, (int(newX), int(newY)))
+            img_path = Path(modified_filepath)
+            cv2.imwrite(modified_filepath, resized_image)
+        else:
+            newX    =   800
+            newY    =   565.686
+            img_path = Path(modified_filepath)
+            with open(modified_filepath, "wb") as f:
+                f.write(base64.decodebytes(imageContent))
 
         return json.dumps({"imgPath": img_path.as_posix(), "imgHeight": newY, "imgWidth": newX})
 
