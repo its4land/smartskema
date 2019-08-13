@@ -32,15 +32,13 @@
     stroke-width: 1px;
     fill:saddlebrown;
     opacity: 0.4;
-
 }
 
-.approximate_tile_RCC{
+.approximate_tile{
     stroke: gray;
     stroke-width: 1px;
     fill:red;
     opacity: 0.4;
-
 }
 
 

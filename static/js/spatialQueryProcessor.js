@@ -264,7 +264,12 @@ function load_computed_tiles_as_svg(tilesType,tilesAsjson){
                 return topo.objects.foo.geometries[i].properties.feat_type
             })
             .attr("d",function(d) { return path(d.geometry) })
-            .attr("class","approximate_tile_LR");
+            .attr("class", "");
+
+           var  tile =json_svg.selectAll("path[feat_type='approximate_tile']")
+                .attr("class", "approximate_tile")
+                .attr("style", null);
+
 
     }if (tilesType ==="RCC8"){
         vector14  = json_svg.selectAll("path")
@@ -277,7 +282,11 @@ function load_computed_tiles_as_svg(tilesType,tilesAsjson){
                 return topo.objects.foo.geometries[i].properties.feat_type
             })
             .attr("d",function(d) { return path(d.geometry) })
-            .attr("class","approximate_tile_RCC");
+            .attr("class","");
+
+         var tile1 =json_svg.selectAll("path[feat_type='approximate_tile']")
+            .attr("class", "approximate_tile")
+            .attr("style", null);
     }else{
         vector15  = json_svg.selectAll("path")
             .data(topojson.feature(topo, topo.objects.foo).features, function (a, b) {
@@ -289,7 +298,10 @@ function load_computed_tiles_as_svg(tilesType,tilesAsjson){
                 return topo.objects.foo.geometries[i].properties.feat_type
             })
             .attr("d",function(d) { return path(d.geometry) })
-            .attr("class","approximate_tile_relDist");
+            .attr("class","");
+        var tile3 =json_svg.selectAll("path[feat_type='approximate_tile']")
+            .attr("class", "approximate_tile")
+            .attr("style", null);
     }
 
 }

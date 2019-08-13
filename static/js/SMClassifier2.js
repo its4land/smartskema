@@ -90,7 +90,12 @@ function randerComplexStructureFiles(imageFile,location){
 
 
 function toggle_interaction() {
-    svg_elements = d3.select("#loadedSVG").selectAll("path,polygon,circle,rect,line,polyline");
+    /**
+     *  get the matches for the interaction of alligned objects
+     */
+     getMapMatches();
+
+    svg_elements = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
     console.log("svg elements:", svg_elements);
     /*.on('click', function (d, i) {
         d3.select(this)
