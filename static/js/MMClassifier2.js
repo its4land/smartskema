@@ -102,7 +102,12 @@ function align_Sketch_Map() {
      *
      * also sets up mouseover events for both maps
      */
-    let callback = function(resp) {
+    let callback = function (resp) {
+      mapmatches = JSON.parse(resp);
+    };
+
+   /* let callback = function(resp) {
+        mapmatches = JSON.parse(resp);
         let matches = JSON.parse(resp);
         // console.log("here is matching json:",json);
         let allFeatureLayers = sketchMapDisplayManager.getVectorLayers();
@@ -169,7 +174,7 @@ function align_Sketch_Map() {
             title: 'Info: Alignment is completed!',
             content: 'Move the mouse over a sketch or base map feature to find the corresponding feature.'
         });
-    };
+    };*/
 
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
 }

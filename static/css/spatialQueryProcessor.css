@@ -27,4 +27,27 @@
     text-align: center;
 }
 
+.approximate_tile_LR{
+    stroke: gray;
+    stroke-width: 1px;
+    fill:saddlebrown;
+    opacity: 0.4;
+
+}
+
+.approximate_tile_RCC{
+    stroke: gray;
+    stroke-width: 1px;
+    fill:red;
+    opacity: 0.4;
+
+}
+
+
+.approximate_tile_relDist{
+    stroke: gray;
+    stroke-width: 1px;
+    fill:blue;
+    opacity: 0.4
+}
 
