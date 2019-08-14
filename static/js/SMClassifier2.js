@@ -59,8 +59,31 @@ function randerComplexStructureFiles(imageFile,location){
         //call resizer function
        //var imageUrl = "./data_original/" + fileName_full;
         //console.log(imageUrl);
-        $.ajax({
-            url: '/smResizer',
+        let ajaxParams = {
+            url: '/uploadComplexSketchMap',
+            type: 'POST',
+            data: {
+                fileName: fileName_full,
+                imageContent: complextImageContent
+            },
+        };
+        new communicator(ajaxParams).sendRequest({}, function(resp){
+            var json = JSON.parse(resp);
+            $("#complexStr_drawing_checked").prop("checked", true);
+            imgPath = json.imgPath;
+            imgHight = json.imgHight;
+            imgWidth = json.imgWidth;
+            filePath = "./"+imgPath;
+            console.log(filePath,imgHight, imgWidth);
+
+            img.setAttribute('src', filePath);
+            img.setAttribute("height", "500px");
+            img.setAttribute("width", "500px");
+            location.appendChild(img);
+        });
+
+      /*  $.ajax({
+            url: '/uploadComplexSketchMap',
             type: 'POST',
             data: {
                 fileName: fileName_full,
@@ -82,7 +105,7 @@ function randerComplexStructureFiles(imageFile,location){
                 img.setAttribute("width", "500px");
                 location.appendChild(img);
             }
-        });
+        });*/
     };
     $('#load_complexStructure_map_div').prop("style", "visibility: visible");
 

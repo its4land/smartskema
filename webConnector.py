@@ -90,6 +90,9 @@ LADM_FILE = "ladm.owl"
 TENURE_RECORD_FILE = "tenureRecord.json"
 APROX_TILE = "approx_tile_file.geojson"
 
+INPUT_RASTER_COMPLEX_SKETCH = "input_complex_sketch_image.png"
+REDUCED_RASTER_COMPLEX_SKETCH = "reduced_complex_sketch_image.png"
+
 app = Flask(__name__)
 
 """
@@ -644,6 +647,58 @@ def initializeDatabase():
     return msg
 """
 
+
+
+"""
+    - resize image to load in the imageholder 
+"""
+@app.route("/uploadComplexSketchMap", methods=["POST", "GET"])
+def uploadComplexSketchMap():
+    global MODIF_DIR_PATH
+    global UPLOADED_DIR_PATH
+    global INPUT_RASTER_COMPLEX_SKETCH
+    global REDUCED_RASTER_COMPLEX_SKETCH
+
+    project_files_path = path_to_project(request.form)
+
+    imageFileName = request.form.get('fileName')
+    imageContent = request.form.get('imageContent')
+    imageContent = imageContent.replace("data:image/png;base64,", "")
+    imageContent = imageContent.encode('utf-8')
+
+    upload_filepath = os.path.join(project_files_path, UPLOADED_DIR_PATH, INPUT_RASTER_COMPLEX_SKETCH)
+    modified_filepath = os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_COMPLEX_SKETCH)
+
+    try:
+        # if os.path.exists(upload_filepath):
+        #     os.remove(upload_filepath)
+        #
+        # os.makedirs(os.path.dirname(upload_filepath), exist_ok=True)
+        # with open(upload_filepath, "w") as f:
+        #     f.write(base64.decodebytes(imageContent))
+        #     f.close()
+
+        # w = 800
+
+        #img = cv2.imread(upload_filepath, 0)
+        #height, width, depth = img.shape
+
+        #imgScale = w/width
+
+        #newX, newY = img.shape[1] * imgScale, img.shape[0] * imgScale
+
+        #resized_image = cv2.resize(img, (int(newX), int(newY)))
+        #img_path = Path(modified_filepath)
+        #cv2.imwrite(modified_filepath, resized_image)
+        #with open(modified_filepath, "w") as f:
+         #   f.write(base64.decodebytes(imageContent))
+        img_path = Path(upload_filepath)
+
+        return json.dumps({"imgPath": img_path.as_posix(), "imgHeight": 500, "imgWidth": 500})
+
+    except IOError:
+        print("couldn't write data\n", IOError)
+        return json.dumps({"error": IOError.__module__})
 """
     - resize image to load in the imageholder 
 """
@@ -695,15 +750,21 @@ def uploadSketchMap():
         w = 800
 
         img = cv2.imread(upload_filepath, -1)
-        height, width, depth = img.shape
+        if img is not None:
+            height, width, depth = img.shape
+            imgScale = w/width
 
-        imgScale = w/width
+            newX, newY = img.shape[1] * imgScale, img.shape[0] * imgScale
 
-        newX, newY = img.shape[1] * imgScale, img.shape[0] * imgScale
-
-        resized_image = cv2.resize(img, (int(newX), int(newY)))
-        img_path = Path(modified_filepath)
-        cv2.imwrite(modified_filepath, resized_image)
+            resized_image = cv2.resize(img, (int(newX), int(newY)))
+            img_path = Path(modified_filepath)
+            cv2.imwrite(modified_filepath, resized_image)
+        else:
+            newX    =   800
+            newY    =   565.686
+            img_path = Path(modified_filepath)
+            with open(modified_filepath, "wb") as f:
+                f.write(base64.decodebytes(imageContent))
 
         return json.dumps({"imgPath": img_path.as_posix(), "imgHeight": newY, "imgWidth": newX})
 
