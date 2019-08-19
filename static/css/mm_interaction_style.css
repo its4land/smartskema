@@ -13,7 +13,7 @@
 .parcel{
     stroke: black;
     stroke-width: 0px;
-    fill: lightgray;
+    fill: red;
     opacity: 0.5;
 }
 .referencePoint{
@@ -29,13 +29,13 @@
 .house{
     stroke: black;
     stroke-width: 0px;
-    fill: saddlebrown;
+    fill: greenyellow;
 }
 
 .landmark{
     stroke: black;
     stroke-width: 0px;
-    fill: lightslategray;
+    fill: gold;
 }
 
 
@@ -99,8 +99,8 @@
 }
 
 .olopololi{
-    stroke: gray;
-    stroke-width: 1px;
+    stroke: lightseagreen;
+    stroke-width: 0px;
     fill:mediumseagreen;
 }
 
