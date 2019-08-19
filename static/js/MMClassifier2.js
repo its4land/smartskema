@@ -1,28 +1,8 @@
-var MMGeoJsonData;
-var SMGeoJsonData;
-var labelLayer;
-
 var mapmatches;
 var baseMapDisplayManager; //baseMapDisplayManagerInstance
-
 var selected = undefined;
-var previousOne = undefined;
-
+var finalResult;
 var json;
-
-function HideMap() {
-    $("#hideMap").hide();
-    $("#metricmapplaceholder").hide();
-    $("#showMap").show();
-    $("#MMLinks").hide();
-}
-
-function ShowMap() {
-    $("#hideMap").show();
-    $("#metricmapplaceholder").show();
-    $("#showMap").hide();
-    $("#MMLinks").show();
-}
 
 function loadMetricMap() {
 
@@ -68,15 +48,6 @@ function renderBaseMap(map) {
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
 }
 
-
-function downloadJsonMM() {
-    var convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(MMGeoJsonData));
-    // Create export
-    document.getElementById('exportMetricFeatures').setAttribute('href', 'data:' + convertedData);
-    document.getElementById('exportMetricFeatures').setAttribute('download', 'MM_fileName.geojson');
-}
-
-
 /**
  Align and integration of data
  **/
@@ -99,83 +70,12 @@ function align_Sketch_Map() {
     /**
      * callback for renderSketchMapRaster - expects a 'this' object containing all parameters
      * that are not part of the contents of a file
-     *
      * also sets up mouseover events for both maps
      */
     let callback = function (resp) {
       mapmatches = JSON.parse(resp);
+      finalResult = mapmatches;
     };
-
-   /* let callback = function(resp) {
-        mapmatches = JSON.parse(resp);
-        let matches = JSON.parse(resp);
-        // console.log("here is matching json:",json);
-        let allFeatureLayers = sketchMapDisplayManager.getVectorLayers();
-        allFeatureLayers.forEach(sml => {
-            sml.selectAll("*").each(function(){
-                if (matches[this.getAttribute("id")]) {
-                    d3.select(this).on("mouseover", function (d,i,g) {
-                        d3.select(this).classed("selected", true);
-                        matches[this.getAttribute("id")].forEach(match => {
-                                baseMapDisplayManager.getVectorLayers().forEach(
-                                    bml => bml.select("#" + match).classed("selected", true));
-                            });
-                        }
-                    ).on("mouseout", function (d,i,g) {
-                        d3.select(this).classed("selected", false);
-                        matches[this.getAttribute("id")].forEach(match => {
-                                baseMapDisplayManager.getVectorLayers().forEach(
-                                    bml => bml.select("#" + match).classed("selected", false));
-                            });
-                        }
-                    )
-                }
-            });
-        });
-
-        let allBMFeatureLayers = baseMapDisplayManager.getVectorLayers();
-        allBMFeatureLayers.forEach(sml => {
-            sml.selectAll("*").each(function(){
-                counter = 0
-                num_keys = Object.keys(matches).length;
-                matched = [];
-                mid = this.getAttribute("id");
-                Object.keys(matches).forEach(k => {
-                    matches[k].forEach(match => {
-                        if (mid == match) {
-                            matched.push(k);
-                        }
-                    })
-                    counter++;
-                });
-                new Promise().resolve(counter == num_keys).then(
-                    function(){
-                        d3.select("#"+mid).on("mouseover", function (d,i,g) {
-                            d3.select(this).classed("selected", true);
-                            matched.forEach(match => {
-                                    sketchMapDisplayManager.getVectorLayers().forEach(
-                                        bml => bml.select("#" + match).classed("selected", true));
-                                });
-                            }
-                        ).on("mouseout", function (d,i,g) {
-                            d3.select(this).classed("selected", false);
-                            matched.forEach(match => {
-                                    sketchMapDisplayManager.getVectorLayers().forEach(
-                                        bml => bml.select("#" + match).classed("selected", false));
-                                });
-                            }
-                        )
-                    }
-                )
-            })
-        });
-
-        $.alert({
-            title: 'Info: Alignment is completed!',
-            content: 'Move the mouse over a sketch or base map feature to find the corresponding feature.'
-        });
-    };*/
-
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
 }
 
@@ -183,6 +83,7 @@ function align_Sketch_Map() {
  * Align features using a least-squares transform
  *
  */
+
 function align_Satellite_Drawing() {
 
     let svgContent = sketchMapDisplayManager.getVectorSVG().outerHTML;
@@ -201,18 +102,21 @@ function align_Satellite_Drawing() {
      */
     let callback = function(resp) {
         let json = JSON.parse(resp);
+        finalResult = json;
         // console.log("here is matching json:",json);
         baseMapDisplayManager.vectorFromGeoJSONContent(json, "alignedSketchMapData");
     };
-
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
 }
 
-
-jQuery.fn.d3Click = function () {
-    this.each(function (i, e) {
-        var evt = new MouseEvent("click");
-        e.dispatchEvent(evt);
-    });
-};
-
+/**
+ *  - Download all the final results are *.json
+ *  - Both plan-sketch and ortho project result will be download by the function
+ */
+function downloadResult(){
+    let alignedResult = finalResult;
+    var convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(alignedResult));
+    // Create export
+    document.getElementById('download_alignedResult').setAttribute('href', 'data:' + convertedData);
+    document.getElementById('download_alignedResult').setAttribute('download', 'alignedResult.json');
+}
