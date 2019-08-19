@@ -1,18 +1,18 @@
-.GCP{
+.gcp{
     stroke: black;
     stroke-width: 1px;
     fill: white;
 }
 
 .linkRoad{
-    stroke: black;
-    stroke-width: 3px;
+    stroke: red;
+    stroke-width: 0px;
     fill: none;
 }
 
 .parcel{
     stroke: black;
-    stroke-width: 1px;
+    stroke-width: 0px;
     fill: lightgray;
     opacity: 0.5;
 }
@@ -23,19 +23,19 @@
 
 .hospital{
     stroke: black;
-    stroke-width: 1px;
-    fill: saddlebrown;
+    stroke-width: 0px;
+    fill: yellow;
 }
 .house{
     stroke: black;
-    stroke-width: 1px;
+    stroke-width: 0px;
     fill: saddlebrown;
 }
 
 .landmark{
     stroke: black;
-    stroke-width: 1px;
-    fill: #66512c;
+    stroke-width: 0px;
+    fill: lightslategray;
 }
 
 
