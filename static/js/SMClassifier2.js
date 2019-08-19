@@ -81,31 +81,6 @@ function randerComplexStructureFiles(imageFile,location){
             img.setAttribute("width", "500px");
             location.appendChild(img);
         });
-
-      /*  $.ajax({
-            url: '/uploadComplexSketchMap',
-            type: 'POST',
-            data: {
-                fileName: fileName_full,
-                imageContent: complextImageContent
-                },
-            //contentType: 'text/plain',
-            //dataType: 'json',
-            success: function (resp) {
-                var json = JSON.parse(resp);
-                $("#complexStr_drawing_checked").prop("checked", true);
-                imgPath = json.imgPath;
-                imgHight = json.imgHight;
-                imgWidth = json.imgWidth;
-                filePath = "./"+imgPath;
-                console.log(filePath,imgHight, imgWidth);
-
-                img.setAttribute('src', filePath);
-                img.setAttribute("height", "500px");
-                img.setAttribute("width", "500px");
-                location.appendChild(img);
-            }
-        });*/
     };
     $('#load_complexStructure_map_div').prop("style", "visibility: visible");
 
@@ -203,6 +178,7 @@ function renderSketchMapRaster(image) {
         sketchMapDisplayManager.rasterFromURL("/" + json.imgPath, json.imgWidth, json.imgHeight);
 
         sm_checked = new Boolean($("#SM_checked").prop("checked", true));
+        orth_sm_checked = new Boolean($("#orthphoto_drawing_checked").prop("checked", true));
     };
 
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
@@ -230,35 +206,23 @@ function processSketchMap(event) {
         var json = JSON.parse(resp);
         sketchMapDisplayManager.vectorFromSVGURL("/" + json.svgPath);
     };
-
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
-
-
-/** THIS SHOULD DEFINITELY GO - DON'T KNOW WHAT IT'S DOING HERE BUT WHATEVER IT IS
-    WE DO IT ELSEWHERE.
-    var final = sketchSVGFinal.selectAll("path,polygon,circle,rect,line,polyline");
-
-    final.on('click', function () {
-        selectedSM = mapClickD3(this, previous, selectedSM, "sketch");
-        matchesCheck("sketch", mapmatches, this);
-    });
-*/
 }
 
 
-jQuery.fn.d3Click = function () {
+/*jQuery.fn.d3Click = function () {
     this.each(function (i, e) {
         var evt = new MouseEvent("click");
         e.dispatchEvent(evt);
     });
-};
+};*/
 
-jQuery.fn.d3DblClick = function () {
+/*jQuery.fn.d3DblClick = function () {
     this.each(function (i, e) {
         var evt = new MouseEvent("dblclick");
         e.dispatchEvent(evt);
     });
-};
+};*/
 
 //connector for connecting the clicks on the D3 map and the leaflet map. Later also for zooming and panning hopefully
 connector.registerSketchListener(function (val) {
@@ -274,7 +238,7 @@ connector.registerSketchListener(function (val) {
 // THESE NEXT TWO WERE PART OF THE PROCESS_IMAGE FUNCTION. THEY WILL HAVE TO GO ELSEWHERE NOW
 // IN PARTICULAR WE SHOULD REPLACE THEM (THE SET_SVG_FEATURES_COLOR METHODS INVOKED
 // INSIDE) WITH CSS STYLING.
-function responseCallback(xhr) {
+/*function responseCallback(xhr) {
 
     var svgFinal = sketchSVGFinal.append(function () {
         return xhr.responseXML.querySelector('svg');
@@ -287,10 +251,10 @@ function responseCallback(xhr) {
     //set color for svg elements
     set_svg_features_color();
 
-}
+}*/
 
 
-function responseCallback_degit(xhr) {
+/*function responseCallback_degit(xhr) {
     //hide the process ring
 
     sketchSVGFinal.append(function () {
@@ -303,10 +267,11 @@ function responseCallback_degit(xhr) {
         .attr("y", 0);
     //set color for svg elements
     set_svg_features_color_digit();
-}
+}*/
 
 
 //from Salmans code for zooming and panning (and even rotating if that's necessary) in D3
+/*
 function sketchZoomCallback() {
     if (sketchZoomCount == 0) {
 
@@ -319,6 +284,7 @@ function sketchZoomCallback() {
         sketchZoomCount--;
     }
 }
+*/
 
 
 function createProcessingRing() {
@@ -397,39 +363,12 @@ function getMapMatches() {
         let json = JSON.parse(resp);
         mapmatches = json;
     });
-   /*$.ajax({
-        url: '/getMapMatches',
-        type: 'POST',
-        data: {
-            ...this,
-            feat_id: "",
-            feat_type: ""
-        },
-        contentType: 'text/plain',
-
-        success: function (resp) {
-            //console.log("receiver Record", resp);
-            json = JSON.parse(resp);
-            mapmatches = json;
-            console.log("mapMatches", mapmatches);
-        }
-    });*/
-}
-
-
-
-function downloadJsonSM() {
-    SMGeoJsonData = drawnItems_sm.toGeoJSON();
-    var SMGeoJSON = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(SMGeoJsonData));
-    document.getElementById('exportSketchFeatures').setAttribute('href', 'data:' + SMGeoJSON);
-    document.getElementById('exportSketchFeatures').setAttribute('download', 'SMdata.geojson');
 }
 
 
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 });
-
 
 
 /**
@@ -510,7 +449,7 @@ function reasoner_process_spatial_queries(){
 
 }
 
-function set_svg_features_color_digit() {
+/*function set_svg_features_color_digit() {
     var svg = d3.select("#loadedSVG");
     var g = svg.select("#layer2").select("g");
 
@@ -540,13 +479,13 @@ function set_svg_features_color_digit() {
     olopololi = g.selectAll("path[smart_skema_type='olopololi']")
         .attr("class", "olopololi")
         .attr("style", null);
-}
+}*/
 
 /**
  * function gives colors based on the defined classes in
  * mm_interaction_stype
  */
-function set_svg_features_color() {
+/*function set_svg_features_color() {
 
     var svg = d3.select("#loadedSVG");
     var g = svg.select("g").select("g");
@@ -631,7 +570,7 @@ function set_svg_features_color() {
         .attr("style", null)
         .attr("class", "mountain");
 
-}
+}*/
 
 
 $(".chosen").chosen();

@@ -43,6 +43,7 @@ function renderBaseMap(map) {
                         });
 
         mm_checked = new Boolean($("#MM_checked").prop("checked", true));
+        mm_checked1 = new Boolean($("#ortho_GCP_checked").prop("checked", true));
     };
 
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
