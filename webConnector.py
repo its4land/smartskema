@@ -22,8 +22,8 @@ import io
 import json
 import os
 import sys
-from settings import APP_ROOT, DIR_DATA, DIR_QCNS, RecordList, \
-    SketchMapName, BaseMapName
+from settings import APP_ROOT, DIR_DATA, DIR_QCNS, RecordList, SMARTSKEMA_PATH
+    #SketchMapName, BaseMapName
     # STATIC_DIR,UPLOADED_DIR_PATH,PROJ_DIR_PATH,MODIF_DIR_PATH,OUTPUT_DIR_PATH,SVG_DIR_PATH,UUID
 import logging
 from logging.handlers import RotatingFileHandler
@@ -47,6 +47,8 @@ import uuid
 import base64
 import io
 import shapely
+import urllib.request
+
 from shapely.geometry import Polygon,LinearRing
 from geometryVisualizer import config
 from geometryVisualizer.left_right_tiles import GLeftRightTiles as g_left_right_tiles
@@ -92,6 +94,7 @@ APROX_TILE = "approx_tile_file.geojson"
 
 INPUT_RASTER_COMPLEX_SKETCH = "input_complex_sketch_image.png"
 REDUCED_RASTER_COMPLEX_SKETCH = "reduced_complex_sketch_image.png"
+ALIGNED_RESULT = "alignedResult.json"
 
 app = Flask(__name__)
 
@@ -708,6 +711,7 @@ def uploadSketchMap():
     global UPLOADED_DIR_PATH
     global INPUT_RASTER_SKETCH
     global REDUCED_RASTER_SKETCH
+    global SMARTSKEMA_PATH
 
     project_files_path = path_to_project(request.form)
 
@@ -757,14 +761,25 @@ def uploadSketchMap():
             newX, newY = img.shape[1] * imgScale, img.shape[0] * imgScale
 
             resized_image = cv2.resize(img, (int(newX), int(newY)))
-            img_path = Path(modified_filepath)
+            #make path relativ
+            #img_path = Path(modified_filepath)
             cv2.imwrite(modified_filepath, resized_image)
         else:
             newX    =   800
             newY    =   565.686
-            img_path = Path(modified_filepath)
+            #img_path = Path(modified_filepath)
             with open(modified_filepath, "wb") as f:
                 f.write(base64.decodebytes(imageContent))
+
+        """
+            - docker container requires relative path for front end
+            - SketchMap_path gives rel path
+            - get relative and pass to front end 
+        """
+        modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+
+        img_path = Path(modified_filepath_relative)
+        #print("here you go the relative path:", img_path)
 
         return json.dumps({"imgPath": img_path.as_posix(), "imgHeight": newY, "imgWidth": newX})
 
@@ -819,6 +834,7 @@ def processSketchMap():
     global OUTPUT_DIR_PATH
     global INPUT_RASTER_SKETCH
     global VECTORIZED_SKETCH
+    global SMARTSKEMA_PATH
 
     project_files_path = path_to_project(request.args)
     uploaded_filepath = os.path.join(project_files_path, UPLOADED_DIR_PATH, INPUT_RASTER_SKETCH)
@@ -826,14 +842,21 @@ def processSketchMap():
     modified_filepath = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
 
 
-    """ comment out if using full alignment in debug mode """
+    #comment out if using full alignment in debug mode
+
     if app.debug:
         svg = svgutils.transform.fromfile(modified_filepath)
-        return json.dumps({'svgPath': Path(modified_filepath).as_posix(), 'svgHeight': int(svg.height), 'svgWidth': int(svg.width)})
+        #print(svg)
+        #print(("height and width...:",svg.height, svg.width))
+        modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+
+        return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
+
 
     try:
         """ load image from uploaded folder"""
         img2 = cv2.imread(uploaded_filepath)
+
         """Save the recognized objects as svg in the output and modified folders"""
         classified_strokes = cc.completeClassification(img2, svg_filepath)
         svgstring = cc.strokesToSVG(classified_strokes,"abc", img2, svg_filepath)
@@ -853,14 +876,17 @@ def processSketchMap():
         # newY = float(scaleFact*float(svg.height))
         # newX = float(scaleFact*float(svg.width))
         # figure = svgutils.compose.Figure(newY, newX, originalSVG)
-
+        print("h and w of svg..:",h,w)
         #newY = 6586
         #newX = 10023
         """- - -"""
         #newY = 800
         #newX = 565.94
 
-        return json.dumps({'svgPath': Path(modified_filepath).as_posix(), 'svgHeight': h, 'svgWidth': w})
+        # modifiy the path to relative path for front-end
+        modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+
+        return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': h, 'svgWidth': w})
 
     except IOError as ioe:
         print("problem in Reading original Image from loaded DIR function: /processSketchMap..\n", ioe)
@@ -989,6 +1015,8 @@ def align_plain_sketch_map():
         print(e)
         return json.dumps({"error": e})
 
+
+
 def debug_align_plain_sketch(matches_file_path):
 
     with io.open(matches_file_path, 'r+') as matches_file:
@@ -1008,6 +1036,7 @@ def align_orthophoto_sketch_map():
     global UPLOADED_DIR_PATH
     global VECTORIZED_SKETCH
     global VECTOR_BASEMAP
+    global GEOREFERENCED_SKETCH_FEATURES
 
     project_files_path = path_to_project(request.form)
     svg_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
@@ -1115,6 +1144,26 @@ def align_orthophoto_sketch_map():
 
     return json.dumps(geojson_output)
 
+
+@app.route("/download_aligned_results", methods = ["POST"])
+def download_aligned_results():
+    global OUTPUT_DIR_PATH
+    global GEOREFERENCED_SKETCH_FEATURES
+
+    project_files_path = path_to_project(request.form)
+    result_as_json = json.loads(request.form.get("alignedResult"))
+    output_dir_path = os.path.join(project_files_path,OUTPUT_DIR_PATH,GEOREFERENCED_SKETCH_FEATURES)
+    download_path = os.path.join("c:/",GEOREFERENCED_SKETCH_FEATURES)
+    try:
+        f = open(download_path, "wb")
+        f.write(json.dumps(result_as_json, indent=4))
+        f.close()
+
+    except IOError:
+        print("Problem in Writing matching result as output.json")
+
+    #urllib.request.urlretrieve(url, 'c:/'+GEOREFERENCED_SKETCH_FEATURES)
+    return "msg"
 
 if __name__ == '__main__':
     app.run(debug=True)
