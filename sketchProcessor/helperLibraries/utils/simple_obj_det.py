@@ -2,6 +2,7 @@
 from keras.applications import imagenet_utils
 import imutils
 import json
+import os
 import time
 import cv2
 import numpy as np
@@ -23,7 +24,7 @@ def printTime(start, end):
 	temp = temp - 3600 * hours
 	minutes = temp // 60
 	seconds = temp - 60 * minutes
-	print('%d:%d:%d' % (hours, minutes, seconds))
+	#print('%d:%d:%d' % (hours, minutes, seconds))
 
 def classify_batch(model, batchROIs, batchLocs, labels, minProb=0.5, top=10, dims=(224, 224)):
 	# pass our batch ROIs through our network and decode the
@@ -87,7 +88,7 @@ def symbolDetection(image, finalBoxes, preprocessor, model, modelLabels, colors)
 	bestPredIndexes = predictions.argmax(axis=1)
 	for (index, bestPredIndex) in enumerate(bestPredIndexes):
 		bestProb = predictions[index][bestPredIndex] * 100
-		print(bestPredIndex, bestProb)
+		#print(bestPredIndex, bestProb)
 		label = modelLabels[bestPredIndex]
 		fontColor = colors[bestPredIndex]
 		# Probabilities greater than 60% and not corresponding to the background class are considered to be a symbol
@@ -123,7 +124,7 @@ def symbolDetection(image, finalBoxes, preprocessor, model, modelLabels, colors)
 	# cv2.imshow("image", clone)
 	# cv2.waitKey()
 	# cv2.destroyAllWindows()
-	cv2.imwrite('./detection.bmp',clone)
+	cv2.imwrite(os.path.join(config.SKETCH_PROCESSOR_PATH,"detection.bmp"),clone)
 
 	return predictionList
 
@@ -162,7 +163,8 @@ def detectSymbols(image, symbolType='stamp', method='t', filterColor = 'red'):
 		# Load Network
 		preprocessors = [sp, mp_stamps, iap]
 		preprocessor = PreprocessImage(preprocessors=preprocessors)
-		modelPath = './sketchProcessor/output/stampNetwork.hdf5'
+		modelPath = os.path.join(config.SKETCH_PROCESSOR_PATH,"stampNetwork.hdf5")
+		#modelPath = './sketchProcessor/output/stampNetwork.hdf5'
 		model = load_model(modelPath)
 		labels = config.LABELS_STAMPS
 		colors = ((255, 255, 255), (0, 0, 255), (92, 92, 205), (255, 0, 0), (0, 0, 0), (0, 255, 0), (139, 0, 139),
@@ -173,7 +175,8 @@ def detectSymbols(image, symbolType='stamp', method='t', filterColor = 'red'):
 	else:
 		preprocessors = [sp, mp_hand_drawn, iap]
 		preprocessor = PreprocessImage(preprocessors=preprocessors)
-		modelPath = './sketchProcessor/output/handDrawnNetwork.hdf5'
+		#modelPath = './sketchProcessor/output/handDrawnNetwork.hdf5'
+		modelPath = os.path.join(config.SKETCH_PROCESSOR_PATH,"handDrawnNetwork.hdf5")
 		model = load_model(modelPath)
 		labels = config.LABELS_HAND_DRAWN
 		colors = ((255, 255, 255), (0, 0, 255), (92, 92, 205), (255, 0, 0), (0, 0, 0), (0, 255, 0), (139, 0, 139),
@@ -181,7 +184,7 @@ def detectSymbols(image, symbolType='stamp', method='t', filterColor = 'red'):
 		predictedBoxes = completeDetection(image, model, preprocessor, labels, colors, 'threshold', filterColor)
 
 
-	cv2.imwrite('./output/test.bmp',clone)
+	cv2.imwrite(os.path.join(config.SKETCH_PROCESSOR_PATH,"test.bmp"),clone)
 	return  predictedBoxes
 
 def beaconCoordinates( predictions):

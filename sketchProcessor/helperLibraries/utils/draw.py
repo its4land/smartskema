@@ -114,8 +114,8 @@ def drawHandStrokes(image, handStrokes , oneByOne = True):
         contours = stroke.contour
         color = stroke.color
         label = stroke.label
-        if(len(stroke.labels) > 0):
-            print('I was labeled as '+ str(label) + ' and I have ' + str(stroke.labels) )
+        #if(len(stroke.labels) > 0):
+            #print('I was labeled as '+ str(label) + ' and I have ' + str(stroke.labels) )
         if (label == ''):
             cv2.drawContours(blank_image, contours, -1, (255,255,255), 1)
         else:

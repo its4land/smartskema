@@ -73,7 +73,7 @@ MODIF_DIR_PATH = "modified"
 OUTPUT_DIR_PATH = "output"
 
 # probably delete this
-SVG_DIR_PATH = "svg"
+#SVG_DIR_PATH = "svg"
 
 INPUT_RASTER_SKETCH = "input_sketch_image.png"
 REDUCED_RASTER_SKETCH = "reduced_sketch_image.png"
@@ -129,7 +129,7 @@ def get_session_id():
 
     """ comment out if using full alignment in debug mode """
     if app.debug:
-        print("using predefined session ID!")
+        #print("using predefined session ID!")
         #print("here session id",debug_get_session_id())
         return debug_get_session_id()
 
@@ -157,7 +157,7 @@ def setProjectType():
     global UPLOADED_DIR_PATH
     global MODIF_DIR_PATH
     global OUTPUT_DIR_PATH
-    global SVG_DIR_PATH
+    #global SVG_DIR_PATH
     global PROJ_DIR_PATH
 
     try:
@@ -169,7 +169,7 @@ def setProjectType():
             os.mkdir(os.path.join(proj_type_dir_path, UPLOADED_DIR_PATH))
             os.mkdir(os.path.join(proj_type_dir_path, MODIF_DIR_PATH))
             os.mkdir(os.path.join(proj_type_dir_path, OUTPUT_DIR_PATH))
-            os.mkdir(os.path.join(proj_type_dir_path, SVG_DIR_PATH))
+            #os.mkdir(os.path.join(proj_type_dir_path, SVG_DIR_PATH))
 
     except IOError:
             print("problem in creating PROJ_DIR and Sub_DIRs..")
@@ -730,7 +730,7 @@ def uploadSketchMap():
             """ copy folder with fileName to currentUserSession/projectType"""
             preRunFiles = os.path.join("preRunSessions", imageFileName)
             try:
-                print("copying from preRun", project_files_path)
+                #print("copying from preRun", project_files_path)
                 shutil.rmtree(project_files_path, ignore_errors=False, onerror=None)
                 shutil.copytree(preRunFiles, project_files_path)
             # Directories are the same
@@ -838,7 +838,7 @@ def processSketchMap():
 
     project_files_path = path_to_project(request.args)
     uploaded_filepath = os.path.join(project_files_path, UPLOADED_DIR_PATH, INPUT_RASTER_SKETCH)
-    svg_filepath = os.path.join(project_files_path, OUTPUT_DIR_PATH, VECTORIZED_SKETCH)
+    output_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, VECTORIZED_SKETCH)
     modified_filepath = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
 
 
@@ -858,12 +858,16 @@ def processSketchMap():
         img2 = cv2.imread(uploaded_filepath)
 
         """Save the recognized objects as svg in the output and modified folders"""
-        classified_strokes = cc.completeClassification(img2, svg_filepath)
-        svgstring = cc.strokesToSVG(classified_strokes,"abc", img2, svg_filepath)
-
-        """ write the SVG to modified_filepath as well """
+        print("Object Detection STARTED...")
+        classified_strokes = cc.completeClassification(img2, output_file_path)
+        svgstring = cc.strokesToSVG(classified_strokes,"abc", img2, output_file_path)
+        #print("svgString...:",svgstring)
+        print("Object Detection END")
         svg = svgutils.transform.fromstring(svgstring)
+        """ write the SVG to modified_filepath  as well as in the output_file_path """
         svg.save(modified_filepath)
+
+        svg.save(output_file_path)
         # originalSVG = svgutils.compose.SVG(svg_file_path)
         # originalSVG.move(0, 0)
 
@@ -876,13 +880,9 @@ def processSketchMap():
         # newY = float(scaleFact*float(svg.height))
         # newX = float(scaleFact*float(svg.width))
         # figure = svgutils.compose.Figure(newY, newX, originalSVG)
-        print("h and w of svg..:",h,w)
+        #print("h and w of svg..:",h,w)
         #newY = 6586
         #newX = 10023
-        """- - -"""
-        #newY = 800
-        #newX = 565.94
-
         # modifiy the path to relative path for front-end
         modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
 
@@ -909,10 +909,10 @@ def align_plain_sketch_map():
 
     project_files_path = path_to_project(request.form)
     matches_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, MATCHED_FEATURES)
-    print(matches_file_path)
+    #print(matches_file_path)
     """ comment out if using full alignment in debug mode """
-    if app.debug:
-        return debug_align_plain_sketch(matches_file_path)
+    #if app.debug:
+    #    return debug_align_plain_sketch(matches_file_path)
 
     svg_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
     geojson_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)
@@ -925,13 +925,13 @@ def align_plain_sketch_map():
 
     try:
         loadedSketch = str(request.form.get('svgData'))
-        print(loadedSketch)
+        print("loadedSketch: ",loadedSketch)
     except KeyError:
         pass
 
     try:
         loadedMetric = str(request.form.get('geojsonData'))
-        print(loadedMetric)
+        print("loadedMetric",loadedMetric)
     except KeyError:
         pass
 
@@ -945,16 +945,18 @@ def align_plain_sketch_map():
         if (loadedSketch is not None):
             if os.path.exists(svg_file_path):
                 os.remove(svg_file_path)
-            with io.open(svg_file_path, 'r+', encoding='utf8') as file:
+            with io.open(svg_file_path, 'w', encoding='utf8') as file:
                 file.write(loadedSketch)
                 file.close()
 
-            qualified_sketch_map = load_map_qualify(sketchid, read_map_data_from_string(loadedSketch,
-                                                                            "svg"), "svg", "sketch_map")
+            #qualified_sketch_map = load_map_qualify(sketchid, read_map_data_from_string(loadedSketch,
+                #                                                            "svg"), "svg", "sketch_map")
+            #print("qualified_sketch_map..:",qualified_sketch_map)
         else:
             qualified_sketch_map = load_map_qualify(sketchid, read_map_data_from_path(svg_file_path,
                                                                             "svg"), "svg", "sketch_map")
         print("SM_QCN...:", qualified_sketch_map)
+
         if os.path.exists(qualified_sketch_map_file_path):
             os.remove(qualified_sketch_map_file_path)
         with io.open(qualified_sketch_map_file_path, 'w', encoding='utf8') as file:

@@ -70,7 +70,7 @@ def generateRegions(boxes, overlapThresh=0.3):
     regions = boxes.copy()
     iteration =1
     while(True):
-        print("Interation :", iteration)
+        #print("Interation :", iteration)
         previousState = len(regions)
         regions = nms.nmsCris(regions, overlapThresh)
         currentState = len(regions)

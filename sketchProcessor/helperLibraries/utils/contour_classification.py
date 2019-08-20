@@ -71,7 +71,7 @@ def strokeClassification(image, contours, predictions, knn = 3):
         center = p.c
         label = p.l
         color = p.color
-        print('Finding the nearest contours for p ' + label)
+        #print('Finding the nearest contours for p ' + label)
         cv2.circle(imageCopy, (center[0],center[1]), 8, color, -1)
         # strokes are sorted according to their distance to the prediction "p", moreover, their values are updated
         strokeList = sortStrokes(p, strokeList)
@@ -86,7 +86,9 @@ def completeClassification(image, svg_file_path):
     draw.showImage(image)
     # Detecting symbols
     predictions = sd.detectSymbols(image, symbolType='stamp', method='t', filterColor='red')
+    #print("predictions",predictions)
     beacons = sd.beaconCoordinates(predictions)
+    #print(beacons)
     #if len(beacons)>0:
     beaconsSVG = getBeacons(beacons, image)
     # Here we get rid of the symbols, clean and segmantate the sketch to obtain a clean image,
@@ -107,8 +109,8 @@ def completeClassification(image, svg_file_path):
 
 def getBeacons(beacons, image):
     h, w, _ = image.shape
-    if not os.path.exists("SVG"):
-        os.makedirs("SVG")
+    #if not os.path.exists("SVG"):
+    #    os.makedirs("SVG")
 
     name = beacons[0].l
     color = beacons[0].color
@@ -129,8 +131,8 @@ def getBeacons(beacons, image):
 
 def strokeToSVG(stroke, image, stroke_id='0'):
     h, w, _ = image.shape
-    if not os.path.exists("SVG"):
-        os.makedirs("SVG")
+    #if not os.path.exists("SVG"):
+    #    os.makedirs("SVG")
     contourTest = stroke.contour
     name = stroke.label
     color = stroke.color
@@ -193,7 +195,7 @@ def strokeToSVG(stroke, image, stroke_id='0'):
                                                                                                         'stroke:rgb(' + str(
             color[2]) + ',' + str(color[1]) + ',' + str(color[0]) + ');opacity:0.8;stroke-width:3"' \
                                                                     ' id="' + stroke_id + '" smart_skema_type="' + 'boundary' + '"  hidden_="" name="" description=""/>'
-        print('ADDED BOUNDARY TO SVG')
+        #print('ADDED BOUNDARY TO SVG')
     elif name in ['Mountain', 'Marsh']:
         hull = cv2.convexHull(contourTest)
         internal += '<polygon points="'
@@ -223,27 +225,11 @@ def strokeToSVG(stroke, image, stroke_id='0'):
 
 def strokesToSVG(strokes, beacons,image, svg_file_path):
     h, w, _ = image.shape
-    internal = ''
-    #f = open('SVG//' + str(fileName) + '.svg', 'w+')
-    svgPath = Path(svg_file_path)
-    print("till here is file...:",svgPath)
-    #svgPath = Path('./static/data/SVG') / (str(fileName) + '.svg')
     internal = '<svg width="' + str(w) + '" height="' + str(h) + '" xmlns="http://www.w3.org/2000/svg">'
     for (i,s) in enumerate(strokes):
 
         if s.label !='':
             internal += strokeToSVG(s, image, str(i))
-
-    # if(len(beacons )>0):
-    #     internal += beacons
-    #     print ( "I added beacons")
-
     internal += '</svg>'
-    #f.write(internal)
-    #f.write('</svg>')
-    #f.close()
-
-    svgPath.write_text(internal)
-    return svgPath.as_posix()
-
+    return internal
 
