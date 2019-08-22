@@ -30,24 +30,8 @@ function loadPartyFile(element) {
         new communicator(ajaxParams).sendRequest({}, function(resp){
             var party = JSON.parse(resp)
         });
-
-
-    /*    $.ajax({
-            url: '/getParty',
-            type: 'GET',
-            data: {
-                loadedPartyFile: loadedPartyFile,
-                partyJson: JSON.stringify(partyJson)
-            },
-            contentType: 'text/plain',
-            success: function (resp) {
-                var party = JSON.parse(resp)
-            }
-        });*/
-
         party_checked = new Boolean($("#Party_checked").prop("checked", true));
 
-        //console.log("partycontant", partyJson);
     };
 
 }
@@ -73,21 +57,6 @@ function ortho_loadPartyFile(element) {
             var party = JSON.parse(resp)
         });
         ortho_party_checked = new Boolean($("#ortho_Party_checked").prop("checked", true));
-/*
-        $.ajax({
-            url: '/getParty',
-            type: 'GET',
-            data: {
-                loadedPartyFile: loadedPartyFile,
-                partyJson: JSON.stringify(partyJson)
-            },
-            contentType: 'text/plain',
-            success: function (resp) {
-                var party = JSON.parse(resp)
-            }
-        });
-        ortho_party_checked = new Boolean($("#ortho_Party_checked").prop("checked", true));*/
-        //console.log("partycontant", partyJson);
     };
 
 }
@@ -146,19 +115,7 @@ function read_LADM_file_contants(ladmFile) {
                 }
             };
             new communicator(ajaxParams).sendRequest({}, function(resp){});
-            /*$.ajax({
-                url: '/postLADM',
-                type: 'POST',
-                data: {
-                    LDMFileName: LDM_fileName_full,
-                    LDMContent: LDMContent
-                },
-                //contentType: 'a/xml',
 
-                success: function (resp) {
-
-                }
-            });*/
         }else{
             $.alert({
                 title: 'Info: Wrong File',
@@ -349,25 +306,6 @@ function get_DM_parties() {
             generate_parties_option(party_list);
     });
 
- /*   $.ajax({
-        url: '/getParty',
-        type: 'GET',
-        data: {
-            ...this,
-            loadedPartyFile: loadedPartyFile,
-            partyJson: JSON.stringify(partyJson)
-        },
-        contentType: 'text/plain',
-        success: function (resp) {
-            party_list.push("Select Party...");
-            var json_party = JSON.parse(resp);
-
-            for (var i = 0; i < json_party.length; i++) {
-                party_list.push(json_party[i]);
-            }
-            generate_parties_option(party_list);
-        }
-    });*/
     return party_list;
 }
 
@@ -397,27 +335,6 @@ function get_RRRs() {
         generate_rrrs_option(rrr_list);
 
     });
-
-    // //pass the features_type on click
-    // $.ajax({
-    //     url: '/get_domain_model_rrrs',
-    //     type: 'GET',
-    //     data: {
-    //         LDMFileName: LDM_fileName_full
-    //     },
-    //     contentType: 'text/plain',
-    //     success: function (resp) {
-    //         rrr_list.push("Select Other RRRs...");
-    //         rrr_list.push("Pastures Depleted Ranch1");
-    //
-    //         var json_rrr = JSON.parse(resp);
-    //
-    //         for (var i = 0; i < json_rrr.length; i++) {
-    //             rrr_list.push(json_rrr[i].item);
-    //         }
-    //         generate_rrrs_option(rrr_list);
-    //     }
-    // });
     return rrr_list;
 }
 
@@ -540,20 +457,4 @@ function save_land_tenure_record() {
 
         $('#ladm_rrrs_popup_div').hide();
     });
-  /*  $.ajax({
-        url: '/save_tenure_record',
-        type: 'GET',
-        data: {
-            feat_id: feat_id
-        },
-        contentType: 'text/plain',
-        success: function (resp) {
-            var json = resp;
-            $.alert({
-                title: 'Info: Tenure Information!',
-                content: 'The land tenure record is Saved as a *.json file'
-            });
-            $('#ladm_rrrs_popup_div').hide();
-        }
-    });*/
 }

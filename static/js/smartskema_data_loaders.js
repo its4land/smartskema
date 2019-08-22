@@ -556,7 +556,23 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         //   - apply the inverse transformation matrix of the consolidated transform matrix of the geometry
         //   - append the coordinate to coordinate list for the geojson object created.
 
-        return geojson
+        /**
+         * Retrieve every vector object from every svg as done in load vector maps.
+         *
+         **/
+        let svg = baseCanvas.node().cloneNode(false);
+        svg = d3.select(svg);
+
+        for (let k in layers){
+            let vectorLayer = layers[k].selection;
+            vectorLayer.selectAll("*").each((d, i, g) => {
+                svg.append(() => g[i].cloneNode(false));
+        })
+        }
+
+        return svg.node();
+
+        //return geojson
     }
 
     var getVectorSelection = function(layerName) {
