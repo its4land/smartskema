@@ -127,7 +127,7 @@ function qualitative_spatial_queries() {
  * function visualies the relations got from the server side
  */
 function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) {
-    createProcessingRing();
+    //createProcessingRing();
     deleteProcessingRing();
 
     for (i in lr_relations) {

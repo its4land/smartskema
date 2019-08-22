@@ -333,6 +333,7 @@ function ladm_interaction_for_RRR() {
  */
 
 function spatial_query_processor(){
+    deleteProcessingRing();
     spatial_query_processor_mode();
 }
 
@@ -340,7 +341,7 @@ function spatial_query_processor(){
  * function activates non-spatial_query_activites
  */
 function nonSpatial_query_processor(){
-
+    deleteProcessingRing();
     nonSpatial_query_processor_mode();
 }
 

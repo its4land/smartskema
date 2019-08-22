@@ -128,10 +128,10 @@ def get_session_id():
     global PROJ_DIR_PATH
 
     """ comment out if using full alignment in debug mode """
-    if app.debug:
+    #if app.debug:
         #print("using predefined session ID!")
         #print("here session id",debug_get_session_id())
-        return debug_get_session_id()
+     #   return debug_get_session_id()
 
     sess_id = str(uuid.uuid4())
     proj_dir_path = os.path.join(STATIC_DIR, sess_id)
@@ -719,15 +719,15 @@ def uploadSketchMap():
     imageContent = request.form.get('imageContent')
     imageContent = imageContent.replace("data:image/png;base64,", "")
     imageContent = imageContent.encode('utf-8')
-
+    #print("here image contants",imageContent)
     upload_filepath = os.path.join(project_files_path, UPLOADED_DIR_PATH, INPUT_RASTER_SKETCH)
     modified_filepath = os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_SKETCH)
 
     try:
 
-        """ comment out if using full alignment in debug mode """
+        """ comment out if using full alignment in debug mode 
         if app.debug:
-            """ copy folder with fileName to currentUserSession/projectType"""
+             #copy folder with fileName to currentUserSession/projectType
             preRunFiles = os.path.join("preRunSessions", imageFileName)
             try:
                 #print("copying from preRun", project_files_path)
@@ -739,17 +739,19 @@ def uploadSketchMap():
             # Any error saying that the directory doesn't exist
             except OSError as e:
                 print('Directory not copied. Error: %s' % e)
-        else:
-            if os.path.exists(upload_filepath):
-                os.remove(upload_filepath)
+                """
+        #else:
+        if os.path.exists(upload_filepath):
+            os.remove(upload_filepath)
 
             # f = open(upload_filepath, "wb")
             # f.write(base64.decodebytes(imageContent))
             # f.close()
 
-            os.makedirs(os.path.dirname(upload_filepath), exist_ok=True)
-            with open(upload_filepath, "w") as f:
-                f.write(base64.decodebytes(imageContent))
+        os.makedirs(os.path.dirname(upload_filepath), exist_ok=True)
+        with open(upload_filepath, "wb") as f:
+            f.write(base64.decodebytes(imageContent))
+            f.close()
 
         w = 800
 
@@ -843,7 +845,7 @@ def processSketchMap():
 
 
     #comment out if using full alignment in debug mode
-
+    """
     if app.debug:
         svg = svgutils.transform.fromfile(modified_filepath)
         #print(svg)
@@ -851,7 +853,7 @@ def processSketchMap():
         modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
 
         return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
-
+    """
 
     try:
         """ load image from uploaded folder"""
@@ -925,17 +927,17 @@ def align_plain_sketch_map():
 
     try:
         loadedSketch = str(request.form.get('svgData'))
-        print("loadedSketch: ",loadedSketch)
+        #print("loadedSketch: ",loadedSketch)
     except KeyError:
         pass
 
     try:
         loadedMetric = str(request.form.get('geojsonData'))
-        print("loadedMetric",loadedMetric)
+        #print("loadedMetric",loadedMetric)
     except KeyError:
         pass
 
-    print(loadedMetric, "\n\n", loadedSketch)
+    #print(loadedMetric, "\n\n", loadedSketch)
 
     qualified_sketch_map = 0  # load qualitative representation here
     qualified_metric_map = 0  # load qualitative representation here
@@ -950,19 +952,20 @@ def align_plain_sketch_map():
                 file.close()
 
             #qualified_sketch_map = load_map_qualify(sketchid, read_map_data_from_string(loadedSketch,
-                #                                                            "svg"), "svg", "sketch_map")
+            #                                                   "svg"), "svg", "sketch_map")
             #print("qualified_sketch_map..:",qualified_sketch_map)
         else:
-            qualified_sketch_map = load_map_qualify(sketchid, read_map_data_from_path(svg_file_path,
+            print("else")
+        qualified_sketch_map = load_map_qualify(sketchid, read_map_data_from_path(svg_file_path,
                                                                             "svg"), "svg", "sketch_map")
-        print("SM_QCN...:", qualified_sketch_map)
+        #print("SM_QCN...:", qualified_sketch_map)
 
         if os.path.exists(qualified_sketch_map_file_path):
             os.remove(qualified_sketch_map_file_path)
         with io.open(qualified_sketch_map_file_path, 'w', encoding='utf8') as file:
             file.write(json.dumps(qualified_sketch_map, indent=4))
             file.close()
-
+        """
         if (loadedMetric is not None):
             if os.path.exists(geojson_file_path):
                 os.remove(geojson_file_path)
@@ -970,13 +973,16 @@ def align_plain_sketch_map():
                 file.write(loadedMetric)
                 file.close()
 
-            qualified_metric_map = load_map_qualify(metricid, read_map_data_from_string(loadedMetric,
-                                                                            "geojson"), "geojson", "metric_map")
+            #qualified_metric_map = load_map_qualify(metricid, read_map_data_from_string(loadedMetric,
+             #                                                               "geojson"), "geojson", "metric_map")
 
         else:
-            qualified_metric_map = load_map_qualify(metricid, read_map_data_from_path(geojson_file_path,
+            print("temp")
+            """
+        qualified_metric_map = load_map_qualify(metricid, read_map_data_from_path(geojson_file_path,
                                                                             "geojson"), "geojson", "metric_map")
-        print("MM_QCN...:", qualified_metric_map)
+        #print("MM_QCN...:", qualified_metric_map)
+
         if os.path.exists(qualified_metric_map_file_path):
             os.remove(qualified_metric_map_file_path)
         with io.open(qualified_metric_map_file_path, 'w', encoding='utf8') as file:
