@@ -13,6 +13,7 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_
 #print("APP_ROOT:",APP_ROOT)
 UUID = ""
 STATIC_DIR = os.path.join(APP_ROOT,"static")
+USER_SESSIONS_DIR = os.path.join(STATIC_DIR,"usessions")
 PROJ_DIR_PATH = ""
 UPLOADED_DIR_PATH = ""
 MODIF_DIR_PATH = ""

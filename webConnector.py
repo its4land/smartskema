@@ -22,7 +22,7 @@ import io
 import json
 import os
 import sys
-from settings import APP_ROOT, DIR_DATA, DIR_QCNS, RecordList, SMARTSKEMA_PATH, QUALITATIVE_REPRESENTATION
+from settings import USER_SESSIONS_DIR,DIR_DATA, DIR_QCNS, RecordList, SMARTSKEMA_PATH, QUALITATIVE_REPRESENTATION
     #SketchMapName, BaseMapName
     # STATIC_DIR,UPLOADED_DIR_PATH,PROJ_DIR_PATH,MODIF_DIR_PATH,OUTPUT_DIR_PATH,SVG_DIR_PATH,UUID
 import logging
@@ -67,7 +67,7 @@ mimetypes.add_type('image/svg+xml', '.svg')
 
 DEBUG_SESSID = "39bb2657-d663-4a78-99c5-a66c152693b2"
 
-STATIC_DIR = os.path.join("./static", "usessions")
+#STATIC_DIR = os.path.join("./static", "usessions")
 UPLOADED_DIR_PATH = "uploaded"
 MODIF_DIR_PATH = "modified"
 OUTPUT_DIR_PATH = "output"
@@ -106,8 +106,9 @@ def build_path(path_list):
 
 
 def path_to_project(d):
+    global USER_SESSIONS_DIR
     #print("d",d)
-    return os.path.join(STATIC_DIR, d.get("sessID"), d.get("projectType"))
+    return os.path.join(USER_SESSIONS_DIR, d.get("sessID"), d.get("projectType"))
 
 """/getSessionID
     try:
@@ -124,7 +125,7 @@ def main_page():
 
 @app.route("/getSessionID", methods=["GET"])
 def get_session_id():
-    global STATIC_DIR
+    global USER_SESSIONS_DIR
     global PROJ_DIR_PATH
 
     """ comment out if using full alignment in debug mode """
@@ -134,7 +135,7 @@ def get_session_id():
      #   return debug_get_session_id()
 
     sess_id = str(uuid.uuid4())
-    proj_dir_path = os.path.join(STATIC_DIR, sess_id)
+    proj_dir_path = os.path.join(USER_SESSIONS_DIR, sess_id)
 
     try:
         if not (os.path.exists(proj_dir_path)):
@@ -144,7 +145,7 @@ def get_session_id():
         print("problem in creating PROJ_DIR and Sub_DIRs..")
 
     # print(url_for('.smartSkeMa'))
-    print("generated session ID - now returning!")
+    #print("generated session ID - now returning!")
     return sess_id  # redirect("dashboard.html", sessId=sess_id)
 
 
@@ -163,6 +164,7 @@ def setProjectType():
     try:
         #print("request.form",request.form)
         proj_type_dir_path = path_to_project(request.form)
+        #print("here you go:proj_type_dir_path",proj_type_dir_path)
         PROJ_DIR_PATH = proj_type_dir_path
         if not (os.path.exists(proj_type_dir_path)):
             os.mkdir(proj_type_dir_path)
@@ -783,6 +785,7 @@ def uploadSketchMap():
             - get relative and pass to front end 
         """
         modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+        #print(modified_filepath_relative)
 
         img_path = Path(modified_filepath_relative)
         #print("here you go the relative path:", img_path)
@@ -804,6 +807,7 @@ def uploadBaseMap():
     global MODIF_DIR_PATH
     global UPLOADED_DIR_PATH
     global VECTOR_BASEMAP
+    global USER_SESSIONS_DIR
 
     project_files_path = path_to_project(request.form)
     upload_filepath = os.path.join(project_files_path, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
@@ -1049,6 +1053,7 @@ def align_orthophoto_sketch_map():
     global VECTORIZED_SKETCH
     global VECTOR_BASEMAP
     global GEOREFERENCED_SKETCH_FEATURES
+    global USER_SESSIONS_DIR
 
     project_files_path = path_to_project(request.form)
     svg_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
@@ -1057,12 +1062,12 @@ def align_orthophoto_sketch_map():
     output_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, GEOREFERENCED_SKETCH_FEATURES)
 
     """temporary copying manual file to the location"""
-    svgFile_manual_file = os.path.join(STATIC_DIR,"vectorized_sketch_svg.svg")
+    svgFile_manual_file = os.path.join(USER_SESSIONS_DIR,"vectorized_sketch_svg.svg")
     shutil.copy(svgFile_manual_file, svg_file_path)
     shutil.copy(svgFile_manual_file, svg_file_path_output)
 
     svg_content = request.form.get('svgData')
-    print("SVG content:\n", svg_content)
+    #print("SVG content:\n", svg_content)
     """
     try:
         with io.open(svg_file_path, 'w', encoding='utf8') as file:
@@ -1088,8 +1093,8 @@ def align_orthophoto_sketch_map():
         print("problem in reading svg and GCPs for the Alignment")
         print("svg_file_path", svg_file_path)
         print("gcp_file_name", gcp_file_name)
-        print("svg_data_properties", svg_data_properties)
-        print("svg_data", svg_data)
+        #print("svg_data_properties", svg_data_properties)
+        #print("svg_data", svg_data)
 
     #geo_data_properties, geo_data = load_geo(loaded_GCP_File, "geojson")
     #svg_data_properties, svg_data = load_svg(svgFile, "svg")
@@ -1146,11 +1151,11 @@ def align_orthophoto_sketch_map():
         georeferenced_features.append(georeferenced_feature)
 
     geojson_output = geo_data_properties.copy()
-    print("geo_data_properties\n", geo_data_properties)
+    #print("geo_data_properties\n", geo_data_properties)
     geojson_output["features"] = georeferenced_features
 
-    print("geojson_output\n", geojson_output)
-    print()
+    #print("geojson_output\n", geojson_output)
+    #print()
     try:
         if os.path.exists(output_file_path):
              os.remove(output_file_path)
