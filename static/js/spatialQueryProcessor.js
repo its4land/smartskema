@@ -12,7 +12,7 @@ var vector14;
 var vector15;
 
 function spatial_query_processor_mode() {
-
+    createProcessingRing();
     console.log("in the spatial query processor MODE...");
 
     svg_elem = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
@@ -64,6 +64,7 @@ function get_spatial_query_popup() {
         top: y,
         left: x
     });
+    deleteProcessingRing();
 
 }
 

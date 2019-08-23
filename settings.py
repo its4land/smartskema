@@ -19,6 +19,7 @@ MODIF_DIR_PATH = ""
 OUTPUT_DIR_PATH = ""
 SVG_DIR_PATH = ""
 SMARTSKEMA_PATH = os.path.join(STATIC_DIR,"..")
+QUALITATIVE_REPRESENTATION = os.path.join(APP_ROOT, "spatialRepresentations.json")
 #print("herer is working dir",os.getcwd())
 
 DIR_QCNS = "./output"

@@ -22,7 +22,7 @@ import io
 import json
 import os
 import sys
-from settings import APP_ROOT, DIR_DATA, DIR_QCNS, RecordList, SMARTSKEMA_PATH
+from settings import APP_ROOT, DIR_DATA, DIR_QCNS, RecordList, SMARTSKEMA_PATH, QUALITATIVE_REPRESENTATION
     #SketchMapName, BaseMapName
     # STATIC_DIR,UPLOADED_DIR_PATH,PROJ_DIR_PATH,MODIF_DIR_PATH,OUTPUT_DIR_PATH,SVG_DIR_PATH,UUID
 import logging
@@ -239,6 +239,7 @@ def getParty():
 def qualitative_spatial_queries():
     global OUTPUT_DIR_PATH
     global SKETCH_MAP_QCN
+    global QUALITATIVE_REPRESENTATION
     selected_feat_lr_rel = []
     selected_feat_rcc8_rel = []
     selected_feat_relDist_rel = []
@@ -255,7 +256,7 @@ def qualitative_spatial_queries():
     with open(smQCNFilePath) as smJson:
         smQCNs = json.loads(smJson.read())
 
-    with open('./static/data/spatialRepresentations.json') as qr_file:
+    with open(QUALITATIVE_REPRESENTATION) as qr_file:
         qualReps = json.loads(qr_file.read())
         qualiReps_list = get_qualitativeRepresentaitons(qualReps)
         #print("listofRepresentations",qualiReps_list)
@@ -319,91 +320,94 @@ def get_approx_location_from_relations():
     relatum_feat_type = get_relatum_feat_type(relatum, data_geom)
 
     #print("relatum_feat_type", relatum_feat_type)
+    try:
+        geoJson_tiles_type = ""
+        if representation == "left_right":
+            geoJson_tiles_type = "left_right"
+            filter_params = {'filter_geoms': 6, 'filter_types': False, 'type_list': [], 'filter_ids': False,
+                             'id_list': [], 'filter_names': False, 'name_list': []}
+            filter_params['filter_ids'] = True
+            filter_params['id_list'].append(relatum)
 
-    geoJson_tiles_type = ""
-    if representation == "left_right":
-        geoJson_tiles_type = "left_right"
-        filter_params = {'filter_geoms': 6, 'filter_types': False, 'type_list': [], 'filter_ids': False,
-                         'id_list': [], 'filter_names': False, 'name_list': []}
-        filter_params['filter_ids'] = True
-        filter_params['id_list'].append(relatum)
+            tessellation_sets = {}
+            tessellation_sets = tessellation('left_right', g_left_right_tiles, 1, data_geom, False,
+                                             **filter_params).get_tessellations()
+            # print(tessellation_sets)
+            filter_params['filter_geoms'] = config.FILTER_ALL
 
-        tessellation_sets = {}
-        tessellation_sets = tessellation('left_right', g_left_right_tiles, 1, data_geom, False,
-                                         **filter_params).get_tessellations()
-        # print(tessellation_sets)
-        filter_params['filter_geoms'] = config.FILTER_ALL
+            if lr_relations['relation'] == "left":
+                shapelyObject = tessellation_sets[(relatum,)].get_tile('left')
+            elif lr_relations['relation'] == "right":
+                shapelyObject = tessellation_sets[(relatum,)].get_tile('right')
+            else:
+                shapelyObject = tessellation_sets.values()
+            coords = shapelyObject.exterior.coords[::-1]
+            shapelyObject = Polygon(coords)
+            computed_tiles = shapely.geometry.mapping(shapelyObject)  #
 
-        if lr_relations['relation'] == "left":
-            shapelyObject = tessellation_sets[(relatum,)].get_tile('left')
-        elif lr_relations['relation'] == "right":
-            shapelyObject = tessellation_sets[(relatum,)].get_tile('right')
-        else:
-            shapelyObject = tessellation_sets.values()
-        coords = shapelyObject.exterior.coords[::-1]
-        shapelyObject = Polygon(coords)
-        computed_tiles = shapely.geometry.mapping(shapelyObject)  #
+            geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
 
-        geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
+        elif representation == "RCC8":
+            geoJson_tiles_type = "RCC8"
+            filter_params = {'filter_geoms': 6, 'filter_types': False, 'type_list': [], 'filter_ids': False,
+                             'id_list': [], 'filter_names': False, 'name_list': []}
+            filter_params['filter_ids'] = True
+            filter_params['id_list'].append(relatum)
 
-    elif representation == "RCC8":
-        geoJson_tiles_type = "RCC8"
-        filter_params = {'filter_geoms': 6, 'filter_types': False, 'type_list': [], 'filter_ids': False,
-                         'id_list': [], 'filter_names': False, 'name_list': []}
-        filter_params['filter_ids'] = True
-        filter_params['id_list'].append(relatum)
+            tessellation_sets = {}
+            tessellation_sets = tessellation('rcc', g_rcc_tiles, 1, data_geom, False,
+                                             **filter_params).get_tessellations()
 
-        tessellation_sets = {}
-        tessellation_sets = tessellation('rcc', g_rcc_tiles, 1, data_geom, False,
-                                         **filter_params).get_tessellations()
+            filter_params['filter_geoms'] = config.FILTER_ALL
 
-        filter_params['filter_geoms'] = config.FILTER_ALL
+            if lr_relations['relation'].upper() == 'PO' or 'EQ' or 'TPP' or 'TPPI' or 'NTPP' or 'NTPPI':
+                shapelyObject = tessellation_sets[(relatum,)].get_tile('interior')
+            elif lr_relations['relation'].upper() == 'EC' or 'PO' or 'EQ' or 'TPP' or 'TPPI' or 'NTPPI':
+                shapelyObject = tessellation_sets[(relatum,)].get_tile('boundary')
+            elif lr_relations['relation'].upper() == 'DC' or 'EC' or 'PO' or 'TPPI' or 'NTPPI':
+                shapelyObject = tessellation_sets[(relatum,)].get_tile('exterior')
+            else:
+                shapelyObject = tessellation_sets.values()
 
-        if lr_relations['relation'].upper() == 'PO' or 'EQ' or 'TPP' or 'TPPI' or 'NTPP' or 'NTPPI':
-            shapelyObject = tessellation_sets[(relatum,)].get_tile('interior')
-        elif lr_relations['relation'].upper() == 'EC' or 'PO' or 'EQ' or 'TPP' or 'TPPI' or 'NTPPI':
-            shapelyObject = tessellation_sets[(relatum,)].get_tile('boundary')
-        elif lr_relations['relation'].upper() == 'DC' or 'EC' or 'PO' or 'TPPI' or 'NTPPI':
-            shapelyObject = tessellation_sets[(relatum,)].get_tile('exterior')
-        else:
-            shapelyObject = tessellation_sets.values()
+            coords = shapelyObject.exterior.coords[::-1]
+            shapelyObject = Polygon(coords)
+            computed_tiles = shapely.geometry.mapping(shapelyObject)  #
 
-        coords = shapelyObject.exterior.coords[::-1]
-        shapelyObject = Polygon(coords)
-        computed_tiles = shapely.geometry.mapping(shapelyObject)  #
+            geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
 
-        geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
+        elif representation == "REL_DIST":
+            geoJson_tiles_type = "REL_DIST"
 
-    elif representation == "REL_DIST":
-        geoJson_tiles_type = "REL_DIST"
+            tessellation_sets = {}
+            filter_params = {'filter_geoms': 6, 'filter_types': True, 'type_list': [relatum_feat_type, main_feat_type],
+                             'filter_ids': False,
+                             'id_list': [], 'filter_names': False, 'name_list': []}
+            filter_params['filter_ids'] = False
+            filter_params['id_list'].append(relatum)
+            filter_params['filter_geoms'] = config.FILTER_ALL
 
-        tessellation_sets = {}
-        filter_params = {'filter_geoms': 6, 'filter_types': True, 'type_list': [relatum_feat_type, main_feat_type],
-                         'filter_ids': False,
-                         'id_list': [], 'filter_names': False, 'name_list': []}
-        filter_params['filter_ids'] = False
-        filter_params['id_list'].append(relatum)
-        filter_params['filter_geoms'] = config.FILTER_ALL
+            tessellation_sets = tessellation('REL_DIST', g_reldist_tiles, 1, data_geom, False, [main_feat_type],
+                                             **filter_params)
+            # print("here is tessellation_sets",tessellation_sets)
+            tessellation_sets = tessellation_sets.get_tessellations()
 
-        tessellation_sets = tessellation('REL_DIST', g_reldist_tiles, 1, data_geom, False, [main_feat_type],
-                                         **filter_params)
-        # print("here is tessellation_sets",tessellation_sets)
-        tessellation_sets = tessellation_sets.get_tessellations()
+            if lr_relations['relation'] == "near":
+                shapelyObject = tessellation_sets[(relatum,)].get_tile('near')
+            elif lr_relations['relation'] == "far":
+                shapelyObject = tessellation_sets[(relatum,)].get_tile('far')
+            elif lr_relations['relation'] == "vfar":
+                shapelyObject = tessellation_sets[(relatum,)].get_tile('vfar')
+            else:
+                shapelyObject = tessellation_sets.values()
 
-        if lr_relations['relation'] == "near":
-            shapelyObject = tessellation_sets[(relatum,)].get_tile('near')
-        elif lr_relations['relation'] == "far":
-            shapelyObject = tessellation_sets[(relatum,)].get_tile('far')
-        elif lr_relations['relation'] == "vfar":
-            shapelyObject = tessellation_sets[(relatum,)].get_tile('vfar')
-        else:
-            shapelyObject = tessellation_sets.values()
+            computed_tiles = shapely.geometry.mapping(shapelyObject)  #
+            geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
 
-        computed_tiles = shapely.geometry.mapping(shapelyObject)  #
-        geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
+        geoJson_tiles = json.dumps(geoJson_tiles)
+        geoJson_tiles = json.loads(geoJson_tiles)
 
-    geoJson_tiles = json.dumps(geoJson_tiles)
-    geoJson_tiles = json.loads(geoJson_tiles)
+    except IOError:
+        print("Problem in Computing Approxmate tiles ")
 
     try:
         outputFilePath = os.path.join(proj_type_dir_path, OUTPUT_DIR_PATH, APROX_TILE)
@@ -415,7 +419,7 @@ def get_approx_location_from_relations():
         f.close()
 
     except IOError:
-        print("sketchMap.json path has problem ")
+        print("Problem in Writing tiles ")
 
     return json.dumps({"geoJson_tiles": geoJson_tiles, "geoJson_tiles_type": geoJson_tiles_type})
 
@@ -920,7 +924,7 @@ def align_plain_sketch_map():
     geojson_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)
     qualified_sketch_map_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, SKETCH_MAP_QCN)
     qualified_metric_map_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, BASEMAP_QCN)
-    print ("here i am ")
+    #print ("here i am ")
     sketchid = "_".join(("sketch", request.form.get("sessID"), request.form.get("projectType")))
     metricid = "_".join(("metric", request.form.get("sessID"), request.form.get("projectType")))
     loadedSketch, loadedMetric = None, None
@@ -988,7 +992,7 @@ def align_plain_sketch_map():
         with io.open(qualified_metric_map_file_path, 'w', encoding='utf8') as file:
             file.write(json.dumps(qualified_metric_map, indent=4))
             file.close()
-
+        print("Alignment is STARTED...")
         similarity_matrix, sketch_map_size = compute_similarity_matrix(
             qualified_sketch_map,
             qualified_metric_map
@@ -1048,12 +1052,18 @@ def align_orthophoto_sketch_map():
 
     project_files_path = path_to_project(request.form)
     svg_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
+    svg_file_path_output = os.path.join(project_files_path, OUTPUT_DIR_PATH, VECTORIZED_SKETCH)
     gcp_file_name = os.path.join(project_files_path, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
     output_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, GEOREFERENCED_SKETCH_FEATURES)
 
+    """temporary copying manual file to the location"""
+    svgFile_manual_file = os.path.join(STATIC_DIR,"vectorized_sketch_svg.svg")
+    shutil.copy(svgFile_manual_file, svg_file_path)
+    shutil.copy(svgFile_manual_file, svg_file_path_output)
+
     svg_content = request.form.get('svgData')
     print("SVG content:\n", svg_content)
-
+    """
     try:
         with io.open(svg_file_path, 'w', encoding='utf8') as file:
             file.write(svg_content)
@@ -1061,7 +1071,7 @@ def align_orthophoto_sketch_map():
 
     except IOError:
         print("Problem in writing svg contents in Modified Folder")
-
+    """
     geo_data_properties, geo_data, svg_data_properties, svg_data = "", "", "", ""
     try:
         # with io.open(svgModifiedFilePath, 'r+') as file:
