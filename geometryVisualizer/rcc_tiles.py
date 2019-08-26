@@ -52,7 +52,7 @@ class GRccTiles(GTessellation):
     def compute_tiles(self, d):
         buffer_thickness= 0
         tiles = {}
-        #print("d...",d)
+        print("d...",d)
         # {'tessellation':'name', 'tuple':(objID_1, ..., objID_k), 'tiles': {'ref_1':tile_1, ..., 'ref_k':tile_k}}
         relatum = d[0]['geometry']
 

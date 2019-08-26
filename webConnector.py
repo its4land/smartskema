@@ -319,9 +319,10 @@ def get_approx_location_from_relations():
     print(" main_feat_type..:", main_feat_type)
 
     geo_data_properties, data_geom = load_geo(read_map_data_from_path(mm_json_FilePath, "geojson"), "geojson")
+    #print(geo_data_properties,data_geom)
     relatum_feat_type = get_relatum_feat_type(relatum, data_geom)
 
-    #print("relatum_feat_type", relatum_feat_type)
+    print("relatum_feat_type", relatum_feat_type)
     try:
         geoJson_tiles_type = ""
         if representation == "left_right":
@@ -345,6 +346,7 @@ def get_approx_location_from_relations():
                 shapelyObject = tessellation_sets.values()
             coords = shapelyObject.exterior.coords[::-1]
             shapelyObject = Polygon(coords)
+
             computed_tiles = shapely.geometry.mapping(shapelyObject)  #
 
             geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
@@ -370,6 +372,7 @@ def get_approx_location_from_relations():
                 shapelyObject = tessellation_sets[(relatum,)].get_tile('exterior')
             else:
                 shapelyObject = tessellation_sets.values()
+
 
             coords = shapelyObject.exterior.coords[::-1]
             shapelyObject = Polygon(coords)

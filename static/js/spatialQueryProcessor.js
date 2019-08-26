@@ -204,7 +204,7 @@ function get_qualitative_approximate_location(rep, rel) {
 
         tilesType = tilesAsjson_and_type.geoJson_tiles_type;
         tilesAsjson = tilesAsjson_and_type.geoJson_tiles;
-
+        deleteProcessingRing();
         //loadGeojsonAsSVG();
         load_computed_tiles_as_svg(tilesType,tilesAsjson);
 

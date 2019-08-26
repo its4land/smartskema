@@ -227,6 +227,40 @@ def clustering_distances(min_dist_data):
     return x
 
 
+def compute_relative_dis_ranges_1_to_M(relatum,secondary_geoms):
+    min_dist_list = []
+    for g1 in secondary_geoms:
+        g1coord = g1['geometry']
+        min_dist_list.append(relatum.distance(g1coord))
+    #print("min_dist_list",min_dist_list)
+    x = clustering_distances(min_dist_list)
+
+    near_dists = []
+    far_dists = []
+    vfar_dists = []
+    for i in range(len(x)):
+        if x[i] == 2:
+            near_dists.append(min_dist_list[i])
+        elif x[i] == 1:
+            far_dists.append(min_dist_list[i])
+        elif x[i] == 0:
+            vfar_dists.append(min_dist_list[i])
+
+    near_range = (min(near_dists), max(near_dists))
+    #print("nearEnd",near_range)
+    far_range = (min(far_dists), max(far_dists))
+    #print("far_range", far_range)
+    vfar_range = (min(vfar_dists), max(vfar_dists))
+    #print("vfar_range", vfar_range)
+
+    ''' clusters are returned in arbitrary order so we have to sort them to 
+        have each distance name refer to the correct  distance (i.e. [1,2,3] could be cluster 1
+        while [31, 43, 39] is cluster 2 and [5, 9, 13] is cluster 3
+    '''
+    near_range, far_range, vfar_range = sorted((near_range, far_range, vfar_range))
+
+    return near_range[1], far_range[1],vfar_range[1]
+
 def compute_relative_dist_ranges(geoms):
     min_dist_list = []
     for g1 in geoms[:-1]:
