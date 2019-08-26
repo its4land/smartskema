@@ -40,8 +40,8 @@ def get_has_rrr(onto):
     for class1 in classes1:
         if class1.iri.endswith('Right'):
             rights = class1.descendants()
-            print(class1.iri)
-            print(class1.descendants())
+            #print(class1.iri)
+            #print(class1.descendants())
 
     for subright in rights:
         item = str(subright)

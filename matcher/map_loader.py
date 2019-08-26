@@ -74,18 +74,18 @@ def load_map_qualify(mapID, map_data, data_format, map_type):
 
 def read_map_data_from_path(path, data_format):
     if data_format.strip().lower() == 'svg'.lower():
-        print("SVG\n", path)
+        #print("SVG\n", path)
         data = svg2paths2(path)
     if data_format.strip().lower() == 'geojson'.lower():
         with open(path) as file:
             data = json.load(file)
-
+    #print(data)
     return data
 
 
 def read_map_data_from_string(dstring, data_format):
     if data_format.strip().lower() == 'svg'.lower():
-        print("SVG\n", dstring)
+        #print("SVG\n", dstring)
         data = svg2pathss2(dstring)
     if data_format.strip().lower() == 'geojson'.lower():
         data = json.loads(dstring)

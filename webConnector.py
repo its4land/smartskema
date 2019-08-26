@@ -280,7 +280,7 @@ def qualitative_spatial_queries():
                 selected_feat_relDist_rel = get_main_feature_relDist_(main_feat_id, relDist_relations)
 
 
-        print(selected_feat_lr_rel,selected_feat_rcc8_rel,selected_feat_relDist_rel)
+        #print(selected_feat_lr_rel,selected_feat_rcc8_rel,selected_feat_relDist_rel)
 
 
     return json.dumps({"selected_feat_lr_rel":selected_feat_lr_rel,"selected_feat_rcc8_rel":selected_feat_rcc8_rel,"selected_feat_relDist_rel":selected_feat_relDist_rel})
@@ -299,7 +299,7 @@ def get_approx_location_from_relations():
         proj_type_dir_path = path_to_project(request.form)
         lr_relations = json.loads(request.form.get('clicked_relations'))
         mm_json_FilePath = os.path.join(proj_type_dir_path, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
-        print("here basemap json",mm_json_FilePath)
+        #print("here basemap json",mm_json_FilePath)
         relatum = lr_relations['relatum']
         representation = lr_relations['representation']
         main_feat_id = lr_relations['main_feat_id']
@@ -532,11 +532,11 @@ def add_tenure_record():
     party = request.args.get('party')
     rrrs = json.loads(request.args.get('rrrs_list'))
 
-    print("feat_id:",feat_id)
-    print("feat_type:",feat_type)
-    print("ownership:",ownership)
-    print("party",party)
-    print("rrrs:",rrrs)
+    #print("feat_id:",feat_id)
+    #print("feat_type:",feat_type)
+    #print("ownership:",ownership)
+    #print("party",party)
+    #print("rrrs:",rrrs)
 
 
     record_json= generate_tuenure_record_json(spatialSource,data_and_time,feat_id,feat_type,ownership,party,rrrs)
@@ -667,6 +667,7 @@ def uploadComplexSketchMap():
     global UPLOADED_DIR_PATH
     global INPUT_RASTER_COMPLEX_SKETCH
     global REDUCED_RASTER_COMPLEX_SKETCH
+    global SMARTSKEMA_PATH
 
     project_files_path = path_to_project(request.form)
 
@@ -679,31 +680,37 @@ def uploadComplexSketchMap():
     modified_filepath = os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_COMPLEX_SKETCH)
 
     try:
-        # if os.path.exists(upload_filepath):
-        #     os.remove(upload_filepath)
-        #
-        # os.makedirs(os.path.dirname(upload_filepath), exist_ok=True)
-        # with open(upload_filepath, "w") as f:
-        #     f.write(base64.decodebytes(imageContent))
-        #     f.close()
+        if os.path.exists(upload_filepath):
+            os.remove(upload_filepath)
 
-        # w = 800
+        os.makedirs(os.path.dirname(upload_filepath), exist_ok=True)
+        with open(upload_filepath, "wb") as f:
+            f.write(base64.decodebytes(imageContent))
+            f.close()
 
-        #img = cv2.imread(upload_filepath, 0)
-        #height, width, depth = img.shape
+        w = 800
 
-        #imgScale = w/width
+        img = cv2.imread(upload_filepath, -1)
+        if img is not None:
+            height, width, depth = img.shape
+            imgScale = w/width
 
-        #newX, newY = img.shape[1] * imgScale, img.shape[0] * imgScale
+            newX, newY = img.shape[1] * imgScale, img.shape[0] * imgScale
 
-        #resized_image = cv2.resize(img, (int(newX), int(newY)))
-        #img_path = Path(modified_filepath)
-        #cv2.imwrite(modified_filepath, resized_image)
-        #with open(modified_filepath, "w") as f:
-         #   f.write(base64.decodebytes(imageContent))
-        img_path = Path(upload_filepath)
+            resized_image = cv2.resize(img, (int(newX), int(newY)))
+            cv2.imwrite(modified_filepath, resized_image)
+        else:
+            newX    =   500
+            newY    =   500
+            #img_path = Path(modified_filepath)
+            with open(modified_filepath, "wb") as f:
+                f.write(base64.decodebytes(imageContent))
 
-        return json.dumps({"imgPath": img_path.as_posix(), "imgHeight": 500, "imgWidth": 500})
+        modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+        img_path = Path(modified_filepath_relative)
+        #img_path = Path(upload_filepath)
+
+        return json.dumps({"imgPath": img_path.as_posix(), "imgHeight": newY, "imgWidth": newX})
 
     except IOError:
         print("couldn't write data\n", IOError)
@@ -785,10 +792,11 @@ def uploadSketchMap():
             - get relative and pass to front end 
         """
         modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
-        #print(modified_filepath_relative)
+        #print("modified_filepath:",modified_filepath)
+        #print("modified_filepath_relative:",modified_filepath_relative)
 
         img_path = Path(modified_filepath_relative)
-        #print("here you go the relative path:", img_path)
+        #print("here you go the relative path:", img_path.as_posix())
 
         return json.dumps({"imgPath": img_path.as_posix(), "imgHeight": newY, "imgWidth": newX})
 

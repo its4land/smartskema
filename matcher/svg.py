@@ -212,7 +212,7 @@ def load_map(map_data, map_type):
     for d in features:
         d['attributes']['geometry_type'] = d['geometry'].geom_type
 
-    print("map loaded")
+    #print("map loaded")
 
     # map loaded, so return the data
     return map_properties, features

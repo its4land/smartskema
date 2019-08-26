@@ -152,7 +152,7 @@ class QTessellation(object):
         self.tiles = {}
 
 
-    def get_tile(tile_ref):
+    def get_tile(self, tile_ref):
         return self.tiles[tile_ref]
 
 
