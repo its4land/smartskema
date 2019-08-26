@@ -1018,12 +1018,12 @@ def align_plain_sketch_map():
         for l in range(matcher.slist.shape[0]):
             matchdict[qualified_sketch_map['features'][matcher.slist[l]]['ssm_id']] = \
                 qualified_metric_map['features'][matcher.mlist[l]]['ssm_id']
-            print(qualified_sketch_map['features'][matcher.slist[l]]['ssm_id'], "(",
-                  qualified_sketch_map['features'][matcher.slist[l]]['feat_type'], ")...matches with...",
-                  qualified_metric_map['features'][matcher.mlist[l]]['ssm_id'], "(",
-                  qualified_metric_map['features'][matcher.mlist[l]]['feat_type'], ")"
-                  )
-
+            # print(qualified_sketch_map['features'][matcher.slist[l]]['ssm_id'], "(",
+            #       qualified_sketch_map['features'][matcher.slist[l]]['feat_type'], ")...matches with...",
+            #       qualified_metric_map['features'][matcher.mlist[l]]['ssm_id'], "(",
+            #       qualified_metric_map['features'][matcher.mlist[l]]['feat_type'], ")"
+            #       )
+        print("Alignment is ENDED")
         if os.path.exists(matches_file_path):
             os.remove(matches_file_path)
 
@@ -1106,7 +1106,7 @@ def align_orthophoto_sketch_map():
 
     #geo_data_properties, geo_data = load_geo(loaded_GCP_File, "geojson")
     #svg_data_properties, svg_data = load_svg(svgFile, "svg")
-
+    print("Alignment is STARTED...")
     # pair up the gcps
     svg_gcps = [d for d in svg_data if d['attributes']['feat_type'] == 'gcp']
     geo_gcps = [d for d in geo_data if d['attributes']['feat_type'] == 'gcp']
@@ -1162,6 +1162,7 @@ def align_orthophoto_sketch_map():
     #print("geo_data_properties\n", geo_data_properties)
     geojson_output["features"] = georeferenced_features
 
+    print("Alignment is ENDED")
     #print("geojson_output\n", geojson_output)
     #print()
     try:
@@ -1175,7 +1176,7 @@ def align_orthophoto_sketch_map():
 
     return json.dumps(geojson_output)
 
-
+"""
 @app.route("/download_aligned_results", methods = ["POST"])
 def download_aligned_results():
     global OUTPUT_DIR_PATH
@@ -1195,6 +1196,7 @@ def download_aligned_results():
 
     #urllib.request.urlretrieve(url, 'c:/'+GEOREFERENCED_SKETCH_FEATURES)
     return "msg"
+"""
 
 if __name__ == '__main__':
     app.run(debug=True)

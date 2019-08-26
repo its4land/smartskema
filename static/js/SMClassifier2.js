@@ -31,6 +31,10 @@ var originalImageContent = "";
 var LDM_fileName_full = "";
 var SvgPath;
 
+sm_checked = new Boolean($("#SM_checked").prop("checked", false));
+orth_sm_checked = new Boolean($("#orthphoto_drawing_checked").prop("checked", false));
+
+
 
 function loadComplexStructureDrawingMap(element){
     fileList = document.getElementById('ComplexStrMapInputbutton').files;
