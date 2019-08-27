@@ -582,6 +582,7 @@ function reasoner_process_spatial_queries(){
 $(".chosen").chosen();
 
 function add_complexStruMap_bnt() {
+
     var SVG_ELE = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
 
     SVG_ELE.on('click', loadComplexStructureMap_mouseClick);
