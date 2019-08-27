@@ -1,12 +1,13 @@
 #nonSpatial_query_popup_div {
-    width:350px;
+    width:360px;
     background: white;
+    margin: auto;
 
 }
 
 
 #nonSpatial_query_resp_div{
-    padding: 1px;
+    padding: 2px;
     width: 100%;
     font-family: Verdana;
     font-size: 12px;

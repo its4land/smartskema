@@ -90,6 +90,7 @@ function nonSpatial_query_result_popup() {
 $(document).on('keydown', function (e) {
     if (e.keyCode === 27) { // ESC
         $('#nonSpatial_query_popup_div').hide();
+        deleteProcessingRing();
     }
 });
 

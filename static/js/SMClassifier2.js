@@ -31,8 +31,8 @@ var originalImageContent = "";
 var LDM_fileName_full = "";
 var SvgPath;
 
-sm_checked = new Boolean($("#SM_checked").prop("checked", false));
-orth_sm_checked = new Boolean($("#orthphoto_drawing_checked").prop("checked", false));
+
+
 
 
 
@@ -328,6 +328,7 @@ function enable_ladm_bnts() {
  * LADM interaction for RRRs
  */
 function ladm_interaction_for_RRR() {
+    deleteProcessingRing();
     ladm_interaction_for_RRR_mode();
 }
 
@@ -337,8 +338,8 @@ function ladm_interaction_for_RRR() {
  */
 
 function spatial_query_processor(){
-    deleteProcessingRing();
-    spatial_query_processor_mode();
+        deleteProcessingRing();
+      spatial_query_processor_mode();
 }
 
 /**

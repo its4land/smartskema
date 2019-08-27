@@ -213,6 +213,7 @@ function ladm_display_popup() {
 $(document).on('keydown', function (e) {
     if (e.keyCode === 27) { // ESC
         $('#ladm_rrrs_popup_div').hide();
+        deleteProcessingRing();
     }
 });
 

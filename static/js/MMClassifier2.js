@@ -5,8 +5,8 @@ var finalResult;
 var json;
 
 
-mm_checked = new Boolean($("#MM_checked").prop("checked", false));
-mm_checked1 = new Boolean($("#ortho_GCP_checked").prop("checked", false));
+
+
 
 function loadMetricMap() {
 

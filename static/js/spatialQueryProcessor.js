@@ -12,7 +12,7 @@ var vector14;
 var vector15;
 
 function spatial_query_processor_mode() {
-    createProcessingRing();
+    //createProcessingRing();
     console.log("in the spatial query processor MODE...");
 
     svg_elem = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
@@ -25,6 +25,7 @@ function spatial_query_processor_mode() {
     $(document).on('keydown', function (e) {
         if (e.keyCode === 27) { // ESC
             $('#spatial_query_popup_div').hide();
+            deleteProcessingRing();
         }
     });
 }
@@ -49,7 +50,7 @@ function get_spatial_query_popup() {
     main_feat_id = $(this).attr('id');
     main_feat_type = $(this).attr('smart_skema_type');
 
-    console.log("here i am in the div");
+    //console.log("here i am in the div");
     $('#featureID_spatial_query').text(main_feat_id);
     $('#featureType_spatial_query').text(main_feat_type);
 
@@ -58,14 +59,12 @@ function get_spatial_query_popup() {
 
     x = d3.event.pageX;
     y = d3.event.pageY;
-    console.log("x, y :",x, y);
+    //console.log("x, y :",x, y);
 
     $('#spatial_query_popup_div').offset({
         top: y,
         left: x
     });
-    deleteProcessingRing();
-
 }
 
 
@@ -74,7 +73,6 @@ function get_spatial_query_popup() {
  */
 
 function qualitative_spatial_queries() {
-    deleteProcessingRing();
     var lr_relations = "";
     var topo_relations = "";
     var relDist_relations= "";
@@ -98,38 +96,14 @@ function qualitative_spatial_queries() {
         lr_relations = relations.selected_feat_lr_rel;
         topo_relations = relations.selected_feat_rcc8_rel;
         relDist_relations = relations.selected_feat_relDist_rel;
-        setTimeout(visualize_computed_rels(lr_relations,topo_relations,relDist_relations), 10);
-
+        setTimeout(visualize_computed_rels(lr_relations,topo_relations,relDist_relations), 5);
     });
-
-    //createProcessingRing(loc);
-   /* $.ajax({
-        url: '/qualitative_spatial_queries',
-        type: 'GET',
-        data: {
-            main_feat_id: main_feat_id,
-            main_feat_type: main_feat_type
-
-        },
-        contentType: 'text/plain',
-        success: function (resp) {
-            var relations = JSON.parse(resp);
-
-            //console.log(relations);
-            lr_relations = relations.selected_feat_lr_rel;
-            topo_relations = relations.selected_feat_rcc8_rel;
-            relDist_relations = relations.selected_feat_relDist_rel;
-            setTimeout(visualize_computed_rels(lr_relations,topo_relations,relDist_relations), 10);
-        }
-    });*/
 }
 
 /**
  * function visualies the relations got from the server side
  */
 function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) {
-    //createProcessingRing();
-    deleteProcessingRing();
 
     for (i in lr_relations) {
         var presentation = "left_right";
@@ -189,7 +163,6 @@ function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) 
  *
  */
 function get_qualitative_approximate_location(rep, rel) {
-    deleteProcessingRing();
     let ajaxParams = {
         url: '/get_approx_location_from_relations',
         type: 'POST',
@@ -200,57 +173,17 @@ function get_qualitative_approximate_location(rep, rel) {
     };
     new communicator(ajaxParams).sendRequest({}, function(resp){
         tilesAsjson_and_type = JSON.parse(resp);
-        console.log("tilesAsjson_and_type...:",tilesAsjson_and_type);
+        //console.log("tilesAsjson_and_type...:",tilesAsjson_and_type);
 
         tilesType = tilesAsjson_and_type.geoJson_tiles_type;
         tilesAsjson = tilesAsjson_and_type.geoJson_tiles;
-        deleteProcessingRing();
-        //loadGeojsonAsSVG();
         load_computed_tiles_as_svg(tilesType,tilesAsjson);
 
     });
-
-   /* $.ajax({
-        url: '/get_approx_location_from_relations',
-        type: 'GET',
-        data: {
-            clicked_relations: JSON.stringify({representation:rep, relation: rel, relatum: mapmatches[rel["obj_1"]], main_feat_id: main_feat_id,
-                main_feat_type: main_feat_type})
-        },
-        contentType: 'text/plain',
-        success: function (resp) {
-            tilesAsjson_and_type = JSON.parse(resp);
-            console.log("tilesAsjson_and_type...:",tilesAsjson_and_type);
-
-            tilesType = tilesAsjson_and_type.geoJson_tiles_type;
-            tilesAsjson = tilesAsjson_and_type.geoJson_tiles;
-
-            //loadGeojsonAsSVG();
-            load_computed_tiles_as_svg(tilesType,tilesAsjson);
-
-        }
-    });*/
-
 }
 
 function load_computed_tiles_as_svg(tilesType,tilesAsjson){
-    //console.log("here is computed tile",tilesAsjson);
-    deleteProcessingRing();
     var topo = topojson.topology({foo: tilesAsjson});
-    //console.log("topo feat_type",topo.objects.foo.geometries[0].properties.feat_type);
-
-
-   /* zoom = d3.zoom()
-        .scaleExtent([1 << 15, 1 << 30])
-        .on("zoom", function () {
-            metricZoomCallback(false)
-        });
-    path = d3.geoPath()
-        .projection(projection);*/
-
-  /*  path = d3.geoPath()
-        .projection(projection);*/
-
     json_svg = d3.select("#baseSVG").select("#baseLayer").append("g");
 
     if (tilesType ==="left_right"){
@@ -304,5 +237,4 @@ function load_computed_tiles_as_svg(tilesType,tilesAsjson){
             .attr("class", "approximate_tile")
             .attr("style", null);
     }
-
 }

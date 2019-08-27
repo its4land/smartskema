@@ -51,6 +51,12 @@ function loadProjectData(event, projectType, divID) {
 }
 
 function loadSketchMapProject(event) {
+
+    sm_checked = new Boolean($("#SM_checked").prop("checked", false));
+    mm_checked = new Boolean($("#MM_checked").prop("checked", false));
+    ladm_checked = new Boolean($("#LADM_checked").prop("checked", false));
+    party_checked = new Boolean($("#Party_checked").prop("checked", false));
+
     projectMode = MODE_FREEHAND_SKETCH;
     let projectType = "plainSketchProject";
     let divID =  '#SM_project_div';
@@ -63,6 +69,10 @@ function loadSketchMapProject(event) {
  *
  */
 function loadOrthophotoProject(event) {
+    orth_sm_checked = new Boolean($("#orthphoto_drawing_checked").prop("checked", false));
+    mm_checked1 = new Boolean($("#ortho_GCP_checked").prop("checked", false));
+    orth_ladm_checked = new Boolean($("#ortho_LADM_checked").prop("checked", false));
+    ortho_party_checked = new Boolean($("#ortho_Party_checked").prop("checked", false));
 
     projectMode = MODE_MAP_TRACE_SKETCH;
     let projectType = "orthoSketchProject";
