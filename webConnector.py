@@ -638,7 +638,9 @@ def get_domain_model_rrrs():
         #uploaded_filepath = os.path.join(UPLOADED_DIR_PATH, fileName_full)
         ontology = get_ontology(uploaded_filepath).load()
 
+
         rrrs = get_has_rrr(ontology)
+        #print(rrrs)
     except IOError:
         print("problem in Reading Owl file in the Function: /get_domain_model_rrrs...")
 

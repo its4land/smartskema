@@ -31,7 +31,7 @@ def generate_tuenure_record_json(spatialSource, date_time, feat_id,feat_type,own
 def get_has_rrr(onto):
     rrr_list = []
     #rrrs = onto.search(iri="*Right*")
-    rrrs = onto.classes()
+    #rrrs = onto.classes()
 
     classes1 = onto.classes()
 
@@ -40,13 +40,13 @@ def get_has_rrr(onto):
     for class1 in classes1:
         if class1.iri.endswith('Right'):
             rights = class1.descendants()
-            #print(class1.iri)
+            print(class1.iri)
             #print(class1.descendants())
 
     for subright in rights:
         item = str(subright)
-        prefix_term = item.split(".", 1)[0]
-        item_term = item.split(".", 1)[-1]
+        item_term = item.split(".", -1)[-1]
+        prefix_term = item.split(".", -1)[0]
         rrr_list.append({'prefix': prefix_term, 'item': item_term})
 
 
