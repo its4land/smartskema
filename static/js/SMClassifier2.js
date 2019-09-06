@@ -614,3 +614,18 @@ function add_complexStruMap_bnt() {
         });
     }
 }
+
+function save_PnS(){
+    let ajaxParams = {
+        url: "/save_PnS",
+        type:"POST",
+        data:{
+            feat_id : ""
+        }
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+        let json = JSON.parse(resp);
+        //mapmatches = json;
+    });
+
+}

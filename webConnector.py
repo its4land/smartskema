@@ -56,6 +56,7 @@ from geometryVisualizer.rcc_tiles import GRccTiles as g_rcc_tiles
 from geometryVisualizer.reldist_tiles import GRelDistTiles as g_reldist_tiles
 from geometryVisualizer.tessellations import Tessellations as tessellation
 from geometryVisualizer.tiles_to_geoJson import *
+import requests
 
 
 #sys.setrecursionlimit(22000)
@@ -97,6 +98,8 @@ REDUCED_RASTER_COMPLEX_SKETCH = "reduced_complex_sketch_image.png"
 ALIGNED_RESULT = "alignedResult.json"
 
 app = Flask(__name__)
+
+
 
 """
 This belongs to the utils modules but is here for quickly constructing directory/file paths from path lists
@@ -1180,6 +1183,59 @@ def align_orthophoto_sketch_map():
          print("Problem in Writing matching result as output.json")
 
     return json.dumps(geojson_output)
+
+
+
+""" 
+    - to save data at PnS
+"""
+
+@app.route("/save_PnS", methods = ["POST"])
+def save_PnS ():
+    global UPLOADED_DIR_PATH
+    global OUTPUT_DIR_PATH
+    global MODIF_DIR_PATH
+    global INPUT_RASTER_SKETCH
+    global REDUCED_RASTER_SKETCH
+    global VECTORIZED_SKETCH
+    global VECTOR_BASEMAP
+    global SKETCH_MAP_QCN
+    global BASEMAP_QCN
+    global LADM_FILE
+    global PARTIES_FILE
+    global MATCHED_FEATURES
+    global GEOREFERENCED_SKETCH_FEATURES
+    global MATCHED_FEATURES
+    global TENURE_RECORD_FILE
+    global INPUT_RASTER_COMPLEX_SKETCH
+    global REDUCED_RASTER_COMPLEX_SKETCH
+
+    API_URL = "http://platform.its4land.com/api"
+    uuid = "cbc2b21d-02d1-4c55-9e53-c0f2622ca497"
+    project_files_path = path_to_project(request.form)
+    print(project_files_path)
+    upladed_sketch_original = os.path.join(project_files_path,UPLOADED_DIR_PATH,INPUT_RASTER_SKETCH)
+    uploaded_base_map = os.path.join(project_files_path, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
+    ladm_file = os.path.join(project_files_path, UPLOADED_DIR_PATH, LADM_FILE)
+    party_file = os.path.join(project_files_path, UPLOADED_DIR_PATH, PARTIES_FILE)
+    uploaded_raster_complex_file = os.path.join(project_files_path, UPLOADED_DIR_PATH, INPUT_RASTER_COMPLEX_SKETCH)
+
+    reduced_sketch = os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_SKETCH)
+    reduced_complex_sketch = os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_COMPLEX_SKETCH)
+
+    sketch_svg_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,INPUT_RASTER_SKETCH)
+    sketch_qcn = os.path.join(project_files_path,OUTPUT_DIR_PATH,SKETCH_MAP_QCN)
+    baseMap_qcn = os.path.join(project_files_path,OUTPUT_DIR_PATH,BASEMAP_QCN)
+    geoReferenced_sketch_match_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,GEOREFERENCED_SKETCH_FEATURES)
+    matches_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,MATCHED_FEATURES)
+    tenure_record_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,TENURE_RECORD_FILE)
+
+    response = requests.post()
+
+
+    print("i am here ")
+
+    return "msg"
 
 """
 @app.route("/download_aligned_results", methods = ["POST"])
