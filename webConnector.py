@@ -22,7 +22,7 @@ import io
 import json
 import os
 import sys
-from settings import USER_SESSIONS_DIR,DIR_DATA, DIR_QCNS, RecordList, SMARTSKEMA_PATH, QUALITATIVE_REPRESENTATION
+from settings import USER_SESSIONS_DIR,DIR_DATA, DIR_QCNS, RecordList, PnS_PROJ_ID, SMARTSKEMA_PATH, QUALITATIVE_REPRESENTATION
     #SketchMapName, BaseMapName
     # STATIC_DIR,UPLOADED_DIR_PATH,PROJ_DIR_PATH,MODIF_DIR_PATH,OUTPUT_DIR_PATH,SVG_DIR_PATH,UUID
 import logging
@@ -57,6 +57,7 @@ from geometryVisualizer.reldist_tiles import GRelDistTiles as g_reldist_tiles
 from geometryVisualizer.tessellations import Tessellations as tessellation
 from geometryVisualizer.tiles_to_geoJson import *
 import requests
+from platform_PnS.platform_PnS import*
 
 
 #sys.setrecursionlimit(22000)
@@ -97,6 +98,7 @@ INPUT_RASTER_COMPLEX_SKETCH = "input_complex_sketch_image.png"
 REDUCED_RASTER_COMPLEX_SKETCH = "reduced_complex_sketch_image.png"
 ALIGNED_RESULT = "alignedResult.json"
 
+
 app = Flask(__name__)
 
 
@@ -110,8 +112,13 @@ def build_path(path_list):
 
 def path_to_project(d):
     global USER_SESSIONS_DIR
-    #print("d",d)
-    return os.path.join(USER_SESSIONS_DIR, d.get("sessID"), d.get("projectType"))
+    global PnS_PROJ_ID
+    PnS_PROJ_ID =  d.get("sessID")
+    #print("pathto project p an s id",PnS_PROJ_ID)
+
+        #print(os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, d.get("projectType")))
+    return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, d.get("projectType"))
+    #return os.path.join(USER_SESSIONS_DIR, d.get("sessID"), d.get("projectType"))
 
 """/getSessionID
     try:
@@ -129,7 +136,7 @@ def main_page():
 @app.route("/getSessionID", methods=["GET"])
 def get_session_id():
     global USER_SESSIONS_DIR
-    global PROJ_DIR_PATH
+    global PnS_PROJ_ID
 
     """ comment out if using full alignment in debug mode """
     #if app.debug:
@@ -137,19 +144,23 @@ def get_session_id():
         #print("here session id",debug_get_session_id())
      #   return debug_get_session_id()
 
-    sess_id = str(uuid.uuid4())
-    proj_dir_path = os.path.join(USER_SESSIONS_DIR, sess_id)
+    #sess_id = str(uuid.uuid4())
+    """getting session id from PnS platform to create folder"""
+    sess_id = str(get_PnS_Project_ID())
+    if sess_id != None:
+        PnS_PROJ_ID = str(sess_id)
+        proj_dir_path = os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID)
 
     try:
         if not (os.path.exists(proj_dir_path)):
             os.mkdir(proj_dir_path)
 
     except IOError:
-        print("problem in creating PROJ_DIR and Sub_DIRs..")
+        print("problem in createing session..")
 
     # print(url_for('.smartSkeMa'))
     #print("generated session ID - now returning!")
-    return sess_id  # redirect("dashboard.html", sessId=sess_id)
+    return PnS_PROJ_ID  # redirect("dashboard.html", sessId=sess_id)
 
 
 def debug_get_session_id():
@@ -167,7 +178,7 @@ def setProjectType():
     try:
         #print("request.form",request.form)
         proj_type_dir_path = path_to_project(request.form)
-        #print("here you go:proj_type_dir_path",proj_type_dir_path)
+        print("here you go:proj_type_dir_path",proj_type_dir_path)
         PROJ_DIR_PATH = proj_type_dir_path
         if not (os.path.exists(proj_type_dir_path)):
             os.mkdir(proj_type_dir_path)
@@ -177,7 +188,7 @@ def setProjectType():
             #os.mkdir(os.path.join(proj_type_dir_path, SVG_DIR_PATH))
 
     except IOError:
-            print("problem in creating PROJ_DIR and Sub_DIRs..")
+            print("problem in creating PROJ_DIR and Sub_DIRs for P and S..")
     return ""
 
 @app.route("/smartSkeMa_new", methods=["POST", "GET"])
@@ -1209,11 +1220,12 @@ def save_PnS ():
     global TENURE_RECORD_FILE
     global INPUT_RASTER_COMPLEX_SKETCH
     global REDUCED_RASTER_COMPLEX_SKETCH
+    global PnS_PROJ_ID
 
     API_URL = "http://platform.its4land.com/api"
     uuid = "cbc2b21d-02d1-4c55-9e53-c0f2622ca497"
     project_files_path = path_to_project(request.form)
-    print(project_files_path)
+    #print(project_files_path)
     upladed_sketch_original = os.path.join(project_files_path,UPLOADED_DIR_PATH,INPUT_RASTER_SKETCH)
     uploaded_base_map = os.path.join(project_files_path, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
     ladm_file = os.path.join(project_files_path, UPLOADED_DIR_PATH, LADM_FILE)
@@ -1229,11 +1241,13 @@ def save_PnS ():
     geoReferenced_sketch_match_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,GEOREFERENCED_SKETCH_FEATURES)
     matches_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,MATCHED_FEATURES)
     tenure_record_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,TENURE_RECORD_FILE)
+    #print("reduced_sketch ",reduced_sketch)
 
-    response = requests.post()
-
-
-    print("i am here ")
+    files = [upladed_sketch_original,reduced_sketch,reduced_complex_sketch, uploaded_raster_complex_file,uploaded_base_map]
+    for file in files:
+        if os.path.exists(file):
+            resp = post_all_files_to_Pns(file,PnS_PROJ_ID)
+            print("API_POST status",resp)
 
     return "msg"
 

@@ -12,6 +12,7 @@ import os
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
 #print("APP_ROOT:",APP_ROOT)
 UUID = ""
+PnS_PROJ_ID = ""
 STATIC_DIR = os.path.join(APP_ROOT,"static")
 USER_SESSIONS_DIR = os.path.join(STATIC_DIR,"usessions")
 PROJ_DIR_PATH = ""
