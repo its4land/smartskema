@@ -32,7 +32,7 @@ function loadProjectData(event, projectType, divID) {
     });
 
     if (sm_checked || mm_checked || ladm_checked || party_checked) {
-        console.log("i am here now :)")
+        //console.log("i am here now :)")
     }
 
     let ajaxParams = {
@@ -110,7 +110,9 @@ var sessionData = (function(){
     var projectType;
     var sessionData =  {
         projectType: projectType,
-        setProjectType: function(projectType){this.projectType = projectType}
+        setProjectType: function(projectType){
+            this.projectType = projectType
+        }
     }
 
     $.ajax({

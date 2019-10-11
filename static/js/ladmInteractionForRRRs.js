@@ -20,7 +20,7 @@ function loadPartyFile(element) {
     fileReader.onload = function () {
         partyJson = JSON.parse(fileReader.result);
         let ajaxParams = {
-            url: '/getParty',
+            url: '/postParty',
             type: 'POST',
             data: {
                 loadedPartyFile: loadedPartyFile,
@@ -46,7 +46,7 @@ function ortho_loadPartyFile(element) {
         partyJson = JSON.parse(fileReader.result);
 
         let ajaxParams = {
-            url: '/getParty',
+            url: '/postParty',
             type: 'POST',
             data: {
                 loadedPartyFile: loadedPartyFile,

@@ -139,12 +139,20 @@
                 </ul>
 
                 <div class="navbar">
-                    <a id = "download_alignedResult" href="" onclick="downloadResult()"><i class="fa fa-fw fa-download"></i> Download Result</a>
-                    <a id = "save@PnS"class="active" href="#" onclick ="save_PnS()"><i class="fa fa-fw fa-upload"></i> Save@PnS</a>
+
+                    <a id="save@PnS" class="active" href="#" onclick="save_PnS()"><i class="fa fa-cloud-upload"></i>
+                        Save@PnS</a>
+                    <a id="download_project_from_PnS" href="#" onclick="download_projects_from_PnS()"><i
+                            class="fa fa-cloud-download"></i> Download PnS Project</a>
+                    <a id="download_alignedResult" href="" onclick="downloadResult()"><i
+                            class="fa fa-fw fa-download"></i> Download Result</a>
                     <!--<a href="#"><i class="fa fa-fw fa-search"></i> Search</a>-->
-                    <a class="active" href="#"><i class="fa fa-fw fa-home"></i>Home</a>
+                    <!-- <a class="active" href="#"><i class="fa fa-fw fa-home"></i>Home</a>-->
                     <a class="active" href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
-                    <a class="active" href="#"><i class="fa fa-fw fa-user"></i> Login</a>
+
+                    <!--<a id="testrander" href="#" onclick="render_downloaded_files_on_client()"><i
+                            class="fa fa-fw fa-download"></i> test</a>-->
+                    <!-- <a class="active" href="#"><i class="fa fa-fw fa-user"></i> Login</a>-->
 
                 </div>
 
@@ -252,8 +260,8 @@
     </div>
 
     <div id="footer_div" class="navbar navbar-expand-xl navbar-dark bg-dark">
-        <table class = "footer_table" style="width: 100%">
-            <tr >
+        <table class="footer_table" style="width: 100%">
+            <tr>
                 <td align="left">
                     <span>
                          <img src="../static/imgs/wwu.jpg" width="85" height="35" class="d-inline-block"
@@ -262,7 +270,7 @@
                             48149 Münster, Germany </i></a>
                     </span>
                 </td>
-                <td >
+                <td>
                     <span>
                         <a style="color: white"><b>Spatial Intelligence Lab |</b> <i>Institute for
                             Geoinformatics</i></a>
@@ -282,375 +290,429 @@
 
 </div>
 
-    <div id="complexStructure_div" class="w3-card-4 w3-round">
-        <header class="w3-panel w3-round w3-teal">
-            <h6 style="padding-top:3px "><b>Complex Structure : </b><a> Detail drawing of Home State called "Boma"</a>
-            </h6>
-        </header>
-        <div class="row" style="padding-left: 5px;padding-right: 5px;padding-top: 0px">
+<div id="complexStructure_div" class="w3-card-4 w3-round">
+    <header class="w3-panel w3-round w3-teal">
+        <h6 style="padding-top:3px "><b>Complex Structure : </b><a> Detail drawing of Home State called "Boma"</a>
+        </h6>
+    </header>
+    <div class="row" style="padding-left: 5px;padding-right: 5px;padding-top: 0px">
+        <div class="col-8">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="complexStr_drawing_checked"
+                       disabled="disabled">
+                <label class="custom-control-label" for="complexStr_drawing_checked"><i> Load Detail
+                    Drawing...</i></label>
+            </div>
+        </div>
+        <div class="col-4">
+            <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                Browse
+                <input id="ComplexStrMapInputbutton" accept=".png, .jpeg, .jpg" style="display: none" type="file"
+                       onchange="loadComplexStructureDrawingMap()">
+            </label>
+
+        </div>
+    </div>
+    <div id="complexStructureMapholder">
+    </div>
+    <div id="load_complexStructure_map_div">
+        <button id="load_complexStructureMap_bnd" type="button" class="btn btn-outline-info"
+                onclick="load_complexStructureMap_bnd()">Load Map
+        </button>
+    </div>
+
+</div>
+<div id="ladm_rrrs_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+    <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: auto">
+        <h6><b style="margin: 2px;padding: 2px;">Party & Rights : </b><a> Rights are extracted from LDM</a>
+            <button id="1" aria-label="Close Account Info Modal Box" style="float: right; padding: 2px;"
+                    onclick="document.getElementById('ladm_rrrs_popup_div').style.display='none'">&times;
+            </button>
+        </h6>
+    </header>
+    <div class="container" style="padding-right: 2px;padding-top: 2px">
+        <div style="padding-top:4px;padding-bottom: 4px">
+            <select id="party_selector" class="chosen" style="width: 70%">
+
+            </select>
+            <span class="text-info"><b><i>Social Unit </i></b></span>
+        </div>
+
+        <div class="dash_1"></div>
+
+        <div style="padding-top:4px;padding-bottom: 4px">
+            <select id="ownership_selector" class="chosen" style="width: 70%">
+
+            </select>
+            <span class="text-info"><b><i>Relationship </i></b></span>
+        </div>
+
+        <div class="dash_1"></div>
+
+        <div style="padding-top:4px;padding-bottom: 4px">
+            <select id="other_rrrs_selector" class="chosen" style="width: 70%">
+
+            </select>
+            <span class="text-info"><b><i>Condition </i></b></span>
+        </div>
+        <div>
+            <form style="text-align: center">
+                <input type="radio" name="Right" value="Right"> Right
+                <input type="radio" name="Responsibility" value="Responsibility"> Responsibility
+                <input type="radio" name="Restrictions" value="Restrictions"> Restrictions
+            </form>
+        </div>
+    </div>
+    <div style="text-align: right;padding: 6px">
+        <button id="add_land_tenure_record_bnt" type="button" class="btn btn-outline-info"
+                onclick="add_land_tenure_record()">Add Record
+        </button>
+
+        <button id="save_land_tenure_record_bnt" type="button" class="btn btn-outline-info"
+                onclick="save_land_tenure_record()">Save Record
+        </button>
+
+    </div>
+</div>
+<div id="popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden">
+</div>
+<div id="nonSpatial_query_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+    <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: auto">
+        <h6><b style="margin: 2px;padding: 2px;">Query Result:</b><a> Land Tenure Record</a>
+            <button id="2" aria-label="Close Account Info Modal Box" style="float: right; padding: 2px;"
+                    onclick="document.getElementById('nonSpatial_query_popup_div').style.display='none'">&times;
+            </button>
+        </h6>
+    </header>
+    <div id="nonSpatial_query_resp_div" class="w3-container">
+
+    </div>
+</div>
+<div id="processRing" style="visibility: hidden"></div>
+<div id="edit_svg_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+    <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: auto">
+        <h6 style="margin: 2px"><b>New Feature:</b><a> Add feature id and type</a>
+        </h6>
+    </header>
+
+    <label style="padding-top: 6px; margin-left: 6px">
+        <input id="feature_id" class="input-group-sm">
+        <span style="color: #009688"><b><i>&nbsp; &nbsp; feature id</i></b></span>
+    </label>
+
+    <label style="padding-top: 2px;margin-left: 6px">
+        <input id="feature_type" class="input-group-sm">
+        <span style="color: #009688"><b><i>&nbsp; &nbsp; feature type</i></b></span>
+    </label>
+    <div>
+        <label id="save_bnt" class="btn btn-outline-info" style="float: right;margin-right: 5px"
+               onclick="save_svg_new_feature_attrs.feature_attr_ok_clicked()">
+            Save data
+        </label>
+    </div>
+</div>
+
+<div id="referencePoints_popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden">
+</div>
+<div id="spatial_query_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+    <header class="w3-panel w3-round w3-teal" style="padding: 2px;margin: auto">
+        <h6><b style="margin: 2px;padding: 2px;">Query Result:</b><a> Select relation to visualize approximate
+            location</a>
+            <button id="3" aria-label="Close Account Info Modal Box" style="float: right; padding: 2px;"
+                    onclick="document.getElementById('spatial_query_popup_div').style.display='none'">&times;
+            </button>
+        </h6>
+    </header>
+
+    <div id="query_builder">
+        <div>
+            <a style="padding: inherit;margin: inherit"><b>Selected Feature Id:</b>
+                <span id="featureID_spatial_query" style="text-align:right;color: teal;font-size: 14px"> </span></a>
+        </div>
+        <div>
+            <a style="padding: inherit;margin: inherit"><b> Feature Type:</b>
+                <span id="featureType_spatial_query" style="text-align:right;color: teal;font-size: 14px"> </span>
+            </a>
+        </div>
+
+        <div style="float: right;padding: 1px">
+            <label id="submit_query" class="btn btn-outline-info" style="padding: 2px"
+                   onclick="qualitative_spatial_queries()">
+                Get Spatial Relations
+            </label>
+        </div>
+    </div>
+    <div id="spatial_query_resp_div">
+        <div>
+            <br>
+            <h6 style="padding: 5%;margin: 2px"><b>Query Result:</b></h6>
+            <table id="result_table" class="table">
+                <tr>
+                    <th style="padding: inherit"><span style="font-size: 11px">LeftRight Relations</span></th>
+                    <th style="padding: inherit"><span style="font-size: 11px">Topological Relations</span></th>
+                    <th style="padding: inherit"><span style="font-size: 11px">Relative Distances</span></th>
+                </tr>
+                <tr>
+                    <td id="leftRight_rels_div" style="padding: inherit"></td>
+                    <td id="topo_rels_div" style="padding: inherit"></td>
+                    <td id="relDist_rels_div" style="padding: inherit"></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+<div id="SM_project_div" class="w3-card-4 w3-round " style="visibility: hidden">
+    <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
+        <h6>
+            <b style="margin: 2px">Sketch Map Project :</b><a> Load required inputs for the project</a>
+            <button id="close_bnt" aria-label="Close Account Info Modal Box" style="float: right; padding: 2px;"
+                    onclick="document.getElementById('SM_project_div').style.display='none'">&times;
+            </button>
+        </h6>
+
+    </header>
+    <div id="file_loader" class="w3-container w3-round">
+        <div class="row" style="padding: 1px">
             <div class="col-8">
                 <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="complexStr_drawing_checked"
+                    <input type="checkbox" class="custom-control-input" id="SM_checked" disabled="disabled">
+                    <label class="custom-control-label" for="SM_checked"><i> Load Sketch Map...</i></label>
+                </div>
+            </div>
+            <div class="col-4">
+                <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                    Browse
+                    <input id="SketchMapInputbutton" accept=".png, .jpeg" style="display: none" type="file"
+                           onchange="loadSketchMap()">
+                </label>
+            </div>
+
+        </div>
+
+        <div class="row" style="padding: 1px">
+            <div class="col-8">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="MM_checked" disabled="disabled">
+                    <label class="custom-control-label" for="SM_checked"><i> Load Base Map...</i></label>
+
+                </div>
+            </div>
+            <div class="col-4">
+                <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                    Browse
+                    <input id="MetrichMapInputbutton" accept=".geojson, .GEOJSON" style="display: none" type="file"
+                           onchange="loadMetricMap()">
+                </label>
+            </div>
+        </div>
+
+        <div class="row" style="padding: 1px">
+            <div class="col-8" style="width: 60%">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="LADM_checked" disabled="disabled">
+                    <label class="custom-control-label" for="SM_checked"><i> Load Local Domain Model...</i></label>
+
+                </div>
+            </div>
+            <div class="col-4">
+                <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                    Browse
+                    <input id="LADMInputbutton" accept=".owl, .OWl" style="display: none" type="file"
+                           onchange="loadLADMFile()">
+                </label>
+            </div>
+        </div>
+        <div class="row" style="padding: 1px">
+
+            <div class="col-8" style="width: 60%">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="Party_checked" disabled="disabled">
+                    <label class="custom-control-label" for="SM_checked"><i> Load Parties...</i></label>
+                </div>
+            </div>
+            <div class="col-4">
+                <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                    Browse
+                    <input id="PartyInputbutton" accept=".JSON, .json" style="display: none" type="file"
+                           onchange="loadPartyFile()">
+                </label>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!--  <footer class="w3-container w3-round w3-teal">
+          <h6>The loaded files will be process</h6>
+      </footer>-->
+
+</div>
+<div id="orthophoto_project_div" class="w3-card-4 w3-round " style="visibility: hidden">
+    <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
+        <h6><b style="margin:2px">Orthophoto Project :</b><a> Load required inputs for the project</a>
+            <button id="orthophoto_close_bnt" aria-label="Close Account Info Modal Box"
+                    style="float: right; padding: 2px;"
+                    onclick="document.getElementById('orthophoto_project_div').style.display='none'">&times;
+            </button>
+        </h6>
+    </header>
+    <div id="orthophoto_file_loader" class="w3-container w3-round">
+        <div class="row" style="padding: 1px">
+            <div class="col-8">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="orthphoto_drawing_checked"
                            disabled="disabled">
-                    <label class="custom-control-label" for="complexStr_drawing_checked"><i> Load Detail
+                    <label class="custom-control-label" for="orthphoto_drawing_checked"><i> Load Orthophoto
                         Drawing...</i></label>
                 </div>
             </div>
             <div class="col-4">
                 <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
                     Browse
-                    <input id="ComplexStrMapInputbutton" accept=".png, .jpeg, .jpg" style="display: none" type="file"
-                           onchange="loadComplexStructureDrawingMap()">
+                    <input id="DigitizedMapInputbutton" accept=".png, .jpeg" style="display: none" type="file"
+                           onchange="loadSketchMap()">
                 </label>
 
             </div>
-        </div>
-        <div id="complexStructureMapholder">
-        </div>
-        <div id="load_complexStructure_map_div">
-            <button id="load_complexStructureMap_bnd" type="button" class="btn btn-outline-info"
-                    onclick="load_complexStructureMap_bnd()">Load Map
-            </button>
-        </div>
-
-    </div>
-    <div id="ladm_rrrs_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
-        <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: auto">
-            <h6><b style="margin: 2px;padding: 2px;">Party & Rights : </b><a> Rights are extracted from LDM</a>
-               <button id="1" aria-label="Close Account Info Modal Box" style="float: right; padding: 2px;"
-                        onclick="document.getElementById('ladm_rrrs_popup_div').style.display='none'">&times;
-                </button>
-            </h6>
-        </header>
-        <div class="container" style="padding-right: 2px;padding-top: 2px">
-            <div style="padding-top:4px;padding-bottom: 4px">
-                <select id="party_selector" class="chosen" style="width: 70%">
-
-                </select>
-                <span class="text-info"><b><i>Social Unit </i></b></span>
-            </div>
-
-            <div class="dash_1"></div>
-
-            <div style="padding-top:4px;padding-bottom: 4px">
-                <select id="ownership_selector" class="chosen" style="width: 70%">
-
-                </select>
-                <span class="text-info"><b><i>Relationship </i></b></span>
-            </div>
-
-            <div class="dash_1"></div>
-
-            <div style="padding-top:4px;padding-bottom: 4px">
-                <select id="other_rrrs_selector" class="chosen" style="width: 70%">
-
-                </select>
-                <span class="text-info"><b><i>Condition </i></b></span>
-            </div>
-            <div>
-                <form style="text-align: center">
-                    <input type="radio" name="Right" value="Right"> Right
-                    <input type="radio" name="Responsibility" value="Responsibility"> Responsibility
-                    <input type="radio" name="Restrictions" value="Restrictions"> Restrictions
-                </form>
-            </div>
-        </div>
-        <div style="text-align: right;padding: 6px">
-            <button id="add_land_tenure_record_bnt" type="button" class="btn btn-outline-info"
-                    onclick="add_land_tenure_record()">Add Record
-            </button>
-
-            <button id="save_land_tenure_record_bnt" type="button" class="btn btn-outline-info"
-                    onclick="save_land_tenure_record()">Save Record
-            </button>
 
         </div>
-    </div>
-    <div id="popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden">
-    </div>
-    <div id="nonSpatial_query_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
-        <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: auto">
-            <h6><b style="margin: 2px;padding: 2px;">Query Result:</b><a> Land Tenure Record</a>
-                <button id="2" aria-label="Close Account Info Modal Box" style="float: right; padding: 2px;"
-                        onclick="document.getElementById('nonSpatial_query_popup_div').style.display='none'">&times;
-                </button>
-            </h6>
-        </header>
-        <div id="nonSpatial_query_resp_div" class="w3-container">
+        <div class="row" style="padding: 1px">
 
-        </div>
-    </div>
-    <div id="processRing" style="visibility: hidden"></div>
-    <div id="edit_svg_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
-        <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: auto">
-            <h6 style="margin: 2px"><b>New Feature:</b><a> Add feature id and type</a>
-            </h6>
-        </header>
-
-            <label style="padding-top: 6px; margin-left: 6px">
-                <input id ="feature_id" class="input-group-sm">
-                <span style="color: #009688"><b><i>&nbsp; &nbsp; feature id</i></b></span>
-            </label>
-
-            <label style="padding-top: 2px;margin-left: 6px">
-                <input  id = "feature_type" class="input-group-sm">
-                <span style="color: #009688"><b><i>&nbsp; &nbsp; feature type</i></b></span>
-            </label>
-            <div>
-            <label id="save_bnt" class="btn btn-outline-info" style="float: right;margin-right: 5px"
-                   onclick="save_svg_new_feature_attrs.feature_attr_ok_clicked()">
-                Save data
-            </label>
+            <div class="col-8" style="width: 60%">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="ortho_GCP_checked"
+                           disabled="disabled">
+                    <label class="custom-control-label" for="ortho_GCP_checked"><i> Load Base Map
+                        GCPs...</i></label>
+                </div>
             </div>
-    </div>
-
-    <div id="referencePoints_popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden">
-    </div>
-    <div id="spatial_query_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
-        <header class="w3-panel w3-round w3-teal"style="padding: 2px;margin: auto">
-            <h6><b style="margin: 2px;padding: 2px;">Query Result:</b><a> Select relation to visualize approximate
-                location</a>
-               <button id="3" aria-label="Close Account Info Modal Box" style="float: right; padding: 2px;"
-                        onclick="document.getElementById('spatial_query_popup_div').style.display='none'">&times;
-                </button>
-            </h6>
-        </header>
-
-        <div id="query_builder">
-            <div>
-                <a style="padding: inherit;margin: inherit"><b>Selected Feature Id:</b>
-                    <span id="featureID_spatial_query" style="text-align:right;color: teal;font-size: 14px"> </span></a>
-            </div>
-            <div>
-                <a style="padding: inherit;margin: inherit"><b> Feature Type:</b>
-                    <span id="featureType_spatial_query" style="text-align:right;color: teal;font-size: 14px"> </span>
-                </a>
-            </div>
-
-            <div style="float: right;padding: 1px">
-                <label id="submit_query" class="btn btn-outline-info" style="padding: 2px"
-                       onclick="qualitative_spatial_queries()">
-                    Get Spatial Relations
+            <div class="col-4">
+                <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                    Browse
+                    <input id="orth_GCP_Inputbutton" accept=".GEOJSON, .geojson" style="display: none" type="file"
+                           onchange="loadMetricMap()">
                 </label>
             </div>
         </div>
-        <div id="spatial_query_resp_div">
-            <div>
-                <br>
-                <h6 style="padding: 5%;margin: 2px"><b>Query Result:</b></h6>
-                <table id="result_table" class="table">
-                    <tr>
-                        <th style="padding: inherit"><span style="font-size: 11px">LeftRight Relations</span></th>
-                        <th style="padding: inherit"><span style="font-size: 11px">Topological Relations</span></th>
-                        <th style="padding: inherit"><span style="font-size: 11px">Relative Distances</span></th>
-                    </tr>
-                    <tr>
-                        <td id="leftRight_rels_div" style="padding: inherit"></td>
-                        <td id="topo_rels_div" style="padding: inherit"></td>
-                        <td id="relDist_rels_div" style="padding: inherit"></td>
-                    </tr>
-                </table>
-            </div>
 
+        <div class="row" style="padding: 1px">
+            <div class="col-8" style="width: 60%">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="ortho_LADM_checked" disabled="disabled">
+                    <label class="custom-control-label" for="ortho_LADM_checked"><i> Load Local Domain
+                        Model...</i></label>
+
+                </div>
+            </div>
+            <div class="col-4">
+                <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                    Browse
+                    <input id="ortho_LADMInputbutton" accept=".owl, .OWl" style="display: none" type="file"
+                           onchange="ortho_loadLADMFile()">
+                </label>
+            </div>
+        </div>
+        <div class="row" style="padding: 1px">
+
+            <div class="col-8" style="width: 60%">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="ortho_Party_checked"
+                           disabled="disabled">
+                    <label class="custom-control-label" for="ortho_Party_checked"><i> Load Parties...</i></label>
+                </div>
+            </div>
+            <div class="col-4">
+                <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                    Browse
+                    <input id="orth_PartyInputbutton" accept=".JSON, .json" style="display: none" type="file"
+                           onchange="ortho_loadPartyFile()">
+                </label>
+            </div>
         </div>
 
     </div>
-    <div id="SM_project_div" class="w3-card-4 w3-round " style="visibility: hidden">
-        <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
-            <h6>
-                <b style="margin: 2px">Sketch Map Project :</b><a> Load required inputs for the project</a>
-                <button id="close_bnt" aria-label="Close Account Info Modal Box" style="float: right; padding: 2px;"
-                        onclick="document.getElementById('SM_project_div').style.display='none'">&times;
-                </button>
-            </h6>
-
-        </header>
-        <div id="file_loader" class="w3-container w3-round">
-            <div class="row" style="padding: 1px">
-                <div class="col-8">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="SM_checked" disabled="disabled">
-                        <label class="custom-control-label" for="SM_checked"><i> Load Sketch Map...</i></label>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
-                        Browse
-                        <input id="SketchMapInputbutton" accept=".png, .jpeg" style="display: none" type="file"
-                               onchange="loadSketchMap()">
-                    </label>
-                </div>
-
-            </div>
-
-            <div class="row" style="padding: 1px">
-                <div class="col-8">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="MM_checked" disabled="disabled">
-                        <label class="custom-control-label" for="SM_checked"><i> Load Base Map...</i></label>
-
-                    </div>
-                </div>
-                <div class="col-4">
-                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
-                        Browse
-                        <input id="MetrichMapInputbutton" accept=".geojson, .GEOJSON" style="display: none" type="file"
-                               onchange="loadMetricMap()">
-                    </label>
-                </div>
-            </div>
-
-            <div class="row" style="padding: 1px">
-                <div class="col-8" style="width: 60%">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="LADM_checked" disabled="disabled">
-                        <label class="custom-control-label" for="SM_checked"><i> Load Local Domain Model...</i></label>
-
-                    </div>
-                </div>
-                <div class="col-4">
-                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
-                        Browse
-                        <input id="LADMInputbutton" accept=".owl, .OWl" style="display: none" type="file"
-                               onchange="loadLADMFile()">
-                    </label>
-                </div>
-            </div>
-            <div class="row" style="padding: 1px">
-
-                <div class="col-8" style="width: 60%">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="Party_checked" disabled="disabled">
-                        <label class="custom-control-label" for="SM_checked"><i> Load Parties...</i></label>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
-                        Browse
-                        <input id="PartyInputbutton" accept=".JSON, .json" style="display: none" type="file"
-                               onchange="loadPartyFile()">
-                    </label>
-                </div>
-            </div>
-
-
+</div>
+<div id="approximate_loc_query_div" class="w3-card-4 w3-round" style="visibility: hidden">
+    <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: 1px">
+        <h6><b>Query Builder:</b><a> Select relations and primary object to find the approximate location of main
+            object</a>
+        </h6>
+    </header>
+    <div id="approx_loc_query_builder" class="w3-card-2">
+        <br>
+        <div>
+            <h6>Qualitative Spatial Relations of Selected Feature(i.e. Beacon)...</h6>
         </div>
+        <br>
+        <div>
+            <h6>Primary Object...</h6>
+            <select id="primary_feature" class="custom-select" size="2">
 
-        <!--  <footer class="w3-container w3-round w3-teal">
-              <h6>The loaded files will be process</h6>
-          </footer>-->
+                <option value="river">River/Wildlife Corridor</option>
+                <option value="mountain">mountain</option>
+
+            </select>
+        </div>
+        <br>
 
     </div>
-    <div id="orthophoto_project_div" class="w3-card-4 w3-round " style="visibility: hidden">
-        <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
-            <h6><b style="margin:2px">Orthophoto Project :</b><a> Load required inputs for the project</a>
-                <button id="orthophoto_close_bnt" aria-label="Close Account Info Modal Box"
-                        style="float: right; padding: 2px;"
-                        onclick="document.getElementById('orthophoto_project_div').style.display='none'">&times;
-                </button>
-            </h6>
-        </header>
-        <div id="orthophoto_file_loader" class="w3-container w3-round">
-            <div class="row" style="padding: 1px">
-                <div class="col-8">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="orthphoto_drawing_checked"
-                               disabled="disabled">
-                        <label class="custom-control-label" for="orthphoto_drawing_checked"><i> Load Orthophoto
-                            Drawing...</i></label>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
-                        Browse
-                        <input id="DigitizedMapInputbutton" accept=".png, .jpeg" style="display: none" type="file"
-                               onchange="loadSketchMap()">
-                    </label>
 
-                </div>
+</div>
 
-            </div>
-            <div class="row" style="padding: 1px">
+<div id="PnS_download_projects_div" class="w3-card-4 w3-round " style="visibility: hidden">
+    <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
+        <h6>
+            <b style="margin: 2px">Projects@PnS :</b><a></a>
+            <button id="PnS_projects_div_bnt" aria-label="Close Account Info Modal Box"
+                    style="float: right; padding: 2px;"
+                    onclick="document.getElementById('PnS_download_projects_div').style.display='none'">&times;
+            </button>
+        </h6>
+    </header>
 
-                <div class="col-8" style="width: 60%">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="ortho_GCP_checked"
-                               disabled="disabled">
-                        <label class="custom-control-label" for="ortho_GCP_checked"><i> Load Base Map
-                            GCPs...</i></label>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
-                        Browse
-                        <input id="orth_GCP_Inputbutton" accept=".GEOJSON, .geojson" style="display: none" type="file"
-                               onchange="loadMetricMap()">
-                    </label>
-                </div>
-            </div>
-
-            <div class="row" style="padding: 1px">
-                <div class="col-8" style="width: 60%">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="ortho_LADM_checked" disabled="disabled">
-                        <label class="custom-control-label" for="ortho_LADM_checked"><i> Load Local Domain Model...</i></label>
-
-                    </div>
-                </div>
-                <div class="col-4">
-                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
-                        Browse
-                        <input id="ortho_LADMInputbutton" accept=".owl, .OWl" style="display: none" type="file"
-                               onchange="ortho_loadLADMFile()">
-                    </label>
-                </div>
-            </div>
-            <div class="row" style="padding: 1px">
-
-                <div class="col-8" style="width: 60%">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="ortho_Party_checked"
-                               disabled="disabled">
-                        <label class="custom-control-label" for="ortho_Party_checked"><i> Load Parties...</i></label>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
-                        Browse
-                        <input id="orth_PartyInputbutton" accept=".JSON, .json" style="display: none" type="file"
-                               onchange="ortho_loadPartyFile()">
-                    </label>
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <div id="approximate_loc_query_div" class="w3-card-4 w3-round" style="visibility: hidden">
-        <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: 1px">
-            <h6><b>Query Builder:</b><a> Select relations and primary object to find the approximate location of main
-                object</a>
-            </h6>
-        </header>
-        <div id="approx_loc_query_builder" class="w3-card-2">
-            <br>
-            <div>
-                <h6>Qualitative Spatial Relations of Selected Feature(i.e. Beacon)...</h6>
-            </div>
-            <br>
-            <div>
-                <h6>Primary Object...</h6>
-                <select id="primary_feature" class="custom-select" size="2">
-
-                    <option value="river">River/Wildlife Corridor</option>
-                    <option value="mountain">mountain</option>
-
-                </select>
-            </div>
-            <br>
-
+        <div id="project_loader" class="w3-container w3-round" style="padding: 2px;text-align: center">
         </div>
 
+    <!--  <footer class="w3-container w3-round w3-teal">
+          <h6>The loaded files will be process</h6>
+      </footer>-->
+
+</div>
+
+<div id="projectNameInputDiv_for_PnS" class="w3-card-4 w3-round " style="visibility: hidden">
+    <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
+        <h6>
+            <b style="margin: 2px">Project Name @ PnS :</b><a></a>
+            <button id="PnS_projects_div_bnt" aria-label="Close Account Info Modal Box"
+                    style="float: right; padding: 2px;"
+                    onclick="document.getElementById('SM_project_div').style.display='none'">&times;
+            </button>
+        </h6>
+    </header>
+    <div id="projectNameInputDivInner" class="w3-container w3-round">
+        <form action="" onsubmit="saveProject_to_PnS()">
+            <div class=" row" style="padding-top: 1px;text-align: left">
+                <div class="col-8" style="width: 90%;padding: 2px" ;>
+                    <input type="text" id ="sub_project_name_input" class=form-control
+                           placeholder="Please enter project name..."
+                           required>
+                </div>
+                <div class="col-4" style="width: 10%;text-align: right;padding: 0px">
+                    <button class="btn btn-outline-info"  type="submit">Save</button>
+                </div>
+            </div>
+        </form>
+
     </div>
+</div>
+
+<!--  <footer class="w3-container w3-round w3-teal">
+      <h6>The loaded files will be process</h6>
+  </footer>-->
+
+</div>
 
 
 {% endblock%}

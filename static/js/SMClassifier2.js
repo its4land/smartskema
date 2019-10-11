@@ -615,17 +615,194 @@ function add_complexStruMap_bnt() {
     }
 }
 
+/*
+    - function to push the final results to the Publish and Share Platform
+    - files includes:
+    - sketch map, base map and intermediate results in svg, json format
+ */
+
 function save_PnS(){
-    let ajaxParams = {
-        url: "/save_PnS",
-        type:"POST",
+
+    $('#projectNameInputDiv_for_PnS').prop("style", "visibility: visible");
+    x = event.pageX;
+    y = event.pageY;
+
+    $('#projectNameInputDiv_for_PnS').offset({
+        top: y+10,
+        left: x-100
+    });
+
+    $(document).on('keydown', function (e) {
+        if (e.keyCode === 27) { // ESC
+            $("#projectNameInputDiv_for_PnS").hide();
+        }
+    });
+
+}
+
+function  saveProject_to_PnS(){
+
+    var sub_project_name= document.getElementById("sub_project_name_input").value;
+    //console.log("sub_project_name",sub_project_name);
+    if (sub_project_name != undefined){
+        let ajaxParams = {
+            url: "/save_PnS",
+            type:"POST",
+            data:{
+                sub_project_name :sub_project_name
+            }
+        };
+        new communicator(ajaxParams).sendRequest({}, function(resp){
+            sub_project_name = undefined;
+            deleteProcessingRing();
+            $.alert({
+                title: 'Project@PnS',
+                content: 'Project has been Uploaded!'
+            });
+            //$('#projectNameInputDiv_for_PnS').prop("style", "visibility: hidden");
+        });
+
+    }else{
+        sub_project_name = undefined;
+        $.alert({
+            title: 'Project Name',
+            content: 'Please enter project name'
+        });
+    }
+
+
+}
+
+/*
+    - function to downloads all the projects from  Publish and Share Platform
+    - files includes:
+    - sketch map, base map and intermediate results in svg, json format
+ */
+
+function download_projects_from_PnS(){
+
+    //console.log("here i am in the download function")
+    ajaxParams = {
+        url: '/get_sub_project_from_PnS',
+        type:'POST',
         data:{
-            feat_id : ""
+            feat_id : "",
         }
     };
-    new communicator(ajaxParams).sendRequest({}, function(resp){
-        let json = JSON.parse(resp);
-        //mapmatches = json;
+   new communicator(ajaxParams).sendRequest({}, function(resp){
+        $('#project_loader').empty();
+        var resp = JSON.parse(resp);
+        projects = resp.projects;
+        for (i in projects){
+            console.log(i);
+            $('#project_loader').append(
+                "<div id='projects';style = 'padding-left:3px'>" +
+                "<span >" + projects[i]+ "</span>" +
+                "</div>"
+            );
+            $('#projects').prop("style", "padding:1px");
+            $('#projects').prop("id", "projects" + i);
+            $('#projects' + i).prop("class", "btn btn-outline-info");
+            $('#projects' + i).prop("style", "padding-bottom:2px");
+            $('#projects' + i).attr("onclick", "get_PnS_project_items("+ JSON.stringify(projects[i])+")");
+
+        }
+
+   });
+
+         //$('#spatial_query_popup_div').empty();
+    $('#PnS_download_projects_div').prop("style", "visibility: visible");
+    x = event.pageX;
+    y = event.pageY;
+    $('#PnS_download_projects_div').offset({
+        top: y+10,
+        left: x
     });
+
+     $(document).on('keydown', function (e) {
+        if (e.keyCode === 27) { // ESC
+            $('#PnS_download_projects_div').hide();
+            deleteProcessingRing();
+        }
+    });
+
+}
+
+function get_PnS_project_items(sub_project_name){
+    $('#PnS_download_projects_div').prop("style", "visibility: hidden");
+    createProcessingRing();
+   let ajaxParams = {
+       url : "/download_project_items_from_PnS",
+       type : "POST",
+       data : {
+           sub_project_name : sub_project_name
+       }
+    
+   };
+   new communicator(ajaxParams).sendRequest({}, function(resp){
+       deleteProcessingRing();
+       var resp = JSON.parse(resp);
+       var msg = resp.msg;
+       $.alert({
+           title: 'Project@PnS',
+           content: 'Project has been Downloaded!'+msg
+       });
+
+
+       //display the downloaded files in the HTML divs
+       render_downloaded_files_on_client(sub_project_name);
+
+    });
+
+}
+
+var baseMapDisplayManager; //baseMapDisplayManagerInstance
+
+function render_downloaded_files_on_client(sub_project_name) {
+    createProcessingRing();
+
+    console.log("recived json")
+    let ajaxParams = {
+        url : "/render_downloaded_files_on_client",
+        type : "POST",
+        data : {
+            sub_project_name : sub_project_name
+        }
+
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+        deleteProcessingRing();
+        var json = JSON.parse(resp);
+        var baseMapVectorData;
+        //let width=799.9999999999999, height=525.6709567993614;
+
+        for (i in json){
+            console.log("herer you go ",json[i]);
+            if (json[i].fileBaseName == "input_sketch_image.png"){
+                sketchMapDisplayManager.rasterFromURL("/" + json[i].filePath,json[i].width, json[i].height);
+
+            }else if (json[i].fileBaseName == "vectorized_sketch_svg.svg"){
+
+                sketchMapDisplayManager.vectorFromSVGURL("/" + json[i].filePath);
+            }else if (json[i].fileBaseName == "vector_base_map.geojson"){
+
+               let sourceFormat = sessionData.projectType == "orthoSketchProject"? "tms": "openstreetmap";
+                    let tilemap_format = sessionData.projectType == "orthoSketchProject"? TMS_TILE_MAP: OSM_TILE_MAP;
+                    baseMapDisplayManager = baseMapDisplayManagerTemplate(tilemap_format);
+                    let url = sourceFormat  == "tms"?
+                        "./static/data/modified/tiles_256_raster/": "tile.openstreetmap.org/";
+                    baseMapVectorData = json[i];
+                    baseMapDisplayManager.tilesFromURL(url).then(
+                        function(done){
+                            baseMapDisplayManager.vectorFromGeoJSONContent(baseMapVectorData.fileContent) //"baseLayer")
+                        });
+                    //baseMapDisplayManagerTemplate.vectorFromGeoJSONContent(json[i].fileContent) //"baseLayer")
+            } else if (json[i].fileBaseName == "adf.geojson"){
+                console.log("test")
+            }
+        }
+
+    });
+
 
 }
