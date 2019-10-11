@@ -22,7 +22,7 @@ import io
 import json
 import os
 import sys
-from settings import USER_SESSIONS_DIR,DIR_DATA, DIR_QCNS, RecordList, PnS_PROJ_ID, SMARTSKEMA_PATH, QUALITATIVE_REPRESENTATION
+from settings import USER_SESSIONS_DIR,DIR_DATA,PROJ_TYPE, DIR_QCNS,PROJ_DIR_PATH,PROJ_TYPE_SUB_PROJ_NAME,SMARTSKEMA_TEMP_PROJ_PATH, RecordList,SPATIALSOURCE_SKETCH_UID,SPATIALSOURCE_BASE_UID, PnS_PROJ_ID, SMARTSKEMA_PATH, QUALITATIVE_REPRESENTATION
     #SketchMapName, BaseMapName
     # STATIC_DIR,UPLOADED_DIR_PATH,PROJ_DIR_PATH,MODIF_DIR_PATH,OUTPUT_DIR_PATH,SVG_DIR_PATH,UUID
 import logging
@@ -73,12 +73,13 @@ DEBUG_SESSID = "39bb2657-d663-4a78-99c5-a66c152693b2"
 UPLOADED_DIR_PATH = "uploaded"
 MODIF_DIR_PATH = "modified"
 OUTPUT_DIR_PATH = "output"
+TEMP_DIR = "temp"
 
 # probably delete this
 #SVG_DIR_PATH = "svg"
 
 INPUT_RASTER_SKETCH = "input_sketch_image.png"
-REDUCED_RASTER_SKETCH = "reduced_sketch_image.png"
+REDUCED_RASTER_SKETCH = "input_sketch_image.png"
 VECTORIZED_SKETCH = "vectorized_sketch_svg.svg"
 
 VECTOR_BASEMAP = "vector_base_map.geojson"
@@ -111,14 +112,29 @@ def build_path(path_list):
 
 
 def path_to_project(d):
+    #print("here is d",d)
     global USER_SESSIONS_DIR
     global PnS_PROJ_ID
-    PnS_PROJ_ID =  d.get("sessID")
-    #print("pathto project p an s id",PnS_PROJ_ID)
+    global PROJ_TYPE
+    global PROJ_TYPE
+    global SUB_PROJ_NAME
+    global PROJ_TYPE_SUB_PROJ_NAME
 
-        #print(os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, d.get("projectType")))
-    return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, d.get("projectType"))
-    #return os.path.join(USER_SESSIONS_DIR, d.get("sessID"), d.get("projectType"))
+    PnS_PROJ_ID =  d.get("sessID")
+
+    if not d.get("projectType") == None:
+        return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, d.get("projectType"))
+    else:
+
+        PnS_PROJ_ID = os.getenv("I4L_PROJECTUID")
+        if PnS_PROJ_ID ==None:
+            PnS_PROJ_ID = "4da0d7ad-952d-4308-a7f4-7ff1dc8672d4"
+        temp = PROJ_TYPE_SUB_PROJ_NAME.split(":")
+        PROJ_TYPE = ":".join(temp[:1])
+        SUB_PROJ_NAME = ":".join(temp[1:])
+        return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID,PROJ_TYPE,SUB_PROJ_NAME)
+
+
 
 """/getSessionID
     try:
@@ -145,10 +161,19 @@ def get_session_id():
      #   return debug_get_session_id()
 
     #sess_id = str(uuid.uuid4())
+    sess_id = os.getenv("I4L_PROJECTUID")
+    if sess_id == None:
+        sess_id = "4da0d7ad-952d-4308-a7f4-7ff1dc8672d4"
+    print("here session id",sess_id)
+    if sess_id is None:
+        raise PnSError ("Problem in Getting envirn_variable value as sess_id")
+
     """getting session id from PnS platform to create folder"""
-    sess_id = str(get_PnS_Project_ID())
+    #sess_id = str(get_PnS_Project_ID())
+
     if sess_id != None:
         PnS_PROJ_ID = str(sess_id)
+
         proj_dir_path = os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID)
 
     try:
@@ -172,15 +197,17 @@ def setProjectType():
     global UPLOADED_DIR_PATH
     global MODIF_DIR_PATH
     global OUTPUT_DIR_PATH
-    #global SVG_DIR_PATH
     global PROJ_DIR_PATH
+
 
     try:
         #print("request.form",request.form)
         proj_type_dir_path = path_to_project(request.form)
         print("here you go:proj_type_dir_path",proj_type_dir_path)
+
         PROJ_DIR_PATH = proj_type_dir_path
         if not (os.path.exists(proj_type_dir_path)):
+
             os.mkdir(proj_type_dir_path)
             os.mkdir(os.path.join(proj_type_dir_path, UPLOADED_DIR_PATH))
             os.mkdir(os.path.join(proj_type_dir_path, MODIF_DIR_PATH))
@@ -225,17 +252,16 @@ def reasoner_process_spatial_queries():
     return result
 
 
-@app.route("/getParty", methods =["POST"])
-def getParty():
+@app.route("/postParty", methods =["POST"])
+def postParty():
     global UPLOADED_DIR_PATH
     global PARTIES_FILE
     global PROJ_DIR_PATH
     proj_type_dir_path = path_to_project(request.form)
+
     fileName_full = request.form.get('loadedPartyFile')
     partyJson = json.loads(request.form.get('partyJson'))
-    #print("project to path",proj_type_dir_path)
-    #fileName_full = request.args.get('loadedPartyFile')
-    #partyJson = json.loads(request.args.get('partyJson'))
+
     party = partyJson.get("parties")
     try:
         uploaded_filepath = os.path.join(proj_type_dir_path, UPLOADED_DIR_PATH, PARTIES_FILE) 
@@ -250,6 +276,16 @@ def getParty():
 
     return json.dumps(party)
 
+
+@app.route("/getParty", methods =["POST"])
+def getParty():
+    proj_type_dir_path = path_to_project(request.form)
+
+    uploaded_party_file = os.path.join(proj_type_dir_path, UPLOADED_DIR_PATH, PARTIES_FILE)
+    with open(uploaded_party_file) as partyFile:
+        partyJson = json.loads(partyFile.read())
+        party = partyJson.get("parties")
+    return json.dumps(party)
 
 @app.route("/qualitative_spatial_queries", methods=["POST"])
 def qualitative_spatial_queries():
@@ -467,6 +503,8 @@ def get_tenure_record():
         matchesDictFile = os.path.join(proj_type_dir_path,OUTPUT_DIR_PATH,MATCHED_FEATURES)
         tenureRecoredFilePath = os.path.join(proj_type_dir_path,OUTPUT_DIR_PATH, TENURE_RECORD_FILE)
 
+
+
     except IOError:
         print("problem in reading matches file and tenure recored in the /get_tenure_record()..")
 
@@ -483,10 +521,6 @@ def get_tenure_record():
                     matched_feat= matched_obj
                 else:
                     matched_feat="NONE"
-
-    #print(matched_feat)
-    #print(matched_feat)
-    #tenureRecoredFilePath = os.path.join(OUTPUT_DIR_PATH,"tenureRecord.json")
 
     with open(tenureRecoredFilePath) as record_json:
         records = json.loads(record_json.read())
@@ -518,20 +552,10 @@ def getMapMatches():
     global OUTPUT_DIR_PATH
     global MATCHED_FEATURES
     global PROJ_DIR_PATH
-    #matchedRecord = ""
 
-    #print("request.form", request.form)
     proj_type_dir_path = path_to_project(request.form)
-
-    #print("project path in the getMapMatches",proj_type_dir_path)
-    #feat_id = request.args.get('feat_id')
-    #feat_type = request.args.get('feat_type')
-    #print("feat_id in tenurerecord:", feat_id)
-    mm_feature_id = ""
-    #print("output file path",OUTPUT_DIR_PATH)
+    print("proj_type_dir_path",proj_type_dir_path)
     matchesFilePath = os.path.join(proj_type_dir_path, OUTPUT_DIR_PATH, MATCHED_FEATURES)
-    #print("here matches file path",matchesFilePath)
-    #matchesFilePath = os.path.join(OUTPUT_DIR_PATH,"matches.json")
     with open(matchesFilePath) as matches:
         matches = json.loads(matches.read())
     return  json.dumps(matches)
@@ -943,6 +967,8 @@ def align_plain_sketch_map():
     global MATCHED_FEATURES
     global SKETCH_MAP_QCN
     global BASEMAP_QCN
+    global PnS_PROJ_ID
+    global PROJ_TYPE
 
     project_files_path = path_to_project(request.form)
     matches_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, MATCHED_FEATURES)
@@ -956,10 +982,14 @@ def align_plain_sketch_map():
     qualified_sketch_map_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, SKETCH_MAP_QCN)
     qualified_metric_map_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, BASEMAP_QCN)
     #print ("here i am ")
-    sketchid = "_".join(("sketch", request.form.get("sessID"), request.form.get("projectType")))
-    metricid = "_".join(("metric", request.form.get("sessID"), request.form.get("projectType")))
-    loadedSketch, loadedMetric = None, None
-
+    if not request.form.get("projectType")== None:
+        sketchid = "_".join(("sketch", request.form.get("sessID"), request.form.get("projectType")))
+        metricid = "_".join(("metric", request.form.get("sessID"), request.form.get("projectType")))
+        loadedSketch, loadedMetric = None, None
+    else:
+        sketchid = "_".join(("sketch", PnS_PROJ_ID, PROJ_TYPE))
+        metricid = "_".join(("metric", PnS_PROJ_ID, PROJ_TYPE))
+        loadedSketch, loadedMetric = None, None
     try:
         loadedSketch = str(request.form.get('svgData'))
         #print("loadedSketch: ",loadedSketch)
@@ -1197,15 +1227,23 @@ def align_orthophoto_sketch_map():
 
 
 
+def get_fileName_with_prefix(file, proj_type, sub_proj_name):
+    return ":".join(["SmartSkeMa",proj_type,sub_proj_name,
+              os.path.dirname(file).split(os.sep)[-1],
+              os.path.basename(file)])
+
+
 """ 
     - to save data at PnS
 """
+
 
 @app.route("/save_PnS", methods = ["POST"])
 def save_PnS ():
     global UPLOADED_DIR_PATH
     global OUTPUT_DIR_PATH
     global MODIF_DIR_PATH
+
     global INPUT_RASTER_SKETCH
     global REDUCED_RASTER_SKETCH
     global VECTORIZED_SKETCH
@@ -1220,58 +1258,183 @@ def save_PnS ():
     global TENURE_RECORD_FILE
     global INPUT_RASTER_COMPLEX_SKETCH
     global REDUCED_RASTER_COMPLEX_SKETCH
+    global APROX_TILE
+    # for P_and_S platform
     global PnS_PROJ_ID
+    global SPATIALSOURCE_SKETCH_UID
+    global SPATIALSOURCE_BASE_UID
+    global SUB_PROJ_NAME
 
-    API_URL = "http://platform.its4land.com/api"
-    uuid = "cbc2b21d-02d1-4c55-9e53-c0f2622ca497"
+    SUB_PROJ_NAME = request.form.get('sub_project_name')
+
     project_files_path = path_to_project(request.form)
-    #print(project_files_path)
+    print(project_files_path)
     upladed_sketch_original = os.path.join(project_files_path,UPLOADED_DIR_PATH,INPUT_RASTER_SKETCH)
     uploaded_base_map = os.path.join(project_files_path, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
+    modified_base_map = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)
     ladm_file = os.path.join(project_files_path, UPLOADED_DIR_PATH, LADM_FILE)
     party_file = os.path.join(project_files_path, UPLOADED_DIR_PATH, PARTIES_FILE)
-    uploaded_raster_complex_file = os.path.join(project_files_path, UPLOADED_DIR_PATH, INPUT_RASTER_COMPLEX_SKETCH)
+    input_raster_complex_file = os.path.join(project_files_path, UPLOADED_DIR_PATH, INPUT_RASTER_COMPLEX_SKETCH)
 
-    reduced_sketch = os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_SKETCH)
-    reduced_complex_sketch = os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_COMPLEX_SKETCH)
+    reduced_raster_sketch = os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_SKETCH)
+    reduced_raster_complex_sketch = os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_COMPLEX_SKETCH)
 
-    sketch_svg_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,INPUT_RASTER_SKETCH)
+    sketch_svg_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,VECTORIZED_SKETCH)
+    modified_sketch_svg_file = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
     sketch_qcn = os.path.join(project_files_path,OUTPUT_DIR_PATH,SKETCH_MAP_QCN)
     baseMap_qcn = os.path.join(project_files_path,OUTPUT_DIR_PATH,BASEMAP_QCN)
-    geoReferenced_sketch_match_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,GEOREFERENCED_SKETCH_FEATURES)
+    geoReferenced_sketch_matches_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,GEOREFERENCED_SKETCH_FEATURES)
     matches_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,MATCHED_FEATURES)
     tenure_record_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,TENURE_RECORD_FILE)
-    #print("reduced_sketch ",reduced_sketch)
-
-    files = [upladed_sketch_original,reduced_sketch,reduced_complex_sketch, uploaded_raster_complex_file,uploaded_base_map]
-    for file in files:
-        if os.path.exists(file):
-            resp = post_all_files_to_Pns(file,PnS_PROJ_ID)
-            print("API_POST status",resp)
-
-    return "msg"
-
-"""
-@app.route("/download_aligned_results", methods = ["POST"])
-def download_aligned_results():
-    global OUTPUT_DIR_PATH
-    global GEOREFERENCED_SKETCH_FEATURES
-
-    project_files_path = path_to_project(request.form)
-    result_as_json = json.loads(request.form.get("alignedResult"))
-    output_dir_path = os.path.join(project_files_path,OUTPUT_DIR_PATH,GEOREFERENCED_SKETCH_FEATURES)
-    download_path = os.path.join("c:/",GEOREFERENCED_SKETCH_FEATURES)
+    approx_tile_file = os.path.join(project_files_path, OUTPUT_DIR_PATH, APROX_TILE)
     try:
-        f = open(download_path, "wb")
-        f.write(json.dumps(result_as_json, indent=4))
-        f.close()
+        files = [upladed_sketch_original,uploaded_base_map]
+        for file in files:
+            if os.path.exists(file):
+                fileName_prefix = get_fileName_with_prefix(file,os.path.basename(project_files_path),SUB_PROJ_NAME)
+                print("fileName_prefix",fileName_prefix)
+                name, ext = os.path.splitext(file)
+                if ext == ".png":
+                    fileType = "sketch"
+                    SPATIALSOURCE_SKETCH_UID = post_to_Pns(file,fileType,fileName_prefix,PnS_PROJ_ID)
+                    print("SPATIALSOURCE_SKETCH_UID status",SPATIALSOURCE_SKETCH_UID)
+                elif ext == ".geojson":
+                    fileType = "base"
+                    SPATIALSOURCE_BASE_UID = post_to_Pns(file,fileType,fileName_prefix,PnS_PROJ_ID)
+                    print("SPATIALSOURCE_BASE_UID status", SPATIALSOURCE_BASE_UID)
 
-    except IOError:
-        print("Problem in Writing matching result as output.json")
+        sketchMapRelatedFiles = [input_raster_complex_file,
+                                 reduced_raster_complex_sketch,
+                                 reduced_raster_sketch,
+                                 ladm_file,party_file,
+                                 sketch_svg_file,
+                                 modified_sketch_svg_file,
+                                 sketch_qcn]
+        for file in sketchMapRelatedFiles:
+            if os.path.exists(file):
+                #fileName = os.path.basename(file)
+                fileName = get_fileName_with_prefix(file,os.path.basename(project_files_path),SUB_PROJ_NAME)
+                #name, ext = os.path.splitext(file)
+                fileType = fileName
+                resp = post_related_files_to_PnS_ADocs (file,fileType,PnS_PROJ_ID,SPATIALSOURCE_SKETCH_UID )
 
-    #urllib.request.urlretrieve(url, 'c:/'+GEOREFERENCED_SKETCH_FEATURES)
-    return "msg"
-"""
 
+        baseMapRelatedFiles = [matches_file,
+                               modified_base_map,
+                               geoReferenced_sketch_matches_file,
+                               tenure_record_file,
+                               baseMap_qcn ]
+        for file in baseMapRelatedFiles:
+            if os.path.exists(file):
+                fileName = get_fileName_with_prefix(file,os.path.basename(project_files_path),SUB_PROJ_NAME)
+                #fileName = os.path.basename(file)
+                #name, ext = os.path.splitext(fileName)
+                fileType = fileName
+                resp = post_related_files_to_PnS_ADocs(file, fileType, PnS_PROJ_ID, SPATIALSOURCE_BASE_UID)
+        return "Data has been Pushed to PnS platform successfully!"
+    except PnSError as e:
+        print("Problem in pushing SmartSkeMa project data to PnS platform")
+
+
+
+@app.route("/get_sub_project_from_PnS", methods = ["POST"])
+def get_sub_project_from_PnS():
+    global PnS_PROJ_ID
+    global USER_SESSIONS_DIR
+    global UPLOADED_DIR_PATH
+    global OUTPUT_DIR_PATH
+    global MODIF_DIR_PATH
+    global PROJ_DIR_PATH
+
+    resp = get_project_list_PnS(pns_proj_id=PnS_PROJ_ID,
+                                 user_session_dir=USER_SESSIONS_DIR,
+                                 proj_dir_path=PROJ_DIR_PATH,
+                                 uploaded_dir_path=UPLOADED_DIR_PATH,
+                                 output_dir_path=OUTPUT_DIR_PATH,
+                                 modified_dir_path=MODIF_DIR_PATH)
+
+    sub_proj_list = list(dict.fromkeys(resp))
+    #print(sub_proj_list)
+
+    return json.dumps({'projects': sub_proj_list})
+
+@app.route("/download_project_items_from_PnS", methods = ["POST"])
+def download_project_items_from_PnS():
+    global PnS_PROJ_ID
+    global USER_SESSIONS_DIR
+    global UPLOADED_DIR_PATH
+    global OUTPUT_DIR_PATH
+    global MODIF_DIR_PATH
+    global PROJ_DIR_PATH
+
+    proj_type_sub_proj_name = request.form.get('sub_project_name')
+
+    resp = get_projects_items_from_PnS(pns_proj_id=PnS_PROJ_ID,
+                                     user_session_dir=USER_SESSIONS_DIR,
+                                     proj_dir_path = PROJ_DIR_PATH,
+                                     uploaded_dir_path = UPLOADED_DIR_PATH,
+                                     output_dir_path = OUTPUT_DIR_PATH,
+                                     modified_dir_path =MODIF_DIR_PATH,
+                                     sub_proj_name = proj_type_sub_proj_name)
+   #return "here you go"
+    return json.dumps({'msg': resp})
+
+
+
+@app.route("/render_downloaded_files_on_client", methods = ["POST"])
+def render_downloaded_files_on_client():
+    global REDUCED_RASTER_SKETCH
+    global MODIF_DIR_PATH
+    global UPLOADED_DIR_PATH
+    global OUTPUT_DIR_PATH
+    global VECTOR_BASEMAP
+    global LADM_FILE
+    global PARTIES_FILE
+    global VECTORIZED_SKETCH
+    global SKETCH_MAP_QCN
+    global BASEMAP_QCN
+    global GEOREFERENCED_SKETCH_FEATURES
+    global MATCHED_FEATURES
+    global TENURE_RECORD_FILE
+    global SMARTSKEMA_PATH
+    global PROJ_TYPE_SUB_PROJ_NAME
+    #PnS_PROJ_ID = os.getenv("I4L_PROJECTUID")
+    PROJ_TYPE_SUB_PROJ_NAME = request.form.get('sub_project_name')
+
+    path_to_downloaded_project_PnS = path_to_project(request.form)
+    reduced_raster_sketch = os.path.join(path_to_downloaded_project_PnS, MODIF_DIR_PATH, REDUCED_RASTER_SKETCH)
+    uploaded_base_map = os.path.join(path_to_downloaded_project_PnS, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
+    sketch_svg_file = os.path.join(path_to_downloaded_project_PnS, OUTPUT_DIR_PATH, VECTORIZED_SKETCH)
+
+    downloaded_files = [reduced_raster_sketch,sketch_svg_file, uploaded_base_map]
+    fileList = []
+    for file in downloaded_files:
+        if os.path.exists(file):
+            #print("i am in the if")
+            fileContent = ""
+            file_rel = os.path.relpath(file, SMARTSKEMA_PATH)
+            fileBaseName = os.path.basename(file)
+            name, ext = os.path.splitext(file)
+            if ext == ".png":
+                img = cv2.imread(file, -1)
+                if img is not None:
+                    height, width, depth = img.shape
+                    print(height,width)
+                else:
+                    width = 800
+                    height = 565.686
+            if ext == ".geojson" or  ext == ".json":
+                with open(file) as file:
+                    fileContent = json.loads(file.read())
+                    #print(fileContent)
+            else:
+                print(fileBaseName)
+            fileList.append({"fileBaseName":fileBaseName,"filePath": Path(file_rel).as_posix(),"fileContent": fileContent, "width":width, "height":height })
+        else:
+            print("file cant find ")
+
+
+
+    return json.dumps(fileList)
 if __name__ == '__main__':
     app.run(debug=True)

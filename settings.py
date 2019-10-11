@@ -13,6 +13,8 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_
 #print("APP_ROOT:",APP_ROOT)
 UUID = ""
 PnS_PROJ_ID = ""
+SPATIALSOURCE_SKETCH_UID = ""
+SPATIALSOURCE_BASE_UID = ""
 STATIC_DIR = os.path.join(APP_ROOT,"static")
 USER_SESSIONS_DIR = os.path.join(STATIC_DIR,"usessions")
 PROJ_DIR_PATH = ""
@@ -20,6 +22,9 @@ UPLOADED_DIR_PATH = ""
 MODIF_DIR_PATH = ""
 OUTPUT_DIR_PATH = ""
 SVG_DIR_PATH = ""
+PROJ_TYPE = ""
+PROJ_TYPE_SUB_PROJ_NAME = ""
+SMARTSKEMA_TEMP_PROJ_PATH =""
 SMARTSKEMA_PATH = os.path.join(STATIC_DIR,"..")
 QUALITATIVE_REPRESENTATION = os.path.join(APP_ROOT, "spatialRepresentations.json")
 #print("herer is working dir",os.getcwd())
