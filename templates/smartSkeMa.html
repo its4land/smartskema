@@ -1,8 +1,8 @@
 {% extends 'layout_SmartSkeMa.html'%}
-{{ JSGlue.include() }}
+<!--{{ JSGlue.include() }}-->
 {% block body %}
-<div class="container-fluid">
-    <div>
+<div >
+    <!--<div>
         <nav class="navbar navbar-expand-xl navbar-dark bg-dark ">
             <button class="btn btn-outline-success my-2 my-sm-0">
                 <span>
@@ -17,21 +17,28 @@
                     <li class="nav-item dropdown active">
                         <a class="dropdown-toggle " class="nav-link" href="#" data-toggle="dropdown" role="button"
                            aria-haspopup="true" aria-expanded="true">
-                            Select Project Type
+                            New Project
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="Preview">
+                        <div class="dropdown-menu" aria-labelledby="Preview" style="padding:4px">
                             <label class="dropdown-item">
-                                <img id="sm_project" src="../static/imgs/openSM_file_icon.png" width="20" height="20"
-                                     alt="">
+                               <i class="fa fa-folder-open" aria-hidden="true"></i>
+
                                 <input id="SketchMapProjectInputbutton" role="button" style="display: none;"
-                                       onclick="loadSketchMapProject(event)"><span>Sketch Map Project </span>
+                                       onclick="loadSketchMapProject(event)"><span> New Sketch Map Project </span>
                             </label>
 
                             <label class="dropdown-item">
-                                <img id="ortho_project" src="../static/imgs/openSM_file_icon.png" width="20" height="20"
-                                     alt="">
+                                <i class="fa fa-folder-open" aria-hidden="true"></i>
+
                                 <input id="OrthoMapProjectInputbutton" role="button" style="display: none;"
-                                       onclick="loadOrthophotoProject(event)"/><span>Orthophoto Project </span>
+                                       onclick="loadOrthophotoProject(event)"/><span>New Orthophoto Project </span>
+
+                            </label>
+
+                                <label class="dropdown-item">
+                                <i class="fa fa-cloud-download"></i>
+                                <input id="download_project_from_PnS" role="button" style="display: none;"
+                                       onclick="download_projects_from_PnS()"/><span>Download Project from PnS </span>
 
                             </label>
 
@@ -142,26 +149,26 @@
 
                     <a id="save@PnS" class="active" href="#" onclick="save_PnS()"><i class="fa fa-cloud-upload"></i>
                         Save@PnS</a>
-                    <a id="download_project_from_PnS" href="#" onclick="download_projects_from_PnS()"><i
-                            class="fa fa-cloud-download"></i> Download PnS Project</a>
+                    &lt;!&ndash;<a id="download_project_from_PnS" href="#" onclick="download_projects_from_PnS()"><i
+                            class="fa fa-cloud-download"></i> Download PnS Project</a>&ndash;&gt;
                     <a id="download_alignedResult" href="" onclick="downloadResult()"><i
                             class="fa fa-fw fa-download"></i> Download Result</a>
-                    <!--<a href="#"><i class="fa fa-fw fa-search"></i> Search</a>-->
-                    <!-- <a class="active" href="#"><i class="fa fa-fw fa-home"></i>Home</a>-->
+                    &lt;!&ndash;<a href="#"><i class="fa fa-fw fa-search"></i> Search</a>&ndash;&gt;
+                    &lt;!&ndash; <a class="active" href="#"><i class="fa fa-fw fa-home"></i>Home</a>&ndash;&gt;
                     <a class="active" href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
 
-                    <!--<a id="testrander" href="#" onclick="render_downloaded_files_on_client()"><i
-                            class="fa fa-fw fa-download"></i> test</a>-->
-                    <!-- <a class="active" href="#"><i class="fa fa-fw fa-user"></i> Login</a>-->
+                    &lt;!&ndash;<a id="testrander" href="#" onclick="render_downloaded_files_on_client()"><i
+                            class="fa fa-fw fa-download"></i> test</a>&ndash;&gt;
+                    &lt;!&ndash; <a class="active" href="#"><i class="fa fa-fw fa-user"></i> Login</a>&ndash;&gt;
 
                 </div>
 
 
             </ul>
         </nav>
-    </div>
+    </div>-->
 
-    <div id="editor_div" class=container style="visibility: hidden">
+   <!-- <div id="editor_div" class=container style="visibility: hidden">
         <div id="edit_div" class="w3-panel w3-round w3-card">
             <div id="editor_tools_row" class="row">
                 <div id="editor_tools_col_left" class="col">
@@ -189,7 +196,7 @@
                             <img id="delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20">
                         </button>
                     </div>
-                    <!-- div for ladm interaction buttons-->
+                    &lt;!&ndash; div for ladm interaction buttons&ndash;&gt;
                     <div id="ladm_interaction_bnts" style="visibility: hidden">
                         <button id="ladm_interaction_for_RRR_bnt" type="button" class="btn btn-outline-info"
                                 onclick="ladm_interaction_for_RRR()">Add RRRs
@@ -206,7 +213,7 @@
                     </div>
                 </div>
                 <div id="editor_tools_col_right" class="col">
-                    <!-- div for geoJson interaction buttons-->
+                    &lt;!&ndash; div for geoJson interaction buttons&ndash;&gt;
                     <div id="json_edit_bnts" align="right" style="visibility: hidden">
                         <button id="json_draw_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
                                 data-placement="bottom" title="Draw Geometry" onclick="">
@@ -238,8 +245,10 @@
                 </div>
             </div>
         </div>
+    </div>-->
+    <div>
+    {% include "contact.html" %}
     </div>
-
     <div id="w3_container_div" class="container-fluid">
 
         <table id="main_table" class="table">
@@ -259,7 +268,8 @@
         </table>
     </div>
 
-    <div id="footer_div" class="navbar navbar-expand-xl navbar-dark bg-dark">
+
+    <!--<div id="footer_div" class="navbar navbar-expand-xl navbar-dark bg-dark">
         <table class="footer_table" style="width: 100%">
             <tr>
                 <td align="left">
@@ -285,7 +295,7 @@
                 </td>
             </tr>
         </table>
-    </div>
+    </div>-->
 
 
 </div>
@@ -665,7 +675,7 @@
     <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
         <h6>
             <b style="margin: 2px">Projects@PnS :</b><a></a>
-            <button id="PnS_projects_div_bnt" aria-label="Close Account Info Modal Box"
+            <button id="PnS_download_projects_div_bnt" aria-label="Close Account Info Modal Box"
                     style="float: right; padding: 2px;"
                     onclick="document.getElementById('PnS_download_projects_div').style.display='none'">&times;
             </button>
@@ -685,9 +695,9 @@
     <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
         <h6>
             <b style="margin: 2px">Project Name @ PnS :</b><a></a>
-            <button id="PnS_projects_div_bnt" aria-label="Close Account Info Modal Box"
+            <button id="PnS_save_projects_div_bnt" aria-label="Close Account Info Modal Box"
                     style="float: right; padding: 2px;"
-                    onclick="document.getElementById('SM_project_div').style.display='none'">&times;
+                    onclick="document.getElementById('projectNameInputDiv_for_PnS').style.display='none'">&times;
             </button>
         </h6>
     </header>
@@ -712,7 +722,7 @@
       <h6>The loaded files will be process</h6>
   </footer>-->
 
-</div>
+<!--</div>-->
 
 
 {% endblock%}

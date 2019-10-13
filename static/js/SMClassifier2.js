@@ -806,3 +806,14 @@ function render_downloaded_files_on_client(sub_project_name) {
 
 
 }
+
+function contactTeam(){
+    $('#contact_div').prop("style", "visibility: visible");
+}
+
+$(document).on('keydown', function (e) {
+    if (e.keyCode === 27) { // ESC
+        $('#contact_div').hide();
+
+    }
+});

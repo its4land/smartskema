@@ -1,3 +1,14 @@
+#contact_div{
+    width: 95%;
+
+    position:absolute;
+    z-index: 1;
+    text-align: center;
+    background: white;
+    top: 10%;
+
+}
+
 ::placeholder {
     color: lightgrey;
     font-style: italic;
@@ -13,7 +24,7 @@
 }
 
 #PnS_download_projects_div{
-    width: 250px;
+    width: 300px;
     padding-top:0px;
     margin: auto;
     background:white;
