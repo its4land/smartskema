@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>editor</title>
+</head>
+<body>
+<div id="editor_div" class="w3-panel w3-round w3-card" style="visibility: hidden">
+        <div class = "row">
+        <div  id = "svg_editor_bnt" class="col " style="text-align: center;display: inherit">
+                    <button id="draw_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                            data-placement="bottom" title="Draw Geometry" onclick="">
+                        <img id="draw_geom_img" src="../static/imgs/draw_geom.png" width="22" height="20">
+                    </button>
+                    <button id="edit_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                            data-placement="bottom" title="Edit Geometry">
+                        <img id="edit_geom_img" src="../static/imgs/edit_geom.png" width="22" height="20">
+                    </button>
+                    <button id="join_endPoints" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                            data-placement="bottom" title="Join EndPoints">
+                        <img id="join_endPoints_img" src="../static/imgs/join_endPoints.png" width="22" height="20">
+                    </button>
+                    <button id="split_endPoints" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                            data-placement="bottom" title="Move Object">
+                        <img id="split_endPoints_img" src="../static/imgs/split_endPoints.png" width="20"
+                             height="20">
+                    </button>
+                    <button id="delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                            data-placement="bottom" title="Delete">
+                        <img id="delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20">
+                    </button>
+
+        </div>
+        <div id = "spaitalUnit_bnts_div" class="col" style="text-align: center;display: inherit; position: absolute">
+            <button id="spatial_query_processor_bnt" type="button" class="btn btn-outline-info"
+                    onclick="spatial_query_processor(event)">Find Approximate Location <span>&nbsp &nbsp</span><i class="fa fa-search" aria-hidden="true" style="font-size:14px"></i>
+            </button>
+        </div>
+        </div>
+</div>
+
+<!--        <div id="ladm_interaction_bnts" style="visibility: hidden">
+                    <button id="ladm_interaction_for_RRR_bnt" type="button" class="btn btn-outline-info"
+                            onclick="ladm_interaction_for_RRR()">Add RRRs
+                    </button>
+                    <button id="nonSpatial_query_processor_bnt" type="button" class="btn btn-outline-info"
+                            onclick="nonSpatial_query_processor()">Non-spatial Query
+                    </button>
+                    <button id="spatial_query_processor_bnt" type="button" class="btn btn-outline-info"
+                            onclick="spatial_query_processor()">Spatial Query
+                    </button>
+                    <button id="reasoner_query_spatial_bnt" type="button" class="btn btn-outline-info"
+                            onclick="reasoner_process_spatial_queries()">Reasoner
+                    </button>
+                </div>-->
+</body>
+</html>

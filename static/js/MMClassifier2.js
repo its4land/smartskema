@@ -46,6 +46,10 @@ function renderBaseMap(map) {
                         baseMapDisplayManager.vectorFromGeoJSONContent(json) //"baseLayer")
                         });
 
+
+        dataManager.addData("baseMapVector", url);
+        button_manager.enable_interactive_bnts();
+
         mm_checked = new Boolean($("#MM_checked").prop("checked", true));
         mm_checked1 = new Boolean($("#ortho_GCP_checked").prop("checked", true));
     };
@@ -53,15 +57,37 @@ function renderBaseMap(map) {
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
 }
 
+
 /**
- Align and integration of data
+ Function to align Maps
  **/
+
+function align_geometries(event,ele){
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(ele);
+    if (projectMode == 0){
+        console.log("alignment if",projectMode);
+        align_Sketch_Map();
+    }else if (projectMode == 1){
+        align_Satellite_Drawing;
+        console.log("alignment else if",projectMode);
+    }else{
+        //align_Sketch_Map();// have to set for the case when we are loading from publish and share platform
+    }
+}
+
 function align_Sketch_Map() {
+
+    $.alert({
+        title: 'Info: the Alignment is in progress!',
+        content: 'be patient the process will take some time...'
+    });
+
 
     let svgContent = sketchMapDisplayManager.getVectorSVG().outerHTML;
     let geojsonContent = baseMapDisplayManager.getVectorGeojson().outerHTML;
-    console.log("here base map contants",geojsonContent)
-    console.log("here svgContent contants",svgContent)
+    //console.log("here base map contants",geojsonContent)
+    //console.log("here svgContent contants",svgContent)
 
     let ajaxParams = {
         url: '/align_plain',
@@ -82,6 +108,17 @@ function align_Sketch_Map() {
     let callback = function (resp) {
       mapmatches = JSON.parse(resp);
       finalResult = mapmatches;
+      if (finalResult !=null){
+
+          dataManager.addData("matchingDict", finalResult);
+          button_manager.enable_interactive_bnts();
+
+          $.alert({
+              title: 'Info: the Alignment is Done!',
+              content: 'Click on a feature in the input map to visualize the aligned feature ...'
+          });
+          toggle_interaction();
+      }
     };
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
 }
@@ -91,7 +128,13 @@ function align_Sketch_Map() {
  *
  */
 
-function align_Satellite_Drawing() {
+function align_Satellite_Drawing(event) {
+
+
+    $.alert({
+        title: 'Info: the Alignment is in progress!',
+        content: 'be patient the process will take some time...'
+    });
 
     let svgContent = sketchMapDisplayManager.getVectorSVG().outerHTML;
 
@@ -120,7 +163,10 @@ function align_Satellite_Drawing() {
  *  - Download all the final results are *.json
  *  - Both plan-sketch and ortho project result will be download by the function
  */
-function downloadResult(){
+function downloadResult(event,ele){
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(ele);
+
     let alignedResult = finalResult;
     var convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(alignedResult));
     // Create export

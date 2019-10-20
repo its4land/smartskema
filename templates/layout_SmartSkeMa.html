@@ -14,7 +14,7 @@
 
     <link rel="stylesheet" href="../static/css/smartSkeMa.css">
     <link rel="stylesheet" href="../static/css/SmartSkemaSVGEditorStyles.css">
-     <link rel="stylesheet" href="../static/css/w3Schools/w3.css">
+    <link rel="stylesheet" href="../static/css/w3Schools/w3.css">
     <link rel="stylesheet" href="../static/css/fonts/font-awesome.min-4.7.0.css">
     <!--<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
 
@@ -23,8 +23,7 @@
 
     <link rel="stylesheet" href="../static/css/jquery/chosen.min-1.5.1.css">
     <!-- <link rel="stylesheet" href="../static/css/bootstrap/bootstrap.min-4.0.0.css">-->
-     <!--<link rel="stylesheet" href="../static/css/w3.css">-->
-
+    <!--<link rel="stylesheet" href="../static/css/w3.css">-->
 
 
     <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />-->
@@ -56,6 +55,7 @@
 
     <script src="../static/js/bootstrap/bootstrap.min.4.0.0-beta.js"></script>
     <!-- Latest compiled and minified JavaScript -->
+    <script src="../static/js/tooltipManager.js"></script>
     <script src="../static/js/ladmInteractionForRRRs.js"></script>
     <script src="../static/js/nonSpatialQueryProcessor.js"></script>
     <script src="../static/js/spatialQueryProcessor.js"></script>
@@ -67,286 +67,22 @@
     <script src="../static/js/smartskema_io.js" charset="utf-8"></script>
     <script src="../static/js/smartskema_data_loaders.js" defer></script>
 
-  <!--  <script src="../static/js/projectMode_interactions.js" charset="utf-8"></script>-->
+    <!--  <script src="../static/js/projectMode_interactions.js" charset="utf-8"></script>-->
     <script src="../static/js/tabulator/jquery-ui.js"></script>
     <script src="../static/js/tabulator/tabulator.js"></script>
     <script src="../static/js/tabulator/tabulator_core.js"></script>
     <script src="../static/js/tabulator/jquery_wrapper.js"></script>
-   <!-- <script src='https://kit.fontawesome.com/a076d05399.js'></script>-->
+    <script src="../static/js/dataManager.js"></script>
+
+    <!-- <script src='https://kit.fontawesome.com/a076d05399.js'></script>-->
 </head>
 <body>
-<div class="container-fluid">
-<div id ="header">
-        <nav class="navbar navbar-expand-xl navbar-dark bg-dark ">
-            <button class="btn btn-outline-success my-2 my-sm-0">
-                <span>
-                    <img src="../static/imgs/smartSkema.png" width="35" height="35" class="d-inline-block align-top"
-                         alt="logo">
-                    SmartSkeMa
-                </span>
-            </button>
+<div>
+    {% include "header.html" %}
 
-            <ul class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav mr-auto mt-2 mt-xl-0">
-                    <li class="nav-item dropdown active">
-                        <a class="dropdown-toggle " class="nav-link" href="#" data-toggle="dropdown" role="button"
-                           aria-haspopup="true" aria-expanded="true">
-                            New Project
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="Preview" style="padding:4px">
-                            <label class="dropdown-item">
-                               <i class="fa fa-folder-open" aria-hidden="true"></i>
+    {%block body %}{% endblock %}
 
-                                <input id="SketchMapProjectInputbutton" role="button" style="display: none;"
-                                       onclick="loadSketchMapProject(event)"><span> New Sketch Map Project </span>
-                            </label>
-
-                            <label class="dropdown-item">
-                                <i class="fa fa-folder-open" aria-hidden="true"></i>
-
-                                <input id="OrthoMapProjectInputbutton" role="button" style="display: none;"
-                                       onclick="loadOrthophotoProject(event)"/><span>New Orthophoto Project </span>
-
-                            </label>
-
-                                <label class="dropdown-item">
-                                <i class="fa fa-cloud-download"></i>
-                                <input id="download_project_from_PnS" role="button" style="display: none;"
-                                       onclick="download_projects_from_PnS()"/><span>Download Project from PnS </span>
-
-                            </label>
-
-                        </div>
-
-                    </li>
-
-                    <li class="nav-item dropdown active">
-                        <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="processImage"
-                           role="button"
-                           aria-haspopup="true" aria-expanded="true">
-                            Vectorize Image
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="Preview">
-                            <label class="dropdown-item">
-                                <img id="p_sm" src="../static/imgs/process.png" width="20" height="20" alt="">
-                                <input id="processSketchMap" type="" style="display: none;"
-                                       onclick="processSketchMap()"/><span>Vectorize Sketch Map </span>
-
-                            </label>
-                            <label class="dropdown-item">
-                                <img id="p_mm" src="../static/imgs/process.png" width="20" height="20" alt="">
-                                <input id="processSatelliteMap" type="" style="display: none;"
-                                       onclick="processSketchMap()"/><span>Vectorize Orthophoto Drawing </span>
-
-                            </label>
-
-                        </div>
-                    </li>
-
-                    <li class="nav-item dropdown active">
-                        <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="tool"
-                           role="button"
-                           aria-haspopup="true" aria-expanded="true">
-                            Edit
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="Preview">
-                            <label class="dropdown-item">
-                                <img id="editor_sm_img" src="../static/imgs/sm_tool.png" width="20" height="20" alt="">
-                                <input id="editor_sm" type="" style="display: none;"
-                                       onclick="enable_svg_edit_tool()"/><span>Edit Sketch Map </span>
-
-                            </label>
-
-                            <label class="dropdown-item">
-                                <img id="editor_orth_img" src="../static/imgs/sm_tool.png" width="20" height="20"
-                                     alt="">
-                                <input id="editor_ortho" type="" style="display: none;"
-                                       onclick="enable_json_svg_edit_tool()"/><span>Edit Base Map  </span>
-
-                            </label>
-
-                            <label class="dropdown-item">
-                                <img id="editor_ladm" src="../static/imgs/ladm_tool_1.png" width="20" height="20"
-                                     alt="">
-                                <input id="editor_ladm_input" type="" style="display: none;"
-                                       onclick="enable_ladm_bnts()"/><span>  Edit Non-spatial Information  </span>
-
-                            </label>
-
-                            <label class="dropdown-item">
-                                <img id="add_complexMap_img" src="../static/imgs/ladm_tool_1.png" width="20" height="20"
-                                     alt="">
-                                <input id="add_complexStruMap_bnt" type="" style="display: none;"
-                                       onclick="add_complexStruMap_bnt()"/><span>  Add Complex Structure Map  </span>
-
-                            </label>
-
-                        </div>
-                    </li>
-
-                    <li class="nav-item dropdown active">
-                        <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="align"
-                           role="button"
-                           aria-haspopup="true" aria-expanded="true">
-                            Align-to-Geometry
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="Preview">
-                            <label class="dropdown-item">
-                                <img id="align_sm_img" src="../static/imgs/align_St_drawing.png" width="20" height="20"
-                                     alt="">
-                                <input id="align_sm" type="" style="display: none;"
-                                       onclick="align_Sketch_Map()"/><span>Align Sketch Map </span>
-                            </label>
-                            <label class="dropdown-item">
-                                <img id="align_mm_img" src="../static/imgs/align_St_drawing.png" width="20" height="20"
-                                     alt="">
-                                <input id="align_mm" type="" style="display: none;"
-                                       onclick="align_Satellite_Drawing()"/><span>Align Orthophoto Drawing </span>
-                            </label>
-                            <label class="dropdown-item">
-                                <img id="toggle_interaction_img" src="../static/imgs/toggle_interaction.png" width="25"
-                                     height="25"
-                                     alt="">
-                                <input id="toggle_interaction" type="" style="display: none;"
-                                       onclick="toggle_interaction()"/><span>Toggle Interaction</span>
-                            </label>
-
-                        </div>
-                    </li>
-
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">help <span class="sr-only"></span></a>
-                    </li>
-                </ul>
-
-                <div class="navbar">
-
-                    <a id="save@PnS" class="active" href="#" onclick="save_PnS()"><i class="fa fa-cloud-upload"></i>
-                        Save@PnS</a>
-                    <!--<a id="download_project_from_PnS" href="#" onclick="download_projects_from_PnS()"><i
-                            class="fa fa-cloud-download"></i> Download PnS Project</a>-->
-                    <a id="download_alignedResult" href="" onclick="downloadResult()"><i
-                            class="fa fa-fw fa-download"></i> Download Result</a>
-                    <!--<a href="#"><i class="fa fa-fw fa-search"></i> Search</a>-->
-                    <!-- <a class="active" href="#"><i class="fa fa-fw fa-home"></i>Home</a>-->
-                    <a id = "contactTeam" class="active" href="#" onclick="contactTeam()"><i class="fa fa-fw fa-envelope"></i> Contact</a>
-
-                    <!--<a id="testrander" href="#" onclick="render_downloaded_files_on_client()"><i
-                            class="fa fa-fw fa-download"></i> test</a>-->
-                    <!-- <a class="active" href="#"><i class="fa fa-fw fa-user"></i> Login</a>-->
-
-                </div>
-
-
-            </ul>
-        </nav>
-    </div>
- <div id="editor_div" class=container style="visibility: hidden">
-        <div id="edit_div" class="w3-panel w3-round w3-card">
-            <div id="editor_tools_row" class="row">
-                <div id="editor_tools_col_left" class="col">
-
-                    <div id="svg_edit_bnts" style="visibility: hidden">
-                        <button id="draw_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
-                                data-placement="bottom" title="Draw Geometry" onclick="">
-                            <img id="draw_geom_img" src="../static/imgs/draw_geom.png" width="22" height="20">
-                        </button>
-                        <button id="edit_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
-                                data-placement="bottom" title="Edit Geometry">
-                            <img id="edit_geom_img" src="../static/imgs/edit_geom.png" width="22" height="20">
-                        </button>
-                        <button id="join_endPoints" type="button" class="btn btn-outline-info" data-toggle="tooltip"
-                                data-placement="bottom" title="Join EndPoints">
-                            <img id="join_endPoints_img" src="../static/imgs/join_endPoints.png" width="22" height="20">
-                        </button>
-                        <button id="split_endPoints" type="button" class="btn btn-outline-info" data-toggle="tooltip"
-                                data-placement="bottom" title="Move Object">
-                            <img id="split_endPoints_img" src="../static/imgs/split_endPoints.png" width="20"
-                                 height="20">
-                        </button>
-                        <button id="delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
-                                data-placement="bottom" title="Delete">
-                            <img id="delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20">
-                        </button>
-                    </div>
-                    <!-- div for ladm interaction buttons-->
-                    <div id="ladm_interaction_bnts" style="visibility: hidden">
-                        <button id="ladm_interaction_for_RRR_bnt" type="button" class="btn btn-outline-info"
-                                onclick="ladm_interaction_for_RRR()">Add RRRs
-                        </button>
-                        <button id="nonSpatial_query_processor_bnt" type="button" class="btn btn-outline-info"
-                                onclick="nonSpatial_query_processor()">Non-spatial Query
-                        </button>
-                        <button id="spatial_query_processor_bnt" type="button" class="btn btn-outline-info"
-                                onclick="spatial_query_processor()">Spatial Query
-                        </button>
-                        <button id="reasoner_query_spatial_bnt" type="button" class="btn btn-outline-info"
-                                onclick="reasoner_process_spatial_queries()">Reasoner
-                        </button>
-                    </div>
-                </div>
-                <div id="editor_tools_col_right" class="col">
-                    <!-- div for geoJson interaction buttons-->
-                    <div id="json_edit_bnts" align="right" style="visibility: hidden">
-                        <button id="json_draw_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
-                                data-placement="bottom" title="Draw Geometry" onclick="">
-                            <img id="json_draw_geom_img" src="../static/imgs/draw_geom.png" width="22" height="20">
-                        </button>
-                        <button id="json_edit_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
-                                data-placement="bottom" title="Edit Geometry">
-                            <img id="json_edit_geom_img" src="../static/imgs/edit_geom.png" width="22" height="20">
-                        </button>
-                        <button id="json_join_endPoints" type="button" class="btn btn-outline-info"
-                                data-toggle="tooltip"
-                                data-placement="bottom" title="Join EndPoints">
-                            <img id="json_join_endPoints_img" src="../static/imgs/join_endPoints.png" width="22"
-                                 height="20">
-                        </button>
-                        <button id="json_split_endPoints" type="button" class="btn btn-outline-info"
-                                data-toggle="tooltip"
-                                data-placement="bottom" title="Move Object">
-                            <img id="json_split_endPoints_img" src="../static/imgs/split_endPoints.png" width="20"
-                                 height="20">
-                        </button>
-                        <button id="json_delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
-                                data-placement="bottom" title="Delete">
-                            <img id="json_delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20">
-                        </button>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-    </div>
-{%block body %}{% endblock %}
-<div id="footer_div" class="navbar navbar-expand-xl navbar-dark bg-dark">
-        <table class="footer_table" style="width: 100%">
-            <tr>
-                <td align="left">
-                    <span>
-                         <img src="../static/imgs/wwu.jpg" width="85" height="35" class="d-inline-block"
-                              alt="logo">
-                        <a style="color: white"><b>Institut für Geoinformatik |</b> <i>Heisenbergstraße 2
-                            48149 Münster, Germany </i></a>
-                    </span>
-                </td>
-                <td>
-                    <span>
-                        <a style="color: white"><b>Spatial Intelligence Lab |</b> <i>Institute for
-                            Geoinformatics</i></a>
-                    </span>
-                </td>
-                <td align="right">
-                    <span>
-                        <img src="../static/imgs/its4land.png" width="85" height="35" class="d-inline-block"
-                             alt="logo">
-                        <a style="color: white"><b>its4Land |</b> <i>Hengelosestraat 99 Enschede,Netherlands</i></a>
-                    </span>
-                </td>
-            </tr>
-        </table>
-    </div>
+    {% include "footer.html" %}
 </div>
 </body>
 </html>

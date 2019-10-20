@@ -3,6 +3,7 @@
 
 
 #referencePoints_popup_div {
+    position: absolute;
     border: 1px solid;
     padding: 1px;
     width:300px;

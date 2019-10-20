@@ -26,7 +26,12 @@ function loadPartyFile(element) {
                 loadedPartyFile: loadedPartyFile,
                 partyJson: JSON.stringify(partyJson)
             }
+
         };
+
+        dataManager.addData("parties", partyJson)
+        button_manager.enable_interactive_bnts();
+
         new communicator(ajaxParams).sendRequest({}, function(resp){
             var party = JSON.parse(resp)
         });
@@ -114,6 +119,10 @@ function read_LADM_file_contants(ladmFile) {
                     LDMContent: LDMContent
                 }
             };
+
+            dataManager.addData("ladmData", LDMContent)
+            button_manager.enable_interactive_bnts();
+
             new communicator(ajaxParams).sendRequest({}, function(resp){});
 
         }else{
@@ -131,8 +140,6 @@ function read_LADM_file_contants(ladmFile) {
  */
 function ladm_interaction_for_RRR_mode() {
     console.log("i am in the LADM interaction MODE....");
-    $('#edit_ladm_bnt').prop('disabled', true);
-    $('#query_ladm_bnt').prop('disabled', false);
 
     var svg_elements = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
 

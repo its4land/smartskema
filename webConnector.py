@@ -146,7 +146,7 @@ def path_to_project(d):
 
 @app.route("/")
 def main_page():
-    return render_template("smartSkeMa.html")
+    return render_template("smartSkeMa.html", page="active")
 
 
 @app.route("/getSessionID", methods=["GET"])

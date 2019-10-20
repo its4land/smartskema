@@ -50,7 +50,13 @@ function loadProjectData(event, projectType, divID) {
 
 }
 
-function loadSketchMapProject(event) {
+
+function loadSketchMapProject(event,ele) {
+
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(ele);
+
+    toolTipManager.movableToolTip(document.getElementById("SM_project_div"));
 
     sm_checked = new Boolean($("#SM_checked").prop("checked", false));
     mm_checked = new Boolean($("#MM_checked").prop("checked", false));
@@ -68,7 +74,14 @@ function loadSketchMapProject(event) {
  * function to activate the project for OrthoPhoto
  *
  */
-function loadOrthophotoProject(event) {
+function loadOrthophotoProject(event, ele) {
+
+
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(ele);
+
+    toolTipManager.movableToolTip(document.getElementById("orthophoto_project_div"));
+
     orth_sm_checked = new Boolean($("#orthphoto_drawing_checked").prop("checked", false));
     mm_checked1 = new Boolean($("#ortho_GCP_checked").prop("checked", false));
     orth_ladm_checked = new Boolean($("#ortho_LADM_checked").prop("checked", false));
@@ -120,6 +133,7 @@ var sessionData = (function(){
         type: 'GET',
         success: function (resp) {
             sessionData.sessID = resp;
+           button_manager.disable_all_interavtive_bnts();
         }
     });
 

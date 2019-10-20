@@ -1,4 +1,5 @@
 #ladm_rrrs_popup_div{
+    position: absolute;
     width: 360px;
     background: white;
     margin: auto;

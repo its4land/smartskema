@@ -36,6 +36,7 @@ var SvgPath;
 
 
 
+
 function loadComplexStructureDrawingMap(element){
     fileList = document.getElementById('ComplexStrMapInputbutton').files;
     for (var i = 0; i < fileList.length; i++) {
@@ -98,13 +99,7 @@ function toggle_interaction() {
      getMapMatches();
 
     svg_elements = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
-    console.log("svg elements:", svg_elements);
-    /*.on('click', function (d, i) {
-        d3.select(this)
-            .transition()//Set transition
-            .style('stroke', '#039BE5')
-            .attr("stroke-width", "5px");
-    })*/
+    //console.log("svg elements:", svg_elements);
     svg_elements.on('mouseover', alignment_mouse_over);
     svg_elements.on('mouseout', alignment_mouse_out);
 }
@@ -145,7 +140,7 @@ function alignment_mouse_out(d, i) {
  * @param element
  */
 function loadSketchMap() {
-
+    createProcessingRing();
     var callbackParams = {};
 
     openReadFromFile(event.target, renderSketchMapRaster, callbackParams);
@@ -178,14 +173,19 @@ function renderSketchMapRaster(image) {
      */
     let callback = function(resp) {
         let json = JSON.parse(resp);
+        deleteProcessingRing();
         //maximum image width should be 800 to fit in the svg without overflowing the viewport
         sketchMapDisplayManager.rasterFromURL("/" + json.imgPath, json.imgWidth, json.imgHeight);
+
+        dataManager.addData("sketchMapImage", json.imgPath)
+        button_manager.enable_interactive_bnts();
 
         sm_checked = new Boolean($("#SM_checked").prop("checked", true));
         orth_sm_checked = new Boolean($("#orthphoto_drawing_checked").prop("checked", true));
     };
 
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
+
 }
 
 
@@ -194,7 +194,11 @@ function renderSketchMapRaster(image) {
  * @returns
  */
 
-function processSketchMap(event) {
+function processSketchMap(event,ele) {
+
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(ele);
+
     $.alert({
         title: 'Info: the image is being processed',
         content: 'be patient the process will take some time...'
@@ -209,6 +213,9 @@ function processSketchMap(event) {
     let callback = function (resp) {
         var json = JSON.parse(resp);
         sketchMapDisplayManager.vectorFromSVGURL("/" + json.svgPath);
+
+        dataManager.addData("vectorizedSketchMap", json.svgPath);
+        button_manager.enable_interactive_bnts();
     };
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
 }
@@ -327,7 +334,10 @@ function enable_ladm_bnts() {
 /**
  * LADM interaction for RRRs
  */
-function ladm_interaction_for_RRR() {
+function ladm_interaction_for_RRR(event,ele) {
+
+    toolTipManager.displayToolTip(ele);
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
     deleteProcessingRing();
     ladm_interaction_for_RRR_mode();
 }
@@ -337,15 +347,20 @@ function ladm_interaction_for_RRR() {
  * function activates spatial_query_activites
  */
 
-function spatial_query_processor(){
-        deleteProcessingRing();
-      spatial_query_processor_mode();
+function spatial_query_processor(event){
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(event);
+    deleteProcessingRing();
+    spatial_query_processor_mode();
 }
 
 /**
  * function activates non-spatial_query_activites
  */
-function nonSpatial_query_processor(){
+function nonSpatial_query_processor(event,ele){
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(ele);
+
     deleteProcessingRing();
     nonSpatial_query_processor_mode();
 }
@@ -380,17 +395,29 @@ $(function () {
 /**
  * removes the disable property of the svg tool buttons
  */
-function enable_svg_edit_tool() {
+function enable_svg_edit_tool(event,ele) {
+
     $('#editor_div').prop("style", "visibility: visible");
-    $('#svg_edit_bnts').prop("style", "visibility: visible");
+    $('#svg_editor_bnt').prop("style", "visibility: visible");
 
-    $('#ladm_interaction_bnts').prop("style", "visibility: hidden");
-    $('#json_edit_bnts').prop("style", "visibility: hidden");
+    $('#spaitalUnit_bnts_div').prop("style", "visibility: hidden");
 
+    //$('#svg_edit_bnts').prop("style", "visibility: visible");
+
+    //$('#ladm_interaction_bnts').prop("style", "visibility: hidden");
+    //$('#json_edit_bnts').prop("style", "visibility: hidden");
+
+    toolTipManager.displayToolTip(ele);
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
 
     popup = document.getElementById("popup_div");
     popup.style.visibility = "hidden";
 
+    $(document).on('keydown', function (e) {
+        if (e.keyCode === 27) { // ESC
+            $("#editor_div").hide();
+        }
+    });
 
     $('.bnt').prop("disabled", false);
     let svg = d3.select("#loadedSVG");
@@ -427,10 +454,15 @@ function enable_svg_edit_tool() {
 /**
  * enable geoJSON interaction buttons
  */
-function enable_json_svg_edit_tool() {
-    svgEditor.init('base')
+function enable_spatialUnit_bnt_tools(event,ele) {
 
-    console.log("JSON_SVG Editor MODE is Activated...");
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(ele);
+
+    $('#editor_div').prop("style", "visibility: visible");
+    $('#svg_editor_bnt').prop("style", "visibility: visible");
+    $('#spaitalUnit_bnts_div').prop("style", "visibility: visible");
+
 
 }
 
@@ -581,7 +613,11 @@ function reasoner_process_spatial_queries(){
 
 $(".chosen").chosen();
 
-function add_complexStruMap_bnt() {
+function add_complexStruMap_bnt(event) {
+
+
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(event);
 
     var SVG_ELE = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
 
@@ -621,7 +657,13 @@ function add_complexStruMap_bnt() {
     - sketch map, base map and intermediate results in svg, json format
  */
 
-function save_PnS(){
+function save_PnS(event,ele){
+
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(ele);
+
+    toolTipManager.movableToolTip(document.getElementById("projectNameInputDiv_for_PnS"));
+
 
     $('#projectNameInputDiv_for_PnS').prop("style", "visibility: visible");
     x = event.pageX;
@@ -643,7 +685,11 @@ function save_PnS(){
 function  saveProject_to_PnS(){
 
     var sub_project_name= document.getElementById("sub_project_name_input").value;
-    //console.log("sub_project_name",sub_project_name);
+    $.alert({
+        title: 'Info: saving data is in progress!',
+        content: 'be patient the process will take some time...'
+    });
+
     if (sub_project_name != undefined){
         let ajaxParams = {
             url: "/save_PnS",
@@ -679,7 +725,11 @@ function  saveProject_to_PnS(){
     - sketch map, base map and intermediate results in svg, json format
  */
 
-function download_projects_from_PnS(){
+function download_projects_from_PnS(event,ele){
+
+
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(ele);
 
     //console.log("here i am in the download function")
     ajaxParams = {
@@ -693,20 +743,30 @@ function download_projects_from_PnS(){
         $('#project_loader').empty();
         var resp = JSON.parse(resp);
         projects = resp.projects;
+
         for (i in projects){
-            console.log(i);
+            var pieces = projects[i].split(":");
+            var lastName= pieces[pieces.length-1];
+            console.log(lastName);
             $('#project_loader').append(
-                "<div id='projects';style = 'padding-left:3px'>" +
-                "<span >" + projects[i]+ "</span>" +
+                "<div id='row' class='row'>"+
+                "<button id='projects'>" +
+                lastName +
+                "</button>"+
                 "</div>"
             );
-            $('#projects').prop("style", "padding:1px");
+            $('#row').prop("id", "row" + i);
+            $('#row' + i).prop("style", "padding:2px");
+
+            $('#row' + i).prop("style", "margin-top: 2px");
+            $('#row' + i).prop("style", "margin-left: 2px");
             $('#projects').prop("id", "projects" + i);
+            $('#projects' + i).prop("style", "margin-bottom: 2px");
             $('#projects' + i).prop("class", "btn btn-outline-info");
-            $('#projects' + i).prop("style", "padding-bottom:2px");
             $('#projects' + i).attr("onclick", "get_PnS_project_items("+ JSON.stringify(projects[i])+")");
 
         }
+
 
    });
 
@@ -715,9 +775,11 @@ function download_projects_from_PnS(){
     x = event.pageX;
     y = event.pageY;
     $('#PnS_download_projects_div').offset({
-        top: y+10,
+        top: y,
         left: x
     });
+
+    toolTipManager.movableToolTip(document.getElementById("PnS_download_projects_div"));
 
      $(document).on('keydown', function (e) {
         if (e.keyCode === 27) { // ESC
@@ -730,7 +792,14 @@ function download_projects_from_PnS(){
 
 function get_PnS_project_items(sub_project_name){
     $('#PnS_download_projects_div').prop("style", "visibility: hidden");
-    createProcessingRing();
+    var str = sub_project_name.split(":");
+    var project_type= str[0];
+    if(project_type == "plainSketchProject"){
+        projectMode =0;
+    }if(project_type == "orthoSketchProject"){
+        projectMode =1;
+    }
+   createProcessingRing();
    let ajaxParams = {
        url : "/download_project_items_from_PnS",
        type : "POST",
@@ -817,3 +886,5 @@ $(document).on('keydown', function (e) {
 
     }
 });
+
+

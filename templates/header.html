@@ -1,0 +1,239 @@
+<div id ="header" class="container-fluid" style="padding: 1px">
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark" style="padding: 10px">
+        <button class="btn btn-outline-success my-2 my-sm-0">
+                <span class="navbar-brand">
+                    <img src="../static/imgs/smartSkema.png" width="35" height="35" >
+                    SmartSkeMa
+                </span>
+        </button>
+
+        <div class="collapse navbar-collapse" style="padding: 6px">
+            <ul class="navbar-nav">
+                <li  class="nav-item dropdown">
+                    <a  id = "Start" class="nav-link dropdown-toggle active " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                        Start
+                    </a>
+
+                    <div class="dropdown-menu" style="padding:4px">
+
+                        <a id = "SketchMapProjectInputbutton" class="dropdown-item" href="#" onclick="loadSketchMapProject(event,this)">
+                            <i class="fa fa-folder-open" aria-hidden="true"></i>
+                            <span style="margin-left: 5px">Load new Sketch Map</span>
+                        </a>
+
+                        <a id = "OrthoMapProjectInputbutton" class="dropdown-item" href="#" onclick="loadOrthophotoProject(event,this)">
+                            <i class="fa fa-folder-open" aria-hidden="true"></i>
+                            <span style="margin-left: 5px">Load new Ortho Drawing</span>
+                        </a>
+
+
+                        <a id = "download_project_from_PnS" class="dropdown-item" href="#" onclick="download_projects_from_PnS(event,this)">
+                            <i class="fa fa-cloud-download"></i>
+                            <span style="margin-left: 5px">Load Data from PnS</span>
+                        </a>
+                    </div>
+
+                </li>
+
+             <!--   <li class="nav-item active">
+
+                    <a id = "Vectorize_Image" class="nav-link" href="#" onclick="processSketchMap(event)">Vectorize Image <span class="sr-only"></span></a>
+                </li>-->
+
+                <li class="nav-item dropdown">
+                    <a id = "Vectorize_Image_menu" class="nav-link dropdown-toggle active" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="true">
+                        Vectorize Image
+                    </a>
+                    <div class="dropdown-menu" style="padding:4px">
+
+                        <a id = "Vectorize_Image" class="dropdown-item" href="#" onclick="processSketchMap(event,this)">
+                            <i class="fa fa-spinner" aria-hidden="true" style="font-size:14px"></i>
+                            <span style="margin-left: 5px">Automatic Vectorization</span>
+                        </a>
+
+                        <a id = "Editor" class="dropdown-item" href="#" onclick="enable_svg_edit_tool(event,this)">
+                            <i class="fa fa-edit" aria-hidden="true" style="font-size:14px"></i>
+                            <span style="margin-left: 5px">Geometry Editor</span>
+                        </a>
+                    </div>
+                </li>
+
+           <!--     <li class="nav-item active">
+                    <a id = "Editor" class="nav-link" href="#" onclick="enable_svg_edit_tool(event)">Editor<span class="sr-only"></span></a>
+                </li>-->
+
+                <li class="nav-item dropdown">
+                     <a id = "Add_Land_Tenure_Info." class="nav-link dropdown-toggle active" data-toggle="dropdown" role="button"
+                        aria-haspopup="true" aria-expanded="true">
+                         Land Tenure Info.
+                     </a>
+                     <div class="dropdown-menu" style="padding:4px">
+                         <a id = "ladm_interaction_for_RRR_bnt" class="dropdown-item" href="#" onclick="ladm_interaction_for_RRR(event,this)">
+                             <i class="fa fa-edit" aria-hidden="true" style="font-size:14px"></i>
+                             <span style="margin-left: 5px">Add Tenure Record</span>
+                         </a>
+
+                         <a id = "nonSpatial_query_processor_bnt" class="dropdown-item" href="#" onclick="nonSpatial_query_processor(event,this)">
+                             <i class="fa fa-question-circle" aria-hidden="true" style="font-size:14px"></i>
+                             <span style="margin-left: 5px">Query Tenure Record</span>
+                         </a>
+                            <!--<label class="dropdown-item" style="padding: 1px;"disabled>
+                                     <i class="fa fa-file-image-o" aria-hidden="true" style="font-size:14px" ></i>
+                                     <input id="add_complexStruMap_bnt" type="" style="display: none;"
+                                            onclick="add_complexStruMap_bnt(event)"/><span>  Add Complex Structure Map  </span>
+                                 </label>-->
+                     </div>
+                 </li>
+                 <!-- <li class="nav-item dropdown active">
+                      <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="processImage"
+                         role="button"
+                         aria-haspopup="true" aria-expanded="true">
+                          <b>Vectorize Image</b>
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="Preview">
+                          <label class="dropdown-item">
+                              <img id="p_sm" src="../static/imgs/process.png" width="20" height="20" alt="">
+                              <input id="processSketchMap" type="" style="display: none;"
+                                     onclick="processSketchMap()"/><span>Vectorize Sketch Map </span>
+
+                          </label>
+                          <label class="dropdown-item">
+                              <img id="p_mm" src="../static/imgs/process.png" width="20" height="20" alt="">
+                              <input id="processSatelliteMap" type="" style="display: none;"
+                                     onclick="processSketchMap()"/><span>Vectorize Orthophoto Drawing </span>
+
+                          </label>
+
+                      </div>
+                  </li>-->
+
+               <!-- <li class="nav-item dropdown active">
+                    <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="tool"
+                       role="button"
+                       aria-haspopup="true" aria-expanded="true">
+                        Edit
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="Preview">
+                        <label class="dropdown-item">
+                            <img id="editor_sm_img" src="../static/imgs/sm_tool.png" width="20" height="20" alt="">
+                            <input id="editor_sm" type="" style="display: none;"
+                                   onclick="enable_svg_edit_tool()"/><span>Edit Sketch Map </span>
+
+                        </label>
+
+                        <label class="dropdown-item">
+                            <img id="editor_orth_img" src="../static/imgs/sm_tool.png" width="20" height="20"
+                                 alt="">
+                            <input id="editor_ortho" type="" style="display: none;"
+                                   onclick="enable_json_svg_edit_tool()"/><span>Edit Base Map  </span>
+
+                        </label>
+
+                        <label class="dropdown-item">
+                            <img id="editor_ladm" src="../static/imgs/ladm_tool_1.png" width="20" height="20"
+                                 alt="">
+                            <input id="editor_ladm_input" type="" style="display: none;"
+                                   onclick="enable_ladm_bnts()"/><span>  Edit Non-spatial Information  </span>
+
+                        </label>
+
+                        <label class="dropdown-item">
+                            <img id="add_complexMap_img" src="../static/imgs/ladm_tool_1.png" width="20" height="20"
+                                 alt="">
+                            <input id="add_complexStruMap_bnt" type="" style="display: none;"
+                                   onclick="add_complexStruMap_bnt()"/><span>  Add Complex Structure Map  </span>
+
+                        </label>
+
+                    </div>
+                </li>-->
+
+                <li class="nav-item dropdown active">
+                    <a id = "align_geometries" class="nav-link" href="#" onclick="align_geometries(event,this)">Align-to-Geometries<span class="sr-only"></span></a>
+                </li>
+
+                <li class="nav-item active">
+                    <a id = "Add_Spatial_Unit" class="nav-link" href="#" onclick="enable_spatialUnit_bnt_tools(event,this)">Spatial Unit<span class="sr-only"></span></a>
+                </li>
+
+               <!-- <li class="nav-item dropdown active">
+                <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="Align_to_Geometry"
+                   role="button"
+                   aria-haspopup="true" aria-expanded="true">
+                    Align-to-Geometry
+                </a>
+                <div class="dropdown-menu" aria-labelledby="Preview">
+                    <label class="dropdown-item">
+                        <img id="align_sm_img" src="../static/imgs/align_St_drawing.png" width="20" height="20"
+                             alt="">
+                        <input id="align_sm" type="" style="display: none;"
+                               onclick="align_Sketch_Map(event)"/><span>Align Sketch Map </span>
+                    </label>
+                    <label class="dropdown-item">
+                        <img id="align_mm_img" src="../static/imgs/align_St_drawing.png" width="20" height="20"
+                             alt="">
+                        <input id="align_mm" type="" style="display: none;"
+                               onclick="align_Satellite_Drawing(event)"/><span>Align Orthophoto Drawing </span>
+                    </label>
+                    <label class="dropdown-item" style="padding-left: 5px">
+                        <i class="fa fa-eye" aria-hidden="true" style="font-size:14px"></i>
+                        <input id="toggle_interaction" type="" style="display: none;"
+                               onclick="toggle_interaction(event)"/><span>Visualize Alignment</span>
+                    </label>
+
+                </div>
+            </li>-->
+
+         <!--       <li class="nav-item dropdown active">
+                    <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="Add_Spatial_Unit"
+                       role="button"
+                       aria-haspopup="true" aria-expanded="true">
+                        Add Spatial Unit
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="Preview">
+                        <label class="dropdown-item" style="padding: 1px">
+                            <i class="fa fa-search" aria-hidden="true" style="font-size:14px"></i>
+                            <input id="spatial_query_processor_bnt" type="" style="display: none;"
+                                   onclick="spatial_query_processor(event)"/><span>Find Approximate Location </span>
+                        </label>
+                        <label class="dropdown-item"  style="padding: 1px">
+                            <i class="fa fa-edit" aria-hidden="true" style="font-size:14px"></i>
+                            <input id="Editor_mm" type="" style="display: none;"
+                                   onclick="enable_svg_edit_tool(event)"/><span> Draw Spatial Unit </span>
+                        </label>
+
+                    </div>
+                </li>-->
+
+                <li class="nav-item active">
+                    <a id = "help" class="nav-link" href="#">help <span class="sr-only"></span></a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav" style="margin: auto;margin-right: 5px">
+                <li class="nav-item active">
+                    <a id="save_PnS" class="nav-link" href="#" onclick="save_PnS(event,this)"><i class="fa fa-cloud-upload"></i>
+                        Save@PnS</a>
+                </li>
+                <!--<a id="download_project_from_PnS" href="#" onclick="download_projects_from_PnS()"><i
+                        class="fa fa-cloud-download"></i> Download PnS Project</a>-->
+                <li class="nav-item active">
+                    <a id="download_alignedResult" class="nav-link" href="" onclick="downloadResult(event,this)"><i
+                            class="fa fa-fw fa-download"></i> Download</a>
+                </li>
+                <!--<a href="#"><i class="fa fa-fw fa-search"></i> Search</a>-->
+                <!-- <a class="active" href="#"><i class="fa fa-fw fa-home"></i>Home</a>-->
+                <li class="nav-item active">
+                    <a id = "contactTeam" class="active" href="#" onclick="contactTeam()"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+                </li>
+                <!--<a id="testrander" href="#" onclick="render_downloaded_files_on_client()"><i
+                        class="fa fa-fw fa-download"></i> test</a>-->
+                <!-- <a class="active" href="#"><i class="fa fa-fw fa-user"></i> Login</a>-->
+
+            </ul>
+
+
+        </div>
+    </nav>
+</div>
