@@ -16,6 +16,12 @@ function loadMetricMap() {
 }
 
 function renderBaseMap(map) {
+    toolTipCounter = toolTipCounter+1;
+
+    if(toolTipCounter==4){
+        toolTipManager.hideToolTip();
+    };
+
     let json = JSON.parse(map);
 
     let ajaxParams = {
@@ -67,16 +73,16 @@ function align_geometries(event,ele){
     toolTipManager.displayToolTip(ele);
     if (projectMode == 0){
         console.log("alignment if",projectMode);
-        align_Sketch_Map();
+        align_Sketch_Map(event);
     }else if (projectMode == 1){
-        align_Satellite_Drawing;
+        align_Satellite_Drawing(event);
         console.log("alignment else if",projectMode);
     }else{
         //align_Sketch_Map();// have to set for the case when we are loading from publish and share platform
     }
 }
 
-function align_Sketch_Map() {
+function align_Sketch_Map(event) {
 
     $.alert({
         title: 'Info: the Alignment is in progress!',
@@ -109,15 +115,9 @@ function align_Sketch_Map() {
       mapmatches = JSON.parse(resp);
       finalResult = mapmatches;
       if (finalResult !=null){
-
+          toolTipManager.hideToolTip(event);
           dataManager.addData("matchingDict", finalResult);
           button_manager.enable_interactive_bnts();
-
-          $.alert({
-              title: 'Info: the Alignment is Done!',
-              content: 'Click on a feature in the input map to visualize the aligned feature ...'
-          });
-          toggle_interaction();
       }
     };
     new communicator(ajaxParams).sendRequest(callbackParams, callback);

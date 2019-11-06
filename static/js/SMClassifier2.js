@@ -30,6 +30,10 @@ var sm_checked;
 var originalImageContent = "";
 var LDM_fileName_full = "";
 var SvgPath;
+var SVG_INTERACTION_MODE = -1
+var SVG_INTERACTION_MODE_SKETCHMAP = 0 // for interaction on svg for sketch map
+var SVG_INTERACTION_MODE_BASEMAP = 1 // for interaction  on SVG for base map
+var toolTipCounter = 0;
 
 
 
@@ -92,11 +96,14 @@ function randerComplexStructureFiles(imageFile,location){
 }
 
 
-function toggle_interaction() {
+function toggle_interaction(event,ele) {
     /**
      *  get the matches for the interaction of alligned objects
      */
      getMapMatches();
+
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(ele);
 
     svg_elements = d3.select("#sketchSVG").selectAll("path,polygon,circle,rect,line,polyline");
     //console.log("svg elements:", svg_elements);
@@ -107,6 +114,7 @@ function toggle_interaction() {
 
 //svg elelment interaction
 function alignment_mouse_over(d, i) {
+
     fid = this.getAttribute('id');
     mid = mapmatches[fid];
     mel = document.getElementById(mid);
@@ -154,6 +162,13 @@ function loadSketchMap() {
  * that are not part of the contents of a file
  */
 function renderSketchMapRaster(image) {
+    toolTipCounter= toolTipCounter+1;
+
+
+    if(toolTipCounter==4){
+        toolTipManager.hideToolTip();
+    };
+
     let originalImageContent = image;
 
     let ajaxParams = {
@@ -214,6 +229,7 @@ function processSketchMap(event,ele) {
         var json = JSON.parse(resp);
         sketchMapDisplayManager.vectorFromSVGURL("/" + json.svgPath);
 
+        toolTipManager.hideToolTip(event);
         dataManager.addData("vectorizedSketchMap", json.svgPath);
         button_manager.enable_interactive_bnts();
     };
@@ -347,10 +363,10 @@ function ladm_interaction_for_RRR(event,ele) {
  * function activates spatial_query_activites
  */
 
-function spatial_query_processor(event){
+function spatial_query_processor(event,ele){
     toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
-    toolTipManager.displayToolTip(event);
-    deleteProcessingRing();
+    toolTipManager.displayToolTip(ele);
+
     spatial_query_processor_mode();
 }
 
@@ -397,34 +413,38 @@ $(function () {
  */
 function enable_svg_edit_tool(event,ele) {
 
-    $('#editor_div').prop("style", "visibility: visible");
+    SVG_INTERACTION_MODE = SVG_INTERACTION_MODE_SKETCHMAP;
+
+    $('#toggle_interaction_bnt').prop("style", "visibility: hidden");
+    $('#spatial_query_processor_bnt').prop("style", "visibility: hidden");
+
+    document.getElementById("editor_tools_col_left").appendChild(document.getElementById("svg_editor_bnt"));
     $('#svg_editor_bnt').prop("style", "visibility: visible");
+    $('#svg_editor_bnt').prop("style", "position: relative");
+    $('#editor_tools_col_left').prop("style", "visibility: visible");
 
-    $('#spaitalUnit_bnts_div').prop("style", "visibility: hidden");
-
-    //$('#svg_edit_bnts').prop("style", "visibility: visible");
-
-    //$('#ladm_interaction_bnts').prop("style", "visibility: hidden");
-    //$('#json_edit_bnts').prop("style", "visibility: hidden");
 
     toolTipManager.displayToolTip(ele);
     toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
 
-    popup = document.getElementById("popup_div");
-    popup.style.visibility = "hidden";
 
     $(document).on('keydown', function (e) {
         if (e.keyCode === 27) { // ESC
-            $("#editor_div").hide();
+            $("#editor_tools_col_left").hide();
         }
     });
+    /*popup = document.getElementById("popup_div");
+    popup.style.visibility = "hidden";*/
 
-    $('.bnt').prop("disabled", false);
-    let svg = d3.select("#loadedSVG");
+    //$('.bnt').prop("disabled", false);
 
-    let img = d3.select("#bgImg");
+    /*let svg = d3.select("#sketchSVG");
+    console.log("sketch SVG",svg);
 
-    var editor = new MODE_EDIT_SVG(svg, img, [0, 1, 2, 3, 4]).init();
+    let img = d3.select("#raster");
+    console.log("sketch image",img);
+
+    var editor = new MODE_EDIT_SVG (SVG_INTERACTION_MODE, svg, img, [0, 1, 2, 3, 4]).init();
 
     svgEditor.init(MODE_EDIT_SKETCHMAP)
 
@@ -446,7 +466,7 @@ function enable_svg_edit_tool(event,ele) {
     d3.select(save).on("click", function () {
         editor.save()
     });
-
+*/
     console.log("SVG Editor Activating...");
 
 }
@@ -455,14 +475,51 @@ function enable_svg_edit_tool(event,ele) {
  * enable geoJSON interaction buttons
  */
 function enable_spatialUnit_bnt_tools(event,ele) {
+    //bnt_id = event.id;
+    //console.log("clicked bnt",bnt_id);
+
+    SVG_INTERACTION_MODE = SVG_INTERACTION_MODE_BASEMAP;
 
     toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
     toolTipManager.displayToolTip(ele);
 
-    $('#editor_div').prop("style", "visibility: visible");
-    $('#svg_editor_bnt').prop("style", "visibility: visible");
-    $('#spaitalUnit_bnts_div').prop("style", "visibility: visible");
+    spatialUnitManager.showSpatialUnitBnts(event);
 
+
+    let svg = d3.select("#baseSVG");
+
+    let img = d3.select("#raster");
+
+/*  var editor = new MODE_EDIT_SVG (SVG_INTERACTION_MODE, svg, img, [0, 1, 2, 3, 4]).init();
+
+    svgEditor.init(MODE_EDIT_SKETCHMAP)
+
+    d3.select(draw_geom).on("click", function () {
+        editor.change_mode(0)
+    });
+    d3.select(edit_geom).on("click", function () {
+        editor.change_mode(1)
+    });
+    d3.select(join_endPoints).on("click", function () {
+        editor.change_mode(2)
+    });
+    d3.select(split_endPoints).on("click", function () {
+        editor.change_mode(3)
+    });
+    d3.select(delete_geom).on("click", function () {
+        editor.change_mode(4)
+    });
+    d3.select(save).on("click", function () {
+        editor.save()
+    });*/
+    console.log(" SVG_INTERACTION_MODE_BASEMAP Editor Activating...");
+
+    $(document).on('keydown', function (e) {
+        if (e.keyCode === 27) { // ESC
+            $('#editor_tools_col_right').hide();
+
+        }
+    });
 
 }
 
@@ -650,19 +707,20 @@ function add_complexStruMap_bnt(event) {
         });
     }
 }
-
 /*
+
+/!*
     - function to push the final results to the Publish and Share Platform
     - files includes:
     - sketch map, base map and intermediate results in svg, json format
- */
+ *!/
 
 function save_PnS(event,ele){
 
     toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
     toolTipManager.displayToolTip(ele);
 
-    toolTipManager.movableToolTip(document.getElementById("projectNameInputDiv_for_PnS"));
+    //toolTipManager.movableToolTip(document.getElementById("projectNameInputDiv_for_PnS"));
 
 
     $('#projectNameInputDiv_for_PnS').prop("style", "visibility: visible");
@@ -671,7 +729,7 @@ function save_PnS(event,ele){
 
     $('#projectNameInputDiv_for_PnS').offset({
         top: y+10,
-        left: x-100
+        left: x-120
     });
 
     $(document).on('keydown', function (e) {
@@ -719,11 +777,11 @@ function  saveProject_to_PnS(){
 
 }
 
-/*
+/!*
     - function to downloads all the projects from  Publish and Share Platform
     - files includes:
     - sketch map, base map and intermediate results in svg, json format
- */
+ *!/
 
 function download_projects_from_PnS(event,ele){
 
@@ -796,8 +854,10 @@ function get_PnS_project_items(sub_project_name){
     var project_type= str[0];
     if(project_type == "plainSketchProject"){
         projectMode =0;
+        sessionData.projectType = project_type;
     }if(project_type == "orthoSketchProject"){
         projectMode =1;
+        sessionData.projectType = project_type;
     }
    createProcessingRing();
    let ajaxParams = {
@@ -846,13 +906,19 @@ function render_downloaded_files_on_client(sub_project_name) {
         //let width=799.9999999999999, height=525.6709567993614;
 
         for (i in json){
-            console.log("herer you go ",json[i]);
+
             if (json[i].fileBaseName == "input_sketch_image.png"){
                 sketchMapDisplayManager.rasterFromURL("/" + json[i].filePath,json[i].width, json[i].height);
 
+                dataManager.addData("sketchMapImage", json[i].filePath);
+                button_manager.enable_interactive_bnts();
             }else if (json[i].fileBaseName == "vectorized_sketch_svg.svg"){
 
                 sketchMapDisplayManager.vectorFromSVGURL("/" + json[i].filePath);
+
+                dataManager.addData("vectorizedSketchMap", json[i].filePath);
+                button_manager.enable_interactive_bnts();
+
             }else if (json[i].fileBaseName == "vector_base_map.geojson"){
 
                let sourceFormat = sessionData.projectType == "orthoSketchProject"? "tms": "openstreetmap";
@@ -864,17 +930,22 @@ function render_downloaded_files_on_client(sub_project_name) {
                     baseMapDisplayManager.tilesFromURL(url).then(
                         function(done){
                             baseMapDisplayManager.vectorFromGeoJSONContent(baseMapVectorData.fileContent) //"baseLayer")
+
+                            dataManager.addData("baseMapVector", baseMapVectorData.fileContent);
+                            button_manager.enable_interactive_bnts();
                         });
                     //baseMapDisplayManagerTemplate.vectorFromGeoJSONContent(json[i].fileContent) //"baseLayer")
-            } else if (json[i].fileBaseName == "adf.geojson"){
-                console.log("test")
+            } else if (json[i].fileBaseName == "matches.json"){
+                var matchesdata = json[i];
+                dataManager.addData("matchingDict", matchesdata.fileContent);
+                button_manager.enable_interactive_bnts();
             }
         }
-
     });
 
 
 }
+*/
 
 function contactTeam(){
     $('#contact_div').prop("style", "visibility: visible");

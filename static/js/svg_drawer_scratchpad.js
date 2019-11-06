@@ -1,4 +1,4 @@
-var MODE_EDIT_SVG = function svgEditMode(svg, body) {
+var MODE_EDIT_SVG = function svgEditMode(SVG_INTERACTION_MODE, svg, body) {
 	var drawing_started = false;
 	var editing_started = false;
 	var joining_started = false;

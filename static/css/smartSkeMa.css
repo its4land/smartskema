@@ -1,3 +1,14 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.full-height {
+    height: 100%;
+    background: yellow;
+}
+
+
 ul {
     list-style-type: none;
 }
@@ -43,6 +54,7 @@ ul {
     margin: 0px;
     background:white;
     position: absolute;
+    z-index: 10;
 }
 
 #PnS_download_projects_div{
@@ -66,6 +78,8 @@ ul {
 
 #orthophoto_file_loader{
     background: white;
+    padding: 3px;
+    margin: 3px;
 }
 
 #orthophoto_project_div{
@@ -73,40 +87,42 @@ ul {
     width: 450px;
     padding-top:1px;
     margin: auto;
+    z-index: 10;
+    background: white;
 }
 
 
 
 #file_loader{
     background: white;
+    padding: 3px;
+    margin: 3px;
 }
 #SM_project_div{
     position: absolute;
     width: 450px;
     margin: auto;
+    z-index: 10;
+    background: white;
 }
 
 
 
 #editor_div{
-    text-align: center;
-    width: 550px;
+    visibility: visible;
     position: relative;
-    padding: 2px;
-    margin: auto;
     background: white;
+
 
 }
 
 
 #editor_tools_col_left{
-    text-align: center;
-    width: 50%;
 }
 
 #editor_tools_col_right{
     text-align: center;
-    width: 50%;
+    overflow: hidden;
 }
 
 
@@ -307,32 +323,52 @@ th {
 }*/
 
 .navbar a {
-     float: right;
      padding: 08px;
      color: white;
-     text-decoration: none;
-     font-size: 18px;
-    font-family: sans-serif;
+     font-size: 16px;
+     font-family: sans-serif;
  }
 .navbar a:hover {
-    background-color: #000;
-    color: white;
+   border-top: 3px solid white;
+
 }
 
-li.nav-item  a {
-    float: right;
-    padding: 18px;
+/*li.nav-item a:hover {
+    border-top: 2px solid whitesmoke;
+}
+li.nav-item a{
+    font-size: 16px;
     color: white;
+
+}
+
+ul.navbar-nav {
+    padding: 6px;
+}*/
+div.dropdown-menu a{
+    float: right;
+    padding: 3px;
+    color: black;
     text-decoration: none;
+    font-size: 14px;
+    font-family: sans-serif;
+
+}
+div.dropdown-menu a:hover {
+    background-color: #17a2b8;
+    color: white;
+
+}
+
+/*li.nav-item  a {
+    float: right;
+    color: white;
     font-size: 16px;
     font-family: sans-serif;
-}
-li.nav-item a :hover {
-   /* background-color: black;*/
-    color: white;
-}
+}*/
 
-.navbar-brand  a {
+
+/*.navbar-brand  a {
     float: right;
     padding: 05px;
     color: white;
@@ -340,7 +376,7 @@ li.nav-item a :hover {
     font-size: 15px;
     font-family: sans-serif;
 
-}
+}*/
 
 /*#edit_div{
     height: 60px;
@@ -408,20 +444,8 @@ li.nav-item a :hover {
     visibility: visible;
 }
 
-div.dropdown-menu a{
-    float: right;
-    padding: 3px;
-    color: black;
-    text-decoration: none;
-    font-size: 14px;
-    font-family: sans-serif;
 
-}
-div.dropdown-menu a:hover {
-    background-color: #17a2b8;
-    color: white;
 
-}
 /*div.dropdown-menu{
     padding-top: 5px;
     padding-bottom: 0px;

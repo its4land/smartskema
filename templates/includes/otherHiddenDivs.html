@@ -5,8 +5,8 @@
     <title>Title</title>
 </head>
 <body>
-<div id = "other_hidden_divs">
-    <div id="complexStructure_div" class="w3-card-4 w3-round">
+<div id="other_hidden_divs">
+    <div id="complexStructure_div" class="w3-card-4 w3-round" style="visibility: hidden; position: absolute">
         <header class="w3-panel w3-round w3-teal">
             <h6 style="padding-top:3px "><b>Complex Structure : </b><a> Detail drawing of Home State called "Boma"</a>
             </h6>
@@ -38,10 +38,12 @@
         </div>
 
     </div>
-    <div id="ladm_rrrs_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+    <div id="ladm_rrrs_popup_div" class="w3-card-4 w3-round" style="visibility: hidden;position: absolute">
         <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: auto">
             <h6><b style="margin: 2px;padding: 2px;">Party & Rights : </b><a> Rights are extracted from LDM</a>
-                <i class="fa fa-close" onclick="document.getElementById('ladm_rrrs_popup_div').style.visibility='hidden'"style="float: right";></i>
+                <i class="fa fa-close"
+                   onclick="document.getElementById('ladm_rrrs_popup_div').style.visibility='hidden'"
+                   style="float: right" ;></i>
             </h6>
         </header>
         <div class="container" style="padding-right: 2px;padding-top: 2px">
@@ -83,17 +85,19 @@
             </button>
 
             <button id="save_land_tenure_record_bnt" type="button" class="btn btn-outline-info"
-                    onclick="save_land_tenure_record()">Save Record
+                    onclick="save_land_tenure_record(event)">Save Record
             </button>
 
         </div>
     </div>
-    <div id="popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden">
+    <div id="popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden;position: absolute">
     </div>
-    <div id="nonSpatial_query_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+    <div id="nonSpatial_query_popup_div" class="w3-card-4 w3-round" style="visibility: hidden;position: absolute">
         <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: auto">
             <h6><b style="margin: 2px;padding: 2px;">Query Result:</b><a> Land Tenure Record</a>
-                <i class="fa fa-close" onclick="document.getElementById('nonSpatial_query_popup_div').style.visibility='hidden'"style="float: right";></i>
+                <i class="fa fa-close"
+                   onclick="document.getElementById('nonSpatial_query_popup_div').style.visibility='hidden'"
+                   style="float: right" ;></i>
             </h6>
         </header>
         <div id="nonSpatial_query_resp_div" class="w3-container">
@@ -101,7 +105,7 @@
         </div>
     </div>
     <div id="processRing" style="visibility: hidden"></div>
-    <div id="edit_svg_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+    <div id="edit_svg_popup_div" class="w3-card-4 w3-round" style="visibility: hidden;position: absolute">
         <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: auto">
             <h6 style="margin: 2px"><b>New Feature:</b><a> Add feature id and type</a>
             </h6>
@@ -124,20 +128,26 @@
         </div>
     </div>
 
-    <div id="referencePoints_popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden">
+    <div id="referencePoints_popup_div" class="w3-panel w3-round w3-teal" style="visibility: hidden;position: absolute">
     </div>
-    <div id="spatial_query_popup_div" class="w3-card-4 w3-round" style="visibility: hidden">
+    <div id="spatial_query_popup_div" class="w3-card-4 w3-round" style="visibility: hidden;position: absolute">
         <header class="w3-panel w3-round w3-teal" style="padding: 2px;margin: auto">
             <h6><b style="margin: 2px;padding: 2px;">Query Result:</b><a> Select relation to visualize approximate
                 location</a>
-                <i class="fa fa-close" onclick="document.getElementById('spatial_query_popup_div').style.visibility='hidden'"style="float: right";></i>
+                <i class="fa fa-close"
+                   onclick="document.getElementById('spatial_query_popup_div').style.visibility='hidden'"
+                   style="float: right" ;></i>
             </h6>
         </header>
 
         <div id="query_builder">
             <div>
-                <a style="padding: inherit;margin: inherit"><b>Selected Feature Id:</b>
+                <a style="padding: inherit;margin: inherit"><b>Selected Feature ID:</b>
                     <span id="featureID_spatial_query" style="text-align:right;color: teal;font-size: 14px"> </span></a>
+            </div>
+            <div>
+                <a style="padding: inherit;margin: inherit"><b>Selected Feature Name:</b>
+                    <span id="featureName_spatial_query" style="text-align:right;color: teal;font-size: 14px"> </span></a>
             </div>
             <div>
                 <a style="padding: inherit;margin: inherit"><b> Feature Type:</b>
@@ -145,39 +155,30 @@
                 </a>
             </div>
 
-            <div style="float: right;padding: 1px">
-                <label id="submit_query" class="btn btn-outline-info" style="padding: 2px"
-                       onclick="qualitative_spatial_queries()">
-                    Get Spatial Relations
-                </label>
+            <div style="padding:5px">
+               <span style="border: #17a2b8">
+                     <i class="fa fa-info-circle" style="font-size:20px;color:cadetblue;padding-right: 5px"></i>
+                    <a >The selected feature has following relations with features in the sketch map,
+                        Click on a relation to visualize the approximate location in base map.</a>
+               </span>
             </div>
         </div>
-        <div id="spatial_query_resp_div">
-            <div>
-                <br>
-                <h6 style="padding: 5%;margin: 2px"><b>Query Result:</b></h6>
-                <table id="result_table" class="table">
-                    <tr>
-                        <th style="padding: inherit"><span style="font-size: 11px">LeftRight Relations</span></th>
-                        <th style="padding: inherit"><span style="font-size: 11px">Topological Relations</span></th>
-                        <th style="padding: inherit"><span style="font-size: 11px">Relative Distances</span></th>
-                    </tr>
-                    <tr>
-                        <td id="leftRight_rels_div" style="padding: inherit"></td>
-                        <td id="topo_rels_div" style="padding: inherit"></td>
-                        <td id="relDist_rels_div" style="padding: inherit"></td>
-                    </tr>
-                </table>
-            </div>
+        <div id="spatial_query_resp_div" class="container">
+             <div id = "leftRight_rels_div" style="padding: inherit"> </div>
+            <div id = "topo_rels_div"  style="padding: inherit"></div>
+            <div id = "relDist_rels_div" style="padding: inherit"> </div>
 
         </div>
 
     </div>
-    <div id="SM_project_div" class="w3-card-4 w3-round " style="visibility: hidden">
+
+
+    <div id="SM_project_div" class="w3-card-4 w3-round " style="visibility: hidden;position: absolute">
         <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
             <h6>
                 <b style="margin: 2px">Sketch Map Project:</b><a> Load required inputs for the project</a>
-                <i class="fa fa-close" onclick="document.getElementById('SM_project_div').style.visibility='hidden'"style="float: right";></i>
+                <i class="fa fa-close" onclick="document.getElementById('SM_project_div').style.visibility='hidden'"
+                   style="float: right" ;></i>
             </h6>
 
         </header>
@@ -257,10 +258,12 @@
           </footer>-->
 
     </div>
-    <div id="orthophoto_project_div" class="w3-card-4 w3-round " style="visibility: hidden">
+    <div id="orthophoto_project_div" class="w3-card-4 w3-round " style="visibility: hidden;position: absolute">
         <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
             <h6><b style="margin:2px">Orthophoto Project :</b><a> Load required inputs for the project</a>
-                <i class="fa fa-close" onclick="document.getElementById('orthophoto_project_div').style.visibility='hidden'"style="float: right";></i>
+                <i class="fa fa-close"
+                   onclick="document.getElementById('orthophoto_project_div').style.visibility='hidden'"
+                   style="float: right" ;></i>
 
             </h6>
         </header>
@@ -340,7 +343,7 @@
 
         </div>
     </div>
-    <div id="approximate_loc_query_div" class="w3-card-4 w3-round" style="visibility: hidden">
+    <div id="approximate_loc_query_div" class="w3-card-4 w3-round" style="visibility: hidden;position: absolute">
         <header class="w3-panel w3-round w3-teal" style="padding: 3px;margin: 1px">
             <h6><b>Query Builder:</b><a> Select relations and primary object to find the approximate location of main
                 object</a>
@@ -367,11 +370,13 @@
 
     </div>
 
-    <div id="PnS_download_projects_div" class="w3-card-4 w3-round " style="visibility: hidden;">
+    <div id="PnS_download_projects_div" class="w3-card-4 w3-round " style="visibility: hidden;position: absolute">
         <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
             <h6>
                 <b style="margin: 2px">Projects@PnS :</b><a></a>
-                <i class="fa fa-close" onclick="document.getElementById('PnS_download_projects_div').style.visibility='hidden'"style="float: right";></i>
+                <i class="fa fa-close"
+                   onclick="document.getElementById('PnS_download_projects_div').style.visibility='hidden'"
+                   style="float: right" ;></i>
             </h6>
         </header>
 
@@ -384,11 +389,13 @@
 
     </div>
 
-    <div id="projectNameInputDiv_for_PnS" class="w3-card-4 w3-round " style="visibility: hidden">
+    <div id="projectNameInputDiv_for_PnS" class="w3-card-4 w3-round " style="visibility: hidden;position: absolute">
         <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
             <h6>
                 <b style="margin: 2px">Project Name @ PnS :</b><a></a>
-                <i class="fa fa-close" onclick="document.getElementById('projectNameInputDiv_for_PnS').style.visibility='hidden'"style="float: right";></i>
+                <i class="fa fa-close"
+                   onclick="document.getElementById('projectNameInputDiv_for_PnS').style.visibility='hidden'"
+                   style="float: right" ;></i>
             </h6>
         </header>
         <div id="projectNameInputDivInner" class="w3-container w3-round">
@@ -397,7 +404,7 @@
                     <div class="col-8" style="width: 90%;padding: 2px" ;>
                         <input type="text" id="sub_project_name_input" class=form-control
                                placeholder="Please enter project name..."
-                               required minlength="5" maxlength="30" size="35">
+                               minlength="5" maxlength="30" size="35" required>
                     </div>
                     <div class="col-4" style="width: 10%;text-align: right;padding: 0px">
                         <button class="btn btn-outline-info" type="submit">Save</button>
@@ -407,6 +414,44 @@
 
         </div>
     </div>
+    <!-- div contains editable buttons and -->
+    <span id="svg_editor_bnt" style="visibility: hidden;position: absolute;margin-left:4px ">
+        <button id="draw_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                data-placement="bottom" title="Draw Geometry" onclick="">
+            <img id="draw_geom_img" src="../static/imgs/draw_geom.png" width="20" height="18">
+        </button>
+        <button id="edit_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                data-placement="bottom" title="Edit Geometry">
+            <img id="edit_geom_img" src="../static/imgs/edit_geom.png" width="20" height="18">
+        </button>
+        <button id="join_endPoints" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                data-placement="bottom" title="Join EndPoints">
+            <img id="join_endPoints_img" src="../static/imgs/join_endPoints.png" width="20" height="18">
+        </button>
+        <button id="split_endPoints" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                data-placement="bottom" title="Move Object">
+            <img id="split_endPoints_img" src="../static/imgs/split_endPoints.png" width="20" height="18">
+        </button>
+        <button id="delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                data-placement="bottom" title="Delete">
+            <img id="delete_geom_image" src="../static/imgs/delelte.png" width="20" height="18">
+        </button>
+
+    </span>
+
+    <div id="toggle_interaction_bnt" type="button" class="btn btn-outline-info"
+         style="visibility: hidden;position: absolute;"
+         onclick="toggle_interaction(event,this)">Visualize Features <span>&nbsp </span><i class="fa fa-eye"
+                                                                                           aria-hidden="true"
+                                                                                           style="font-size:14px"></i>
+    </div>
+
+    <div id="spatial_query_processor_bnt" type="button" class="btn btn-outline-info"
+         style="visibility: hidden;position: absolute;"
+         onclick="spatial_query_processor(event, this)">Find Approximate Location <span>&nbsp</span><i
+            class="fa fa-search" aria-hidden="true" style="font-size:14px"></i>
+    </div>
+
 </div>
 </body>
 </html>

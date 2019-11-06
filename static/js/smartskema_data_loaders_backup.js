@@ -20,7 +20,9 @@ var sessionData = (function(){
     return {
         sessID: sessID,
         projectType: projectType,
-        setProjectType: function(projectType){this.projectType = projectType}
+        setProjectType: function(projectType){
+            this.projectType = projectType
+        }
     }
 })();
 

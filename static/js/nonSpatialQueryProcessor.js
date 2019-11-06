@@ -9,7 +9,7 @@ function nonSpatial_query_processor_mode() {
     $('#edit_ladm_bnt').prop('disabled', false);
     $('#query_ladm_bnt').prop('disabled', false);
 
-
+    getMapMatches();
     //function reads matches file and puts in the mapMatches variable
     //getMapMatches();
 
@@ -25,25 +25,38 @@ function nonSpatial_query_processor_mode() {
 }
 
 
+
 //svg elelment interaction
 function nonSpatial_query_mouse_over(d, i) {
+    fid = this.getAttribute('id');
+    mid = mapmatches[fid];
+    mel = document.getElementById(mid);
 
     d3.select(this)
         .style("stroke", "#039BE5")
-        .style("stroke-width", "30px");
+        .style("stroke-width", "20px");
+
+    d3.select(mel)
+        .style("stroke", "#039BE5")
+        .style("stroke-width", "10px");
 }
 
 function nonSpatial_query_mouse_out(d, i) {
+    fid = this.getAttribute('id');
+    mid = mapmatches[fid];
+    mel = document.getElementById(mid);
+
     d3.select(this)
+        .style("stroke", "#455A64")
+        .style("stroke-width", "1px");
+    d3.select(mel)
         .style("stroke", "#455A64")
         .style("stroke-width", "1px");
 }
 
 function nonSpatial_query_result_popup() {
-
     var feat_id = "";
     var feat_type = "";
-
     rrrs_list = [];
     d3.event.preventDefault();
 
@@ -72,9 +85,8 @@ function nonSpatial_query_result_popup() {
         $(query_popup).hide();
     }
 
-    query_popup = document.getElementById("nonSpatial_query_popup_div");
-    query_popup.style.visibility = "visible";
-    $(query_popup).show();
+    $('#nonSpatial_query_popup_div').prop("style", "visibility: visible");
+    //$(query_popup).show();
     //empity query response table
     $('#nonSpatial_query_resp_div').empty();
 
@@ -87,12 +99,6 @@ function nonSpatial_query_result_popup() {
     });
 }
 
-$(document).on('keydown', function (e) {
-    if (e.keyCode === 27) { // ESC
-        $('#nonSpatial_query_popup_div').hide();
-        deleteProcessingRing();
-    }
-});
 
 function get_tenure_record(feat_id, feat_type) {
     let ajaxParams = {
@@ -104,49 +110,24 @@ function get_tenure_record(feat_id, feat_type) {
         }
     };
     new communicator(ajaxParams).sendRequest({}, function(resp){
-        console.log("receiver Record", resp);
-        if (resp != "None") {
+
+        if (resp != "Tenure record not found") {
+
             var json = "";
             json = JSON.parse(resp);
-            //console.log("received record:",json);
-            record = json;
-            createTenureRecordTable(record);
-            //create_record_table(record);
-        } else {
-            $('#nonSpatial_query_popup_div').hide();
-        }
+            //table is created to visualize the record
+            createTenureRecordTable(json);
 
+        }if(resp == "Tenure record not found"){
+            $('#nonSpatial_query_resp_div').empty();
+            $('#nonSpatial_query_resp_div').text("Tenure record not available!");
+        }
     });
-/*
-    $.ajax({
-        url: '/get_tenure_record',
-        type: 'GET',
-        data: {
-            feat_id: feat_id,
-            feat_type: feat_type
-        },
-        contentType: 'text/plain',
-
-        success: function (resp) {
-            console.log("receiver Record", resp);
-            if (resp != "None") {
-                var json = "";
-                json = JSON.parse(resp);
-                //console.log("received record:",json);
-                record = json;
-                createTenureRecordTable(record);
-                //create_record_table(record);
-            } else {
-                $('#nonSpatial_query_popup_div').hide();
-            }
-
-        }
-    });*/
 }
 
 function createTenureRecordTable(record) {
     queryResult_div = document.getElementById("nonSpatial_query_resp_div");
-    $(queryResult_div).empty();
+    $('#nonSpatial_query_resp_div').empty();
 
     var table = document.createElement("table");
     table.setAttribute("width", "100%");
@@ -173,3 +154,10 @@ function createTenureRecordTable(record) {
     }
     queryResult_div.appendChild(table);
 }
+
+$(document).on('keydown', function (e) {
+    if (e.keyCode === 27) { // ESC
+        $('#nonSpatial_query_popup_div').hide();
+        deleteProcessingRing();
+    }
+});

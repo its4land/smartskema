@@ -7,7 +7,8 @@ var dataManager = (function () {
         vectorizedSketchMap: null,
         ladmData: null,
         parties: null,
-        matchingDict: null
+        matchingDict: null,
+        tenureRecord:null
     }
 
     function addData(name, indata) {
@@ -63,10 +64,11 @@ var button_manager = (function (){
             sketchMapImage: ["Vectorize_Image_menu", "Vectorize_Image"],
             baseMapVector: ["Vectorize_Image_menu", "Vectorize_Image"],
             basemapTiles: ["Vectorize_Image_menu", "Vectorize_Image"],
-            vectorizedSketchMap: ["Editor","Add_Land_Tenure_Info.","ladm_interaction_for_RRR_bnt","align_geometries"],
+            vectorizedSketchMap: ["Editor","align_geometries"],
             ladmData: ["Vectorize_Image_menu", "Vectorize_Image"],
             parties: ["Vectorize_Image_menu", "Vectorize_Image"],
-            matchingDict: ["nonSpatial_query_processor_bnt","Add_Spatial_Unit","save_PnS","download_alignedResult","spatial_query_processor_bnt"]
+            matchingDict: ["Add_Land_Tenure_Info.","ladm_interaction_for_RRR_bnt","Add_Spatial_Unit","toggle_interaction_bnt","spatial_query_processor_bnt","save_PnS","download_alignedResult"],
+            tenureRecord:["Add_Land_Tenure_Info.","nonSpatial_query_processor_bnt"]
         },
         "orthoSketchProject": {
             sketchMapImage: ["Vectorize_Image_menu", "Vectorize_Image"],
@@ -75,7 +77,8 @@ var button_manager = (function (){
             vectorizedSketchMap: ["Editor","Add_Land_Tenure_Info.","ladm_interaction_for_RRR_bnt","align_geometries"],
             ladmData: ["Vectorize_Image_menu", "Vectorize_Image"],
             parties: ["Vectorize_Image_menu", "Vectorize_Image"],
-            matchingDict: ["nonSpatial_query_processor_bnt","Add_Spatial_Unit","save_PnS","download_alignedResult","spatial_query_processor_bnt"]
+            matchingDict: ["Add_Land_Tenure_Info.","ladm_interaction_for_RRR_bnt","Add_Spatial_Unit","toggle_interaction_bnt","spatial_query_processor_bnt","save_PnS","download_alignedResult"],
+            tenureRecord:["Add_Land_Tenure_Info.","nonSpatial_query_processor_bnt"]
         }
     };
 
@@ -89,6 +92,7 @@ var button_manager = (function (){
         "align_geometries",
         "Add_Spatial_Unit",
         "spatial_query_processor_bnt",
+        "toggle_interaction_bnt",
         "save_PnS",
         "download_alignedResult"
     ];

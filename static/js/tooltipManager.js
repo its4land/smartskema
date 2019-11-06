@@ -14,12 +14,12 @@ var toolTipManager = (function(){
         "ladm_interaction_for_RRR_bnt":"Right-click on a feature in the input map to add Rights, Responsibilities and Restrictions.",
         "nonSpatial_query_processor_bnt":"Click on a feature in the input map to retrieve its land tenure record.",
 
-        "align_geometries":"Use information about aligned features and relations among them to add new spatial units to the geo-referenced map.",
+        "align_geometries":"Use information about aligned features and relations among them to add new spatial units to the base map.",
 
-        "Add_Spatial_Unit":"Select editor function \'visualize relations\' to highlight approximate locations of non-aligned features and \'draw geometries\' to add this information.",
-        "toggle_interaction":"Click on a feature in the input map to visualize the aligned feature in geo-referenced map.",
-        "spatial_query_processor_bnt":"Click on a feature in the input map to visualize the approximate location in geo-referenced map.",
-
+        "Add_Spatial_Unit":"Select \'visualize relations\' function to highlight approximate locations of non-aligned features and \'draw geometries\' to add this information.",
+        "toggle_interaction":"Click on a feature in the input map to visualize the aligned feature in base map.",
+        "spatial_query_processor_bnt":"Click on a feature in the input map to visualize the approximate location in base map.",
+        "toggle_interaction_bnt":"Click on a feature in the input map to visualize the aligned feature in base map map.",
 
         "save_PnS":"All data is saved on PnS Platform with the file name assigned in the PnS Project.",
 
@@ -29,11 +29,12 @@ var toolTipManager = (function(){
 
     function displayToolTip(event){
         bnt_id = event.id;
+
         //console.log("clicked bnt",bnt_id);
         var tooltipdiv = document.getElementById("tooltipdiv");
         tooltipdiv.style.visibility = "visible";
-        x = 900;
-        y = 80;
+        x = 1060;
+        y = 160;
         //console.log("x and Y",x, y);
 
 
@@ -53,6 +54,11 @@ var toolTipManager = (function(){
             top: y,
             left: x
         });
+    }
+    function hideToolTip(event){
+        var tooltipdiv = document.getElementById("tooltipdiv");
+        tooltipdiv.style.visibility = "hidden";
+        toolTipCounter = 0;
     }
 
     function movableToolTip(elmnt){
@@ -100,6 +106,7 @@ var toolTipManager = (function(){
     return{
         displayToolTip: displayToolTip,
         movableToolTip: movableToolTip,
+        hideToolTip: hideToolTip,
     }
 
 

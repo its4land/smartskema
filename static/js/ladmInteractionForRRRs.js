@@ -12,6 +12,7 @@ var feat_type= "";
  *  in the #getparty function we pass this a data
  */
 function loadPartyFile(element) {
+    toolTipCounter= toolTipCounter+1;
     partyfile = document.getElementById('PartyInputbutton').files[0];
     loadedPartyFile = partyfile.name;
     fileReader = new FileReader();
@@ -35,13 +36,20 @@ function loadPartyFile(element) {
         new communicator(ajaxParams).sendRequest({}, function(resp){
             var party = JSON.parse(resp)
         });
+
         party_checked = new Boolean($("#Party_checked").prop("checked", true));
 
+        if(toolTipCounter==4){
+            toolTipManager.hideToolTip();
+            $('#SM_project_div').prop("style", "visibility: hidden");
+
+        };
     };
 
 }
 
 function ortho_loadPartyFile(element) {
+    toolTipCounter= toolTipCounter+1;
     partyfile = document.getElementById('orth_PartyInputbutton').files[0];
     loadedPartyFile = partyfile.name;
     fileReader = new FileReader();
@@ -73,6 +81,7 @@ function ortho_loadPartyFile(element) {
  */
 
 function loadLADMFile(element) {
+    toolTipCounter= toolTipCounter+1;
     fileList = document.getElementById('LADMInputbutton').files;
     $("#SMLinks").show();
     $("#MMLinks").hide();
@@ -85,6 +94,11 @@ function loadLADMFile(element) {
 
 
 function ortho_loadLADMFile(element) {
+    toolTipCounter= toolTipCounter+1;
+    if(toolTipCounter==4){
+        toolTipManager.hideToolTip();
+    };
+
     fileList = document.getElementById('ortho_LADMInputbutton').files;
     $("#SMLinks").show();
     $("#MMLinks").hide();
@@ -122,7 +136,6 @@ function read_LADM_file_contants(ladmFile) {
 
             dataManager.addData("ladmData", LDMContent)
             button_manager.enable_interactive_bnts();
-
             new communicator(ajaxParams).sendRequest({}, function(resp){});
 
         }else{
@@ -447,7 +460,7 @@ function add_land_tenure_record() {
  - and ownership name
  - and send it back to python for generating ownership and rights json
  **/
-function save_land_tenure_record() {
+function save_land_tenure_record(event) {
 
     let ajaxParams = {
         url: '/save_tenure_record',
@@ -463,6 +476,9 @@ function save_land_tenure_record() {
             content: 'The land tenure record is Saved as a *.json file'
         });
 
+        dataManager.addData("tenureRecord",json)
+        button_manager.enable_interactive_bnts();
+        toolTipManager.hideToolTip(event);
         $('#ladm_rrrs_popup_div').hide();
     });
 }

@@ -5,12 +5,10 @@ Created on Mon Apr 30 15:51:54 2018
 @author: s_jan001
 """
 import shutil
-from docutils.nodes import image
+
 from flask import Flask, render_template, request, redirect, url_for
 from matcher.matching_preprocessor import compute_similarity_matrix
-from matcher.adp_map_alignment_alternating import ADPMatcher
 from matcher.test_eigen2 import SpecCenScore
-# from qualifier import qualify_map
 from matcher.map_loader import load_map_qualify, read_map_data_from_path, read_map_data_from_string
 from matcher.geojson import load_map as load_geo
 from matcher.svg import load_map as load_svg
@@ -18,36 +16,20 @@ from sklearn.linear_model import LinearRegression as linear_regression
 from sklearn.preprocessing import PolynomialFeatures as polynomial_features
 import cv2
 import numpy as np
-import io
-import json
-import os
-import sys
-from settings import USER_SESSIONS_DIR,DIR_DATA,PROJ_TYPE, DIR_QCNS,PROJ_DIR_PATH,PROJ_TYPE_SUB_PROJ_NAME,SMARTSKEMA_TEMP_PROJ_PATH, RecordList,SPATIALSOURCE_SKETCH_UID,SPATIALSOURCE_BASE_UID, PnS_PROJ_ID, SMARTSKEMA_PATH, QUALITATIVE_REPRESENTATION
-    #SketchMapName, BaseMapName
-    # STATIC_DIR,UPLOADED_DIR_PATH,PROJ_DIR_PATH,MODIF_DIR_PATH,OUTPUT_DIR_PATH,SVG_DIR_PATH,UUID
-import logging
-from logging.handlers import RotatingFileHandler
-from matplotlib import pyplot as plt
-import base64
-
-from lib import svg2paths
+from settings import USER_SESSIONS_DIR,PROJ_TYPE,PnS_PROJ_Mode, PROJ_TYPE_SUB_PROJ_NAME,\
+    RecordList,SPATIALSOURCE_SKETCH_UID,SPATIALSOURCE_BASE_UID, PnS_PROJ_ID, \
+    SMARTSKEMA_PATH, QUALITATIVE_REPRESENTATION,SUB_PROJ_NAME
 from pathlib import Path
-from sketchProcessor.helperLibraries.utils import draw
 from sketchProcessor.helperLibraries.utils import contour_classification as cc
 import svgutils
-from owlready2 import *
-import owlready2
 from domainModel.owlProcessor import *
 import datetime
 from domainModel.spatialQueries import *
-import matplotlib as plot
 import mimetypes
-from time import sleep
 import uuid
 import base64
 import io
 import shapely
-import urllib.request
 
 from shapely.geometry import Polygon,LinearRing
 from geometryVisualizer import config
@@ -56,11 +38,8 @@ from geometryVisualizer.rcc_tiles import GRccTiles as g_rcc_tiles
 from geometryVisualizer.reldist_tiles import GRelDistTiles as g_reldist_tiles
 from geometryVisualizer.tessellations import Tessellations as tessellation
 from geometryVisualizer.tiles_to_geoJson import *
-import requests
 from platform_PnS.platform_PnS import*
 
-
-#sys.setrecursionlimit(22000)
 
 """
 create flask web app instance 
@@ -69,14 +48,9 @@ mimetypes.add_type('image/svg+xml', '.svg')
 
 DEBUG_SESSID = "39bb2657-d663-4a78-99c5-a66c152693b2"
 
-#STATIC_DIR = os.path.join("./static", "usessions")
 UPLOADED_DIR_PATH = "uploaded"
 MODIF_DIR_PATH = "modified"
 OUTPUT_DIR_PATH = "output"
-TEMP_DIR = "temp"
-
-# probably delete this
-#SVG_DIR_PATH = "svg"
 
 INPUT_RASTER_SKETCH = "input_sketch_image.png"
 REDUCED_RASTER_SKETCH = "input_sketch_image.png"
@@ -112,36 +86,31 @@ def build_path(path_list):
 
 
 def path_to_project(d):
-    #print("here is d",d)
+
     global USER_SESSIONS_DIR
     global PnS_PROJ_ID
     global PROJ_TYPE
-    global PROJ_TYPE
     global SUB_PROJ_NAME
     global PROJ_TYPE_SUB_PROJ_NAME
+    global PnS_PROJ_Mode
 
     PnS_PROJ_ID =  d.get("sessID")
-
-    if not d.get("projectType") == None:
-        return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, d.get("projectType"))
-    else:
+    PROJ_TYPE = d.get("projectType")
+    print("PnS_PROJ_Mode",PnS_PROJ_Mode)
+    if PnS_PROJ_Mode == True:
 
         PnS_PROJ_ID = os.getenv("I4L_PROJECTUID")
-        if PnS_PROJ_ID ==None:
+        if PnS_PROJ_ID == None:
             PnS_PROJ_ID = "4da0d7ad-952d-4308-a7f4-7ff1dc8672d4"
         temp = PROJ_TYPE_SUB_PROJ_NAME.split(":")
         PROJ_TYPE = ":".join(temp[:1])
         SUB_PROJ_NAME = ":".join(temp[1:])
-        return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID,PROJ_TYPE,SUB_PROJ_NAME)
+        print("i am comming PnS_Proj_MODE", os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE, SUB_PROJ_NAME))
+        return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE, SUB_PROJ_NAME)
+    else:
+        print("i am in SmartSkeMa Proj_Mode",os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE))
+        return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE)
 
-
-
-"""/getSessionID
-    try:
-        sess_id = request.args.get("sessID")
-    except KeyError:
-        sess_id = str(uuid.uuid4())
-"""
 
 
 @app.route("/")
@@ -156,23 +125,21 @@ def get_session_id():
 
     """ comment out if using full alignment in debug mode """
     #if app.debug:
-        #print("using predefined session ID!")
-        #print("here session id",debug_get_session_id())
+        # print("using predefined session ID!")
      #   return debug_get_session_id()
 
     #sess_id = str(uuid.uuid4())
-    sess_id = os.getenv("I4L_PROJECTUID")
-    if sess_id == None:
-        sess_id = "4da0d7ad-952d-4308-a7f4-7ff1dc8672d4"
-    print("here session id",sess_id)
-    if sess_id is None:
+    PnS_PROJ_ID = os.getenv("I4L_PROJECTUID")
+    if PnS_PROJ_ID == None:
+        PnS_PROJ_ID = "4da0d7ad-952d-4308-a7f4-7ff1dc8672d4"
+
+    if PnS_PROJ_ID is None:
         raise PnSError ("Problem in Getting envirn_variable value as sess_id")
 
     """getting session id from PnS platform to create folder"""
     #sess_id = str(get_PnS_Project_ID())
 
-    if sess_id != None:
-        PnS_PROJ_ID = str(sess_id)
+    if PnS_PROJ_ID != None:
 
         proj_dir_path = os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID)
 
@@ -197,15 +164,15 @@ def setProjectType():
     global UPLOADED_DIR_PATH
     global MODIF_DIR_PATH
     global OUTPUT_DIR_PATH
-    global PROJ_DIR_PATH
+    global PnS_PROJ_Mode
 
+    PnS_PROJ_Mode = False
 
     try:
         #print("request.form",request.form)
         proj_type_dir_path = path_to_project(request.form)
         print("here you go:proj_type_dir_path",proj_type_dir_path)
 
-        PROJ_DIR_PATH = proj_type_dir_path
         if not (os.path.exists(proj_type_dir_path)):
 
             os.mkdir(proj_type_dir_path)
@@ -256,7 +223,6 @@ def reasoner_process_spatial_queries():
 def postParty():
     global UPLOADED_DIR_PATH
     global PARTIES_FILE
-    global PROJ_DIR_PATH
     proj_type_dir_path = path_to_project(request.form)
 
     fileName_full = request.form.get('loadedPartyFile')
@@ -264,7 +230,7 @@ def postParty():
 
     party = partyJson.get("parties")
     try:
-        uploaded_filepath = os.path.join(proj_type_dir_path, UPLOADED_DIR_PATH, PARTIES_FILE) 
+        uploaded_filepath = os.path.join(proj_type_dir_path, UPLOADED_DIR_PATH, PARTIES_FILE)
         if os.path.exists(uploaded_filepath):
             os.remove(uploaded_filepath)
         f = open(uploaded_filepath, "w")
@@ -376,88 +342,93 @@ def get_approx_location_from_relations():
     try:
         geoJson_tiles_type = ""
         if representation == "left_right":
-            geoJson_tiles_type = "left_right"
-            filter_params = {'filter_geoms': 6, 'filter_types': False, 'type_list': [], 'filter_ids': False,
-                             'id_list': [], 'filter_names': False, 'name_list': []}
-            filter_params['filter_ids'] = True
-            filter_params['id_list'].append(relatum)
+            try:
+                geoJson_tiles_type = "left_right"
+                filter_params = {'filter_geoms': 6, 'filter_types': False, 'type_list': [], 'filter_ids': False,
+                                 'id_list': [], 'filter_names': False, 'name_list': []}
+                filter_params['filter_ids'] = True
+                filter_params['id_list'].append(relatum)
 
-            tessellation_sets = {}
-            tessellation_sets = tessellation('left_right', g_left_right_tiles, 1, data_geom, False,
-                                             **filter_params).get_tessellations()
-            # print(tessellation_sets)
-            filter_params['filter_geoms'] = config.FILTER_ALL
+                tessellation_sets = {}
+                tessellation_sets = tessellation('left_right', g_left_right_tiles, 1, data_geom, False,
+                                                 **filter_params).get_tessellations()
+                # print(tessellation_sets)
+                filter_params['filter_geoms'] = config.FILTER_ALL
 
-            if lr_relations['relation'] == "left":
-                shapelyObject = tessellation_sets[(relatum,)].get_tile('left')
-            elif lr_relations['relation'] == "right":
-                shapelyObject = tessellation_sets[(relatum,)].get_tile('right')
-            else:
-                shapelyObject = tessellation_sets.values()
-            coords = shapelyObject.exterior.coords[::-1]
-            shapelyObject = Polygon(coords)
+                if lr_relations['relation'] == "left":
+                    shapelyObject = tessellation_sets[(relatum,)].get_tile('left')
+                elif lr_relations['relation'] == "right":
+                    shapelyObject = tessellation_sets[(relatum,)].get_tile('right')
+                else:
+                    shapelyObject = tessellation_sets.values()
+                coords = shapelyObject.exterior.coords[::-1]
+                shapelyObject = Polygon(coords)
 
-            computed_tiles = shapely.geometry.mapping(shapelyObject)  #
+                computed_tiles = shapely.geometry.mapping(shapelyObject)  #
 
-            geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
-
+                geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
+            except IOError:
+                print("Problem in Computing Approxmate tiles for leftRight")
         elif representation == "RCC8":
-            geoJson_tiles_type = "RCC8"
-            filter_params = {'filter_geoms': 6, 'filter_types': False, 'type_list': [], 'filter_ids': False,
-                             'id_list': [], 'filter_names': False, 'name_list': []}
-            filter_params['filter_ids'] = True
-            filter_params['id_list'].append(relatum)
+            try:
+                geoJson_tiles_type = "RCC8"
+                filter_params = {'filter_geoms': 6, 'filter_types': False, 'type_list': [], 'filter_ids': False,
+                                 'id_list': [], 'filter_names': False, 'name_list': []}
+                filter_params['filter_ids'] = True
+                filter_params['id_list'].append(relatum)
 
-            tessellation_sets = {}
-            tessellation_sets = tessellation('rcc', g_rcc_tiles, 1, data_geom, False,
-                                             **filter_params).get_tessellations()
+                tessellation_sets = {}
+                tessellation_sets = tessellation('rcc', g_rcc_tiles, 1, data_geom, False,
+                                                 **filter_params).get_tessellations()
 
-            filter_params['filter_geoms'] = config.FILTER_ALL
+                filter_params['filter_geoms'] = config.FILTER_ALL
 
-            if lr_relations['relation'].upper() == 'PO' or 'EQ' or 'TPP' or 'TPPI' or 'NTPP' or 'NTPPI':
-                shapelyObject = tessellation_sets[(relatum,)].get_tile('interior')
-            elif lr_relations['relation'].upper() == 'EC' or 'PO' or 'EQ' or 'TPP' or 'TPPI' or 'NTPPI':
-                shapelyObject = tessellation_sets[(relatum,)].get_tile('boundary')
-            elif lr_relations['relation'].upper() == 'DC' or 'EC' or 'PO' or 'TPPI' or 'NTPPI':
-                shapelyObject = tessellation_sets[(relatum,)].get_tile('exterior')
-            else:
-                shapelyObject = tessellation_sets.values()
+                if lr_relations['relation'].upper() == 'PO' or 'EQ' or 'TPP' or 'TPPI' or 'NTPP' or 'NTPPI':
+                    shapelyObject = tessellation_sets[(relatum,)].get_tile('interior')
+                elif lr_relations['relation'].upper() == 'EC' or 'PO' or 'EQ' or 'TPP' or 'TPPI' or 'NTPPI':
+                    shapelyObject = tessellation_sets[(relatum,)].get_tile('boundary')
+                elif lr_relations['relation'].upper() == 'DC' or 'EC' or 'PO' or 'TPPI' or 'NTPPI':
+                    shapelyObject = tessellation_sets[(relatum,)].get_tile('exterior')
+                else:
+                    shapelyObject = tessellation_sets.values()
 
 
-            coords = shapelyObject.exterior.coords[::-1]
-            shapelyObject = Polygon(coords)
-            computed_tiles = shapely.geometry.mapping(shapelyObject)  #
+                coords = shapelyObject.exterior.coords[::-1]
+                shapelyObject = Polygon(coords)
+                computed_tiles = shapely.geometry.mapping(shapelyObject)  #
 
-            geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
-
+                geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
+            except IOError:
+                print("Problem in Computing Approxmate tiles for RCC8")
         elif representation == "REL_DIST":
-            geoJson_tiles_type = "REL_DIST"
+            try:
+                geoJson_tiles_type = "REL_DIST"
+                tessellation_sets = {}
+                filter_params = {'filter_geoms': 6, 'filter_types': True, 'type_list': [relatum_feat_type, main_feat_type],
+                                 'filter_ids': False,
+                                 'id_list': [], 'filter_names': False, 'name_list': []}
+                filter_params['filter_ids'] = False
+                filter_params['id_list'].append(relatum)
+                filter_params['filter_geoms'] = config.FILTER_ALL
 
-            tessellation_sets = {}
-            filter_params = {'filter_geoms': 6, 'filter_types': True, 'type_list': [relatum_feat_type, main_feat_type],
-                             'filter_ids': False,
-                             'id_list': [], 'filter_names': False, 'name_list': []}
-            filter_params['filter_ids'] = False
-            filter_params['id_list'].append(relatum)
-            filter_params['filter_geoms'] = config.FILTER_ALL
+                tessellation_sets = tessellation('REL_DIST', g_reldist_tiles, 1, data_geom, False, [main_feat_type],
+                                                 **filter_params)
+                # print("here is tessellation_sets",tessellation_sets)
+                tessellation_sets = tessellation_sets.get_tessellations()
 
-            tessellation_sets = tessellation('REL_DIST', g_reldist_tiles, 1, data_geom, False, [main_feat_type],
-                                             **filter_params)
-            # print("here is tessellation_sets",tessellation_sets)
-            tessellation_sets = tessellation_sets.get_tessellations()
+                if lr_relations['relation'] == "near":
+                    shapelyObject = tessellation_sets[(relatum,)].get_tile('near')
+                elif lr_relations['relation'] == "far":
+                    shapelyObject = tessellation_sets[(relatum,)].get_tile('far')
+                elif lr_relations['relation'] == "vfar":
+                    shapelyObject = tessellation_sets[(relatum,)].get_tile('vfar')
+                else:
+                    shapelyObject = tessellation_sets.values()
 
-            if lr_relations['relation'] == "near":
-                shapelyObject = tessellation_sets[(relatum,)].get_tile('near')
-            elif lr_relations['relation'] == "far":
-                shapelyObject = tessellation_sets[(relatum,)].get_tile('far')
-            elif lr_relations['relation'] == "vfar":
-                shapelyObject = tessellation_sets[(relatum,)].get_tile('vfar')
-            else:
-                shapelyObject = tessellation_sets.values()
-
-            computed_tiles = shapely.geometry.mapping(shapelyObject)  #
-            geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
-
+                computed_tiles = shapely.geometry.mapping(shapelyObject)  #
+                geoJson_tiles = convert_tiles_into_geojson(computed_tiles, geo_data_properties)
+            except IOError:
+                print("Problem in Computing Approxmate tiles for reldist")
         geoJson_tiles = json.dumps(geoJson_tiles)
         geoJson_tiles = json.loads(geoJson_tiles)
 
@@ -472,7 +443,6 @@ def get_approx_location_from_relations():
         f = open(outputFilePath, "w")
         f.write(json.dumps(geoJson_tiles, indent=4))
         f.close()
-
     except IOError:
         print("Problem in Writing tiles ")
 
@@ -499,66 +469,64 @@ def get_tenure_record():
         feat_id = request.form.get('feat_id')
         feat_type = request.form.get('feat_type')
         proj_type_dir_path = path_to_project(request.form)
-
+        #print(proj_type_dir_path)
         matchesDictFile = os.path.join(proj_type_dir_path,OUTPUT_DIR_PATH,MATCHED_FEATURES)
         tenureRecoredFilePath = os.path.join(proj_type_dir_path,OUTPUT_DIR_PATH, TENURE_RECORD_FILE)
+        matched_feat = ""
+        if os.path.exists(matchesDictFile):
+            with open(matchesDictFile) as matches:
+                matches = json.loads(matches.read())
+                #print(matches)
+                for key, value in matches.items():
+                    if key==feat_id:
+                        matched_obj = value
+                        if matched_obj !=None:
+                            matched_feat= matched_obj
+                        else:
+                            matched_feat="NONE"
+        if os.path.exists(tenureRecoredFilePath):
+            with open(tenureRecoredFilePath) as record_json:
+                records = json.loads(record_json.read())
+                for record in records:
+                    for feature in record["features"]:
+                        feature_ID = feature["feature_id"]
+                        if feature_ID == feat_id:
+                            matchedRecord = record
+                #print("empity recored",matchedRecord)
+                if (matchedRecord !=""):
+                    record_no = matchedRecord["record_no"]
+                    spatial_source = matchedRecord["spatial_source"]
+                    for feature in matchedRecord["features"]:
+                        for relation in feature["relations"]:
+                            ownership = relation["ownership"]
+                            party = relation["party"]
+                            rrrs = relation["rrrs"]
 
-
-
-    except IOError:
-        print("problem in reading matches file and tenure recored in the /get_tenure_record()..")
-
-    matched_feat = ""
-
-    #print(matchesDictFile)
-    with open(matchesDictFile) as matches:
-        matches = json.loads(matches.read())
-        #print(matches)
-        for key, value in matches.items():
-            if key==feat_id:
-                matched_obj = value
-                if matched_obj !=None:
-                    matched_feat= matched_obj
+                    return json.dumps([{"Record no.": record_no, "Spatial Source": spatial_source,
+                                       "Feature ID": feat_id, "Feature Type": feat_type,"Aligned Object":matched_feat,
+                                       "Party": party,"Right": ownership,  "Condition": rrrs}])
                 else:
-                    matched_feat="NONE"
-
-    with open(tenureRecoredFilePath) as record_json:
-        records = json.loads(record_json.read())
-        for record in records:
-            for feature in record["features"]:
-                feature_ID = feature["feature_id"]
-                if feature_ID == feat_id:
-                    matchedRecord = record
-
-        #print("empity recored",matchedRecord)
-        if (matchedRecord !=""):
-            record_no = matchedRecord["record_no"]
-            spatial_source = matchedRecord["spatial_source"]
-            for feature in matchedRecord["features"]:
-                for relation in feature["relations"]:
-                    ownership = relation["ownership"]
-                    party = relation["party"]
-                    rrrs = relation["rrrs"]
-
-            return json.dumps([{"Record no.": record_no, "Spatial Source": spatial_source,
-                               "Feature ID": feat_id, "Feature Type": feat_type,"Aligned Object":matched_feat,
-                               "Party": party,"Right": ownership,  "Condition": rrrs}])
+                       return "Tenure record not found"
         else:
-            return "None"
+            return "Tenure record not found"
+    except IOError:
+        print("Problem in Tenure record file @get_tenure_record()")
 
 
 @app.route("/getMapMatches", methods=["POST"])
 def getMapMatches():
     global OUTPUT_DIR_PATH
     global MATCHED_FEATURES
-    global PROJ_DIR_PATH
-
     proj_type_dir_path = path_to_project(request.form)
     print("proj_type_dir_path",proj_type_dir_path)
-    matchesFilePath = os.path.join(proj_type_dir_path, OUTPUT_DIR_PATH, MATCHED_FEATURES)
-    with open(matchesFilePath) as matches:
-        matches = json.loads(matches.read())
-    return  json.dumps(matches)
+    try:
+        matchesFilePath = os.path.join(proj_type_dir_path, OUTPUT_DIR_PATH, MATCHED_FEATURES)
+        with open(matchesFilePath) as matches:
+            matches = json.loads(matches.read())
+            return json.dumps(matches)
+    except IOError:
+        return(json.dumps("none"))
+
 
 
 @app.route("/add_tenure_record", methods =["POST","GET"])
@@ -610,7 +578,7 @@ def save_tenure_record():
 def postLADM():
     global UPLOADED_DIR_PATH
     global LADM_FILE
-    global PROJ_DIR_PATH
+
     proj_type_dir_path = path_to_project(request.form)
     #print("proj to path",proj_type_dir_path)
     fileName_full = str(request.form.get('LDMFileName'))
@@ -685,21 +653,6 @@ def get_domain_model_rrrs():
     return json.dumps(rrrs)
 
 
-"""
-initialize database 
-    - it will delete all the previous records and 
-    - create new main structure for neo4j
-"""
-
-"""
-@app.route("/initializeDatabase", methods =["POST","GET"])
-def initializeDatabase():
-    deleted = dbInitilizer.deleteAllRecords()
-    msg = dbInitilizer.createGraphStructure()
-    return msg
-"""
-
-
 
 """
     - resize image to load in the imageholder 
@@ -770,7 +723,7 @@ def uploadSketchMap():
     global SMARTSKEMA_PATH
 
     project_files_path = path_to_project(request.form)
-
+    print("Sketch Map is Resizing and Loading....")
     imageFileName = request.form.get('fileName')
     imageContent = request.form.get('imageContent')
     imageContent = imageContent.replace("data:image/png;base64,", "")
@@ -781,8 +734,11 @@ def uploadSketchMap():
 
     try:
 
-        """ comment out if using full alignment in debug mode 
+        #comment out if using full alignment in debug mode
+        """
         if app.debug:
+            
+          
              #copy folder with fileName to currentUserSession/projectType
             preRunFiles = os.path.join("preRunSessions", imageFileName)
             try:
@@ -835,12 +791,7 @@ def uploadSketchMap():
             - get relative and pass to front end 
         """
         modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
-        #print("modified_filepath:",modified_filepath)
-        #print("modified_filepath_relative:",modified_filepath_relative)
-
         img_path = Path(modified_filepath_relative)
-        #print("here you go the relative path:", img_path.as_posix())
-
         return json.dumps({"imgPath": img_path.as_posix(), "imgHeight": newY, "imgWidth": newX})
 
     except IOError:
@@ -904,16 +855,13 @@ def processSketchMap():
 
 
     #comment out if using full alignment in debug mode
-    """
-    if app.debug:
-        svg = svgutils.transform.fromfile(modified_filepath)
-        #print(svg)
-        #print(("height and width...:",svg.height, svg.width))
-        modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
 
-        return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
-    """
+    #if app.debug:
+     #    svg = svgutils.transform.fromfile(modified_filepath)
+      #   modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+       #  return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
 
+    #else:
     try:
         """ load image from uploaded folder"""
         img2 = cv2.imread(uploaded_filepath)
@@ -959,7 +907,7 @@ def processSketchMap():
 """
 @app.route("/align_plain", methods =["POST"])
 def align_plain_sketch_map():
-
+    global USER_SESSIONS_DIR
     global OUTPUT_DIR_PATH
     global MODIF_DIR_PATH
     global VECTORIZED_SKETCH
@@ -973,9 +921,11 @@ def align_plain_sketch_map():
     project_files_path = path_to_project(request.form)
     matches_file_path = os.path.join(project_files_path, OUTPUT_DIR_PATH, MATCHED_FEATURES)
     #print(matches_file_path)
+
     """ comment out if using full alignment in debug mode """
-    #if app.debug:
-    #    return debug_align_plain_sketch(matches_file_path)
+    if app.debug:
+        matches_file_path = os.path.join(USER_SESSIONS_DIR, "matches.json")
+        return debug_align_plain_sketch(matches_file_path)
 
     svg_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
     geojson_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)
@@ -1053,7 +1003,9 @@ def align_plain_sketch_map():
         with io.open(qualified_metric_map_file_path, 'w', encoding='utf8') as file:
             file.write(json.dumps(qualified_metric_map, indent=4))
             file.close()
+
         print("Alignment is STARTED...")
+
         similarity_matrix, sketch_map_size = compute_similarity_matrix(
             qualified_sketch_map,
             qualified_metric_map
@@ -1236,7 +1188,25 @@ def get_fileName_with_prefix(file, proj_type, sub_proj_name):
 """ 
     - to save data at PnS
 """
+def change_reduced_sketchfile_name(project_files_path,PnsProjectName):
+    global MODIF_DIR_PATH
+    global REDUCED_RASTER_SKETCH
+    os.rename(os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_SKETCH),
+              os.path.join(project_files_path, MODIF_DIR_PATH, PnsProjectName + "_modified_sketch.png"))
+    REDUCED_RASTER_SKETCH = PnsProjectName + "_modified_sketch"
+    reducedSketchName = os.path.join(project_files_path, MODIF_DIR_PATH, REDUCED_RASTER_SKETCH)
+    return reducedSketchName
 
+
+def change_original_sketchfile_name(project_files_path,PnsProjectName):
+    global INPUT_RASTER_SKETCH
+    global UPLOADED_DIR_PATH
+
+    os.rename(os.path.join(project_files_path,UPLOADED_DIR_PATH,INPUT_RASTER_SKETCH),
+              os.path.join(project_files_path,UPLOADED_DIR_PATH,PnsProjectName+"_sketch.png"))
+    INPUT_RASTER_SKETCH = PnsProjectName + "_sketch.png"
+    originalSketchName = os.path.join(project_files_path,UPLOADED_DIR_PATH,INPUT_RASTER_SKETCH)
+    return originalSketchName
 
 @app.route("/save_PnS", methods = ["POST"])
 def save_PnS ():
@@ -1263,12 +1233,12 @@ def save_PnS ():
     global PnS_PROJ_ID
     global SPATIALSOURCE_SKETCH_UID
     global SPATIALSOURCE_BASE_UID
-    global SUB_PROJ_NAME
+
 
     SUB_PROJ_NAME = request.form.get('sub_project_name')
 
     project_files_path = path_to_project(request.form)
-    print(project_files_path)
+
     upladed_sketch_original = os.path.join(project_files_path,UPLOADED_DIR_PATH,INPUT_RASTER_SKETCH)
     uploaded_base_map = os.path.join(project_files_path, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
     modified_base_map = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)
@@ -1287,6 +1257,13 @@ def save_PnS ():
     matches_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,MATCHED_FEATURES)
     tenure_record_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,TENURE_RECORD_FILE)
     approx_tile_file = os.path.join(project_files_path, OUTPUT_DIR_PATH, APROX_TILE)
+
+    if os.path.exists(upladed_sketch_original):
+        upladed_sketch_original = change_original_sketchfile_name(project_files_path,SUB_PROJ_NAME)
+    if os.path.exists(reduced_raster_sketch):
+        reduced_raster_sketch = change_reduced_sketchfile_name(project_files_path,SUB_PROJ_NAME)
+
+    print(upladed_sketch_original,reduced_raster_sketch)
     try:
         files = [upladed_sketch_original,uploaded_base_map]
         for file in files:
@@ -1341,17 +1318,13 @@ def save_PnS ():
 def get_sub_project_from_PnS():
     global PnS_PROJ_ID
     global USER_SESSIONS_DIR
-    global UPLOADED_DIR_PATH
-    global OUTPUT_DIR_PATH
-    global MODIF_DIR_PATH
-    global PROJ_DIR_PATH
+    global PnS_PROJ_Mode
+    #print("PnS_PROJ_ID",PnS_PROJ_ID,)
+    PnS_PROJ_Mode = True
+    project_files_path = path_to_project(request.form)
 
     resp = get_project_list_PnS(pns_proj_id=PnS_PROJ_ID,
-                                 user_session_dir=USER_SESSIONS_DIR,
-                                 proj_dir_path=PROJ_DIR_PATH,
-                                 uploaded_dir_path=UPLOADED_DIR_PATH,
-                                 output_dir_path=OUTPUT_DIR_PATH,
-                                 modified_dir_path=MODIF_DIR_PATH)
+                                user_session_dir=USER_SESSIONS_DIR)
 
     sub_proj_list = list(dict.fromkeys(resp))
     #print(sub_proj_list)
@@ -1365,17 +1338,22 @@ def download_project_items_from_PnS():
     global UPLOADED_DIR_PATH
     global OUTPUT_DIR_PATH
     global MODIF_DIR_PATH
-    global PROJ_DIR_PATH
+    global PROJ_TYPE_SUB_PROJ_NAME
+    global PnS_PROJ_Mode
 
-    proj_type_sub_proj_name = request.form.get('sub_project_name')
+    PnS_PROJ_Mode = True
 
+    PROJ_TYPE_SUB_PROJ_NAME = request.form.get('sub_project_name')
+    project_files_path = path_to_project(request.form)
+
+    print("path_to_project", project_files_path)
     resp = get_projects_items_from_PnS(pns_proj_id=PnS_PROJ_ID,
                                      user_session_dir=USER_SESSIONS_DIR,
-                                     proj_dir_path = PROJ_DIR_PATH,
+                                     proj_dir_path = project_files_path,
                                      uploaded_dir_path = UPLOADED_DIR_PATH,
                                      output_dir_path = OUTPUT_DIR_PATH,
                                      modified_dir_path =MODIF_DIR_PATH,
-                                     sub_proj_name = proj_type_sub_proj_name)
+                                     sub_proj_name = PROJ_TYPE_SUB_PROJ_NAME)
    #return "here you go"
     return json.dumps({'msg': resp})
 
@@ -1398,19 +1376,25 @@ def render_downloaded_files_on_client():
     global TENURE_RECORD_FILE
     global SMARTSKEMA_PATH
     global PROJ_TYPE_SUB_PROJ_NAME
+
     #PnS_PROJ_ID = os.getenv("I4L_PROJECTUID")
     PROJ_TYPE_SUB_PROJ_NAME = request.form.get('sub_project_name')
 
+
     path_to_downloaded_project_PnS = path_to_project(request.form)
+
+    print("path_to_downloaded_project_PnS",path_to_downloaded_project_PnS)
+
     reduced_raster_sketch = os.path.join(path_to_downloaded_project_PnS, MODIF_DIR_PATH, REDUCED_RASTER_SKETCH)
     uploaded_base_map = os.path.join(path_to_downloaded_project_PnS, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
     sketch_svg_file = os.path.join(path_to_downloaded_project_PnS, OUTPUT_DIR_PATH, VECTORIZED_SKETCH)
+    matches_file = os.path.join(path_to_downloaded_project_PnS, OUTPUT_DIR_PATH, MATCHED_FEATURES)
 
-    downloaded_files = [reduced_raster_sketch,sketch_svg_file, uploaded_base_map]
+    downloaded_files = [reduced_raster_sketch,sketch_svg_file, uploaded_base_map,matches_file]
     fileList = []
     for file in downloaded_files:
         if os.path.exists(file):
-            #print("i am in the if")
+            print(file)
             fileContent = ""
             file_rel = os.path.relpath(file, SMARTSKEMA_PATH)
             fileBaseName = os.path.basename(file)

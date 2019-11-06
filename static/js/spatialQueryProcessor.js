@@ -7,9 +7,46 @@
 
 var main_feat_id = "";
 var main_feat_type = "";
+var main_feat_name = "";
 var vector13;
 var vector14;
 var vector15;
+
+
+var spatialUnitManager = (function(){
+
+
+    function showSpatialUnitBnts(event){
+        document.getElementById("editor_tools_col_right").appendChild(document.getElementById("svg_editor_bnt"));
+        document.getElementById("editor_tools_col_right").appendChild(document.getElementById("toggle_interaction_bnt"));
+        document.getElementById("editor_tools_col_right").appendChild(document.getElementById("spatial_query_processor_bnt"));
+
+
+        $('#svg_editor_bnt').prop("style", "visibility: visible");
+        $('#svg_editor_bnt').prop("style", "position: relative");
+        $('#svg_editor_bnt').prop("style", "margin-left: 5px");
+        $('#svg_editor_bnt').prop("style", "margin-right: 5px");
+
+        $('#toggle_interaction_bnt').prop("style", "visibility: visible");
+        $('#toggle_interaction_bnt').prop("style", "position: relative");
+        $('#toggle_interaction_bnt').prop("style", "margin-left: 5px");
+
+        $('#spatial_query_processor_bnt').prop("style", "visibility: visible");
+        $('#spatial_query_processor_bnt').prop("style", "position: relative");
+        $('#spatial_query_processor_bnt').prop("style", "margin-left: 5px");
+
+        $('#editor_tools_col_right').prop("style", "visibility: visible");
+    }
+
+    return{
+        showSpatialUnitBnts: showSpatialUnitBnts,
+
+    }
+
+})();
+
+
+
 
 function spatial_query_processor_mode() {
     //createProcessingRing();
@@ -46,12 +83,18 @@ function spatial_query_mouse_out(d, i) {
 
 function get_spatial_query_popup() {
 
+    var lr_relations = "";
+    var topo_relations = "";
+    var relDist_relations= "";
+
     d3.event.preventDefault();
     main_feat_id = $(this).attr('id');
+    main_feat_name = $(this).attr('name');
     main_feat_type = $(this).attr('smart_skema_type');
 
     //console.log("here i am in the div");
     $('#featureID_spatial_query').text(main_feat_id);
+    $('#featureName_spatial_query').text(main_feat_id);
     $('#featureType_spatial_query').text(main_feat_type);
 
     //$('#spatial_query_popup_div').empty();
@@ -60,6 +103,30 @@ function get_spatial_query_popup() {
     x = d3.event.pageX;
     y = d3.event.pageY;
     //console.log("x, y :",x, y);
+
+    $('#leftRight_rels_div').empty();
+    $('#relDist_rels_div').empty();
+    $('#topo_rels_div').empty();
+
+    let ajaxParams = {
+        url: '/qualitative_spatial_queries',
+        type: 'POST',
+        data: {
+            main_feat_id: main_feat_id,
+            main_feat_type: main_feat_type
+
+        }
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+        var relations = JSON.parse(resp);
+
+        //console.log(relations);
+        lr_relations = relations.selected_feat_lr_rel;
+        topo_relations = relations.selected_feat_rcc8_rel;
+        relDist_relations = relations.selected_feat_relDist_rel;
+        setTimeout(visualize_computed_rels(lr_relations,topo_relations,relDist_relations), 5);
+    });
+
 
     $('#spatial_query_popup_div').offset({
         top: y,
@@ -73,7 +140,7 @@ function get_spatial_query_popup() {
  */
 
 function qualitative_spatial_queries() {
-    var lr_relations = "";
+    /*var lr_relations = "";
     var topo_relations = "";
     var relDist_relations= "";
     $('#leftRight_rels_div').empty();
@@ -97,7 +164,7 @@ function qualitative_spatial_queries() {
         topo_relations = relations.selected_feat_rcc8_rel;
         relDist_relations = relations.selected_feat_relDist_rel;
         setTimeout(visualize_computed_rels(lr_relations,topo_relations,relDist_relations), 5);
-    });
+    });*/
 }
 
 /**
@@ -109,15 +176,14 @@ function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) 
         var presentation = "left_right";
         $('#leftRight_rels_div').append(
             "<div id='lr_relation'>" +
-            "<span style='padding-right: 10px'>" + lr_relations[i].obj_1 + "</span>" +
-            "<span style='padding-right: 10px'>" + lr_relations[i].obj_2 + " : " + "</span>" +
-            "<span style='padding-right: 10px'>" + lr_relations[i].relation + "</span>" +
-            "</div>"
+            "<span >" + "has a spatial relation to feature (ID"+ " : "+ lr_relations[i].obj_1 +") in Sketch map"+ "</span>" +
+            "</div>"+
+            "</br>"
         );
-        $('#lr_relation').prop("style", "padding:1px");
+       // $('#lr_relation').prop("style", "padding:1px");
         $('#lr_relation').prop("id", "lr_relation" + i);
-        $('#lr_relation' + i).prop("class", "btn btn-outline-info");
-        $('#lr_relation' + i).prop("style", "padding:2px");
+        $('#lr_relation' + i).prop("class", " btn btn-outline-info");
+        $('#lr_relation' + i).prop("style", "margin-top:3px");
 
 
         $('#lr_relation' + i).attr("onclick", "get_qualitative_approximate_location(" + JSON.stringify(presentation)+','+JSON.stringify(lr_relations[i]) + ")");
@@ -125,17 +191,20 @@ function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) 
     }
 
     for (i in topo_relations) {
+        console.log(i);
+        var layer = sketchMapDisplayManager.getVectorLayer("baseLayer");
+         //"Name:"+ ele_name +
         var presentation = "RCC8";
         $('#topo_rels_div').append(
             "<div id='topo_relations'>" +
-            "<span style='padding-right: 10px;'>" + topo_relations[i].obj_1 + "</span>" +
-            "<span style='padding-right: 10px;'>" + topo_relations[i].obj_2 + " : " + "</span>" +
-            "<span style='padding-right: 10px;'>" + topo_relations[i].relation + "</span></div>"
+            "<span >" + "has a spatial relation to feature (ID"+ " : "+ topo_relations[i].obj_1 +") in sketch map"+ "</span>" +
+            "</div>"+
+            "</br>"
         );
-        $('#topo_relations').prop("style", "padding:1px");
+      /*  $('#topo_relations').prop("style", "padding:1px");*/
         $('#topo_relations').prop("id", "topo_relations" + i);
         $('#topo_relations' + i).prop("class", "btn btn-outline-info");
-        $('#topo_relations' + i).prop("style", "padding:2px");
+        $('#topo_relations' + i).prop("style", "margin-top:3px");
         $('#topo_relations' + i).attr("onclick", "get_qualitative_approximate_location(" +JSON.stringify(presentation)+','+ JSON.stringify(topo_relations[i]) + ")");
 
     }
@@ -144,14 +213,14 @@ function visualize_computed_rels(lr_relations,topo_relations,relDist_relations) 
         var presentation = "REL_DIST";
         $('#relDist_rels_div').append(
             "<div id='relDist_relations'>" +
-            "<span style='padding-right: 10px;'>" + relDist_relations[i].obj_1 + "</span>" +
-            "<span style='padding-right: 10px;'>" + relDist_relations[i].obj_2 + " : " + "</span>" + "" +
-            "<span style='padding-right: 10px;'>" + relDist_relations[i].relation + "</span></div>"
+            "<span >" + "has a spatial relation to feature (ID"+ " : "+ relDist_relations[i].obj_1 +") in sketch map"+ "</span>" +
+            "</div>"+
+            "<br>"
         );
-        $('#relDist_relations').prop("style", "padding:1px");
+       // $('#relDist_relations').prop("style", "padding:1px");
         $('#relDist_relations').prop("id", "relDist_relations" + i);
-        $('#relDist_relations' + i).prop("class", "btn btn-outline-info");
-        $('#relDist_relations' + i).prop("style", "padding:2px");
+        $('#relDist_relations' + i).prop("class", " btn btn-outline-info");
+        $('#relDist_relations' + i).prop("style", "margin-top:3px");
         $('#relDist_relations' + i).attr("onclick", "get_qualitative_approximate_location(" +JSON.stringify(presentation)+','+ JSON.stringify(relDist_relations[i]) + ")");
 
     }
@@ -183,7 +252,40 @@ function get_qualitative_approximate_location(rep, rel) {
 }
 
 function load_computed_tiles_as_svg(tilesType,tilesAsjson){
-    var topo = topojson.topology({foo: tilesAsjson});
+    let sourceFormat = sessionData.projectType == "orthoSketchProject"? "tms": "openstreetmap";
+
+    let tilemap_format = sessionData.projectType == "orthoSketchProject"? TMS_TILE_MAP: OSM_TILE_MAP;
+    //baseMapDisplayManager = baseMapDisplayManagerTemplate(tilemap_format);
+
+    let url = sourceFormat  == "tms"?
+        "./static/data/modified/tiles_256_raster/": "tile.openstreetmap.org/";
+    if (tilesType ==="left_right"){
+        date_time = (new Date()).toISOString();
+        baseMapDisplayManager.tilesFromURL(url).then(
+            function(done){
+                baseMapDisplayManager.vectorFromGeoJSONContent(tilesAsjson, "Approx_tiles_leftRight_"+date_time) //"baseLayer")
+            });
+
+    }if (tilesType ==="RCC8"){
+        date_time = (new Date()).toISOString();
+        console.log("i am in the RCC if for tiles ")
+
+        baseMapDisplayManager.tilesFromURL(url).then(
+            function(done){
+                baseMapDisplayManager.vectorFromGeoJSONContent(tilesAsjson, "Approx_tiles_RCC_"+date_time) //"baseLayer")
+            });
+    }if (tilesType ==="REL_DIST"){
+        date_time = (new Date()).toISOString();
+        console.log("i am in the reldist if for tiles ")
+
+        baseMapDisplayManager.tilesFromURL(url).then(
+            function(done){
+                baseMapDisplayManager.vectorFromGeoJSONContent(tilesAsjson, "Approx_tiles_relDist_"+date_time) //"baseLayer")
+            });
+    }
+
+    //baseMapDisplayManager.vectorFromGeoJSONContent(json) //"baseLayer")
+   /* var topo = topojson.topology({foo: tilesAsjson});
     json_svg = d3.select("#baseSVG").select("#baseLayer").append("g");
 
     if (tilesType ==="left_right"){
@@ -236,5 +338,5 @@ function load_computed_tiles_as_svg(tilesType,tilesAsjson){
         var tile3 =json_svg.selectAll("path[feat_type='approximate_tile']")
             .attr("class", "approximate_tile")
             .attr("style", null);
-    }
+    }*/
 }

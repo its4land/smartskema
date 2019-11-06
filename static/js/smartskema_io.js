@@ -2,8 +2,8 @@ var projectMode = -1;
 
 const MODE_FREEHAND_SKETCH = 0;
 const MODE_MAP_TRACE_SKETCH = 1;
-const TMS_TILE_MAP = "tms"
-const OSM_TILE_MAP = "osm"
+const TMS_TILE_MAP = "tms";
+const OSM_TILE_MAP = "osm";
 
 /**
  * Set the project type and load the appropriate datasets
@@ -27,7 +27,7 @@ function loadProjectData(event, projectType, divID) {
     $(divID).prop("style", "visibility: visible");
 
     $(divID).offset({
-        top: y,
+        top: y+10,
         left: x
     });
 
@@ -120,6 +120,7 @@ var sessionData = (function(){
  * project type.
  */
 var sessionData = (function(){
+
     var projectType;
     var sessionData =  {
         projectType: projectType,
@@ -132,8 +133,9 @@ var sessionData = (function(){
         url: '/getSessionID',
         type: 'GET',
         success: function (resp) {
+            button_manager.disable_all_interavtive_bnts();
             sessionData.sessID = resp;
-           button_manager.disable_all_interavtive_bnts();
+
         }
     });
 
@@ -153,6 +155,7 @@ var communicator = function(ajaxParams) {
         return {
             sendRequest: function(callbackParams, callback) {
                 createProcessingRing();
+
                 if (ajaxParams.data){
                     ajaxParams.data.sessID = sessionData.sessID
                     ajaxParams.data.projectType = sessionData.projectType
