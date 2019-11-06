@@ -250,9 +250,9 @@
             <div id="editor_tools_row" class="row">
                 <div id="editor_tools_col_left" class="col">
 
-                    <div id="svg_edit_bnts" style="visibility: hidden">
+                    <div id="svg_edit_bnts" style="overflow:hidden;visibility: hidden">
                         <button id="draw_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
-                                data-placement="bottom" title="Draw Geometry" onclick="">
+                                data-placement="bottom" title="Draw Geometry">
                             <img id="draw_geom_img" src="../static/imgs/draw_geom.png" width="22" height="20">
                         </button>
                         <button id="edit_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
@@ -271,6 +271,10 @@
                         <button id="delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
                                 data-placement="bottom" title="Delete">
                             <img id="delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20">
+                        </button>
+                        <button id="save_edits" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Save Edits"  width="20" height="20">
+                            <i class="fa fa-save w3-large w3-text-black" ></i><!--img id="delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20"-->
                         </button>
                     </div>
                     <!-- div for ladm interaction buttons-->
@@ -317,8 +321,6 @@
                             <img id="json_delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20">
                         </button>
                     </div>
-
-
                 </div>
             </div>
         </div>
