@@ -1,7 +1,7 @@
 var svgEditor = (function () {
 
 
-	let anchor_radius = 40;
+	let anchor_radius = 5;
 	let regexp = /\s+|,/;
 
 
@@ -11,6 +11,9 @@ var svgEditor = (function () {
     var rasterNode, vectorNode, drawingNode, decoratorsNode;
     var vScale = 1;
     var iScale = 1;
+	
+	var anchorRad = 5;
+	var edAnchorRad = 8;
 
     var editModeOnClick = null;
 
@@ -44,9 +47,8 @@ var svgEditor = (function () {
 	let join_data = {"first_seg":{"path":null, "point":null}, 
 					"second_seg":{"path":null, "point":null}};
 
-	let activeGeometries = [];
+	let activeGeometries = new Map([]);
 	let activeMarkers = [];
-
 	
 	var init = function(mapType) {
 	    activeMode = -1;
@@ -76,9 +78,12 @@ var svgEditor = (function () {
 
         if (vectorNode.transform.baseVal.consolidate()){
             vScale = vectorNode.transform.baseVal.consolidate().matrix.a;
+			anchor_radius = edAnchorRad/vScale;
+			drawingLayer.attr("transform", vectorLayer.attr("transform"));
+			decoratorsLayer.attr("transform", vectorLayer.attr("transform"));
         }
 
-        if (vectorNode.transform.baseVal.consolidate()){
+        if (rasterNode.transform.baseVal.consolidate()){
             iScale = rasterNode.transform.baseVal.consolidate().matrix.a;
         }
 
@@ -95,8 +100,8 @@ var svgEditor = (function () {
 	}
 
 	function setUpEditorMenu(){
-        $('#editor_div').prop("style", "visibility: visible");
-        $('#svg_edit_bnts').prop("style", "visibility: visible");
+        $('#editor_div').prop("style", "visibility:visible");
+        $('#svg_edit_bnts').prop("style", "overflow:hidden;visibility:visible");
 
         $('#ladm_interaction_bnts').prop("style", "visibility: hidden");
         $('#json_edit_bnts').prop("style", "visibility: hidden");
@@ -111,19 +116,19 @@ var svgEditor = (function () {
 
         let img = d3.select("#bgImg");
 
-        d3.select(draw_geom).on("click", function () {
+        d3.select("#draw_geom").on("click", function () {
             setMode(MODE_DRAW)
         });
-        d3.select(edit_geom).on("click", function () {
+        d3.select("#edit_geom").on("click", function () {
             setMode(MODE_EDIT)
         });
-        d3.select(join_endPoints).on("click", function () {
+        d3.select("#join_endPoints").on("click", function () {
             setSecondaryMode(EDIT_MODE_JOIN)
         });
-        d3.select(split_endPoints).on("click", function () {
+        d3.select("#split_endPoints").on("click", function () {
             setMode(EDIT_MODE_SPLIT)
         });
-        d3.select(save_edits).on("click", function () {
+        d3.select("#save_edits").on("click", function () {
             save()
         });
 
@@ -131,6 +136,7 @@ var svgEditor = (function () {
 	}
 
 	function save() {
+		saveAllEdits();
         drawingLayer.selectAll("path").remove().each(
             function(d, i ,g){
                 vectorLayer.append(() => g[i]);
@@ -250,7 +256,9 @@ var svgEditor = (function () {
         lineFunction.curve(d3.curveLinear);
 
         vectorLayer.on("mousedown", drawingMousedown);
-        rasterLayer.on("mousedown", drawingMousedown);
+		//rasterLayer.selectAll('image').each((i, v) => console.log(i, v));
+        //rasterLayer.selectAll('image').on("mousedown", drawingMousedown);
+		rasterLayer.on("mousedown", drawingMousedown);
         drawingLayer.on("mousedown", drawingMousedown);
 
         d3.select("body").on("keypress", drawingKeypressed);
@@ -336,11 +344,17 @@ var svgEditor = (function () {
         s = pathData[0].values;
         e = pathData[pathData.length - 1].values;
         e2 = pathData[pathData.length - 2].values;
+		e3 = pathData[pathData.length - 3].values;
 
         if (e[0] === e2[0] && e[1] === e2[1]) {
             pathData.pop();
             e = e2;
         }
+		if (e2[0] === e3[0] && e2[1] === e3[1]) {
+            pathData.pop();
+            e = e3;
+        }
+		
         if (s[0] === e[0], s[1] === e[1]) {
             pathData.pop();
             pathData.push({"type":"Z", "values":[]});
@@ -435,26 +449,52 @@ var svgEditor = (function () {
             $('#edit_svg_popup_div').prop("style","visibility: hidden");
             $('#feature_id').val("");
             $('#feature_type').val("");
-
-            this.parentNode.parentNode.removeChild(this.parentNode);
-            delete this;
-            delete this.parentNode;
+			
+			edDiv = document.getElementById('edit_svg_popup_div')
+			
+			while (edDiv.hasChildNodes()) {
+				edDiv.removeChild(edDiv.lastChild);
+            }
 	    });
 	}
 
+	function inview(x, y) {
+		let xInview = (0 < x) && (x < drawingNode.parentNode.parentNode.getAttribute("width"));
+		let yInview = (0 < y) && (y < drawingNode.parentNode.parentNode.getAttribute("height"));
+		
+		return xInview && yInview;
+	}
+	
 	function drawingMousedown() {
-		var m = d3.mouse(this);  
-		[x, y] = [m[0]/vScale, m[1]/vScale];
+		var m = d3.mouse(drawingNode);  
+		//[x, y] = [m[0]/vScale, m[1]/vScale];
+		[x, y] = m;
 		//console.log("x, y",[m[0]/scale, m[1]/scale]);
-		if (activeGeometries.size == 0) {
-			path = g.append("path")
-				.attr("d", lineFunction([{"x":x, "y":y}]))
-				.classed("polyline").node();
-			activateGeometry(path);
+		if (activeGeometries.size == 0 && inview(x, y)) {
+			/* create a line object and pass it to 
+			   activateGeometry() to obtain an editable 
+			   path. Set the drag event on the last anchor
+			   to dragDraw
+			*/
+			path = drawingLayer.append("line")
+				.attr("x1", x)
+				.attr("y1", y)
+				.attr("x2", x)
+				.attr("y2", y)
+				.classed("line", true).node();
+			path = activateGeometry(path);
+			let pathAnchors = activeGeometries.get(path);
+			pathAnchors[pathAnchors.length - 1].call(
+													d3.drag()
+													.on("start", ()=>{})
+													.on("drag", dragged)
+													.on("end", dragEnded)
+													);
+			/*
 			let c = addDraggableAnchors(1, [x, y], path, ()=>{}, dragged, dragEnded)
 						.attr("r", anchor_radius + 1)
 			c.raise()
-						//.call(d3.drag().on("start", dragStarted)
+						//.call(d3.drag().on("start", dragStarted)*/
 						//			   .on("drag", dragged)
 						//			   .on("end", dragEnded)
 						//		);
@@ -518,9 +558,6 @@ var svgEditor = (function () {
 
 	function activateGeometry(geom) {
 	    [path, decorators] = makeEditable(geom);
-	    parentNode = path.parentNode;
-	    drawingLayer.append(()=> path)
-	    parentNode.removeChild(path);
 	    activeGeometries.set(path, decorators);
         d3.select(path).classed("selected", true)
                        .call(d3.drag()
@@ -536,18 +573,17 @@ var svgEditor = (function () {
 	}
 
 	function deactivateGeometry(geom) {
-        decorators = activeGeometries[geom];
+        decorators = activeGeometries.get(geom);
         updateFeatureGeometry(geom);
 
         decorators.forEach(function(v, i, arr) {
             anchorNodes.delete(v);
-            decoratorsLayer.select(v).remove();
+            decoratorsLayer.select(() => v.node()).remove();
         });
 
         activeGeometries.delete(geom);
         d3.select(geom).classed("selected", false)
-                       .on(".drag", null)
-                       .on("click", editGeomOnClick);
+                       .on(".drag", null);
 
         if (activeGeometries.size == 0) {
             d3.select(delete_geom).attr("opacity", 0.5)
@@ -581,23 +617,35 @@ var svgEditor = (function () {
 
 	function drawingKeypressed() {
 	    if (d3.event.keyCode = 13) { //key == Enter
-
-	        activeGeometries.forEach(
-                (v, k, m) => {
-                    deactivateGeometry(k);
-                    updateFeatureAttributes(k);
-                }
-            );
+			saveAllEdits();
 	    }
 	}
 
-/*    function handler(ev) {
-      console.log('CTRL pressed during click:', ev.ctrlKey);
-    }*/
+	function saveAllEdits() {
+		activeGeometries.forEach(
+			(v, k, m) => {
+				deactivateGeometry(k);
+				updateFeatureAttributes(k);
+				displayManager.moveVectorToLayer(k, DRAWING_LAYER_NAME, DRAWING_LAYER_NAME)
+			}
+		);
+	}
 
+	/*
+		Make geometry editable, first detaching it from it's
+		parent then converting it to a path object if it isn't a 
+		path, and finally appending it to the drawing layer. At 
+		the end also create draggable anchor nodes to manipulate
+		the geometry's shape.
+    */
 	function makeEditable(geom) {
         switch( geom.tagName.toLowerCase() ) {
 
+		case 'path':
+          lineFunction.curve(d3.curveLinear);
+		  geom = d3.select(geom).remove().node();
+		  drawingLayer.append(()=>geom);
+		  break;
         case 'rect':
           lineFunction.curve(d3.curveLinearClosed);
           x = geom.getAttribute("x");
@@ -612,11 +660,12 @@ var svgEditor = (function () {
                {"x":x + w, "y": y}
               ];
 
-          geom = g.append("path")
+          d3.select(geom).remove();
+          geom = drawingLayer.append("path")
                     .attr("d", lineFunction(d))
+					.attr("geom_type", 'polygon')
                     .classed('polygon', true)
                     .node();
-          d3.select(geom).remove();
           break;
 
         case 'line':
@@ -631,11 +680,12 @@ var svgEditor = (function () {
                {"x":x2, "y":y2}
               ];
 
-          geom = g.append("path")
+          d3.select(geom).remove();
+          geom = drawingLayer.append("path")
                     .attr("d", lineFunction(d))
+					.attr("geom_type", 'polyline')
                     .classed('polyline', true)
                     .node();
-          d3.select(geom).remove();
           break;
 
         case 'polyline':
@@ -647,11 +697,12 @@ var svgEditor = (function () {
                                       return {"x": num(coords[0]), "y": num(coords[1])};
                                    });
 
-          geom = g.append("path")
+          d3.select(geom).remove();
+          geom = drawingLayer.append("path")
                     .attr("d", lineFunction(d))
+					.attr("geom_type", 'polyline')
                     .classed('polyline', true)
                     .node();
-          d3.select(geom).remove();
           break;
 
         case 'polygon':
@@ -663,8 +714,9 @@ var svgEditor = (function () {
                                       return {"x": num(coords[0]), "y": num(coords[1])};
                                    });
           d3.select(geom).remove();
-          geom = g.append("path")
+          geom = drawingLayer.append("path")
                     .attr("d", lineFunction(d))
+					.attr("geom_type", 'polygon')
                     .classed('polygon', true)
                     .node();
           break;
@@ -679,19 +731,23 @@ var svgEditor = (function () {
             let seg = pathData[i];
             let [x, y] = seg.values;
             if (x && y){
-                let c = addDraggableAnchors(i, [x, y], geom, ()=>{}, dragged, ()=>{})
-                                .on("contextmenu", deleteNode);
+                let c = addDraggableAnchors(i, [x, y], geom, edAnchorRad/vScale, ()=>{}, dragged, ()=>{});
                 decorators.push(c);
             }
         }
 		return [geom, decorators];
-		// vector.on("click", addPoint);
 	}
 	
-	function addDraggableAnchors(i, seg, path, dragStart, drag, dragEnd) {
-		let c = addAnchor(i, seg, path);
-		c.on('mouseover', () => d3.select(this).classed("active", true))
-		 .on('mouseout', () => d3.select(this).classed("active", false))
+	function addDraggableAnchors(i, seg, path, radius, dragStart, drag, dragEnd) {
+		let c = addAnchor(i, seg, path, radius);
+		let activate = function(){
+			d3.select(this).classed("active", true);
+		}
+		let deactivate = function(){
+			d3.select(this).classed("active", false);
+		}
+		c.on('mouseover', activate)
+		 .on('mouseout', deactivate)
 		 .call(d3.drag()
 			    .on("start", dragStart)
 			    .on("drag", drag)
@@ -811,7 +867,7 @@ var svgEditor = (function () {
         if (i >= 2)
         {
             for (var [key, value] of anchorNodes) {
-              if (value.pos === 0) {
+              if (value.pos === 0 && value.path === path) {
                   let x0 = key.getAttribute("cx");
                   let y0 = key.getAttribute("cy");
                   if (Math.abs(x - x0) <= anchor_radius + 1
@@ -831,9 +887,16 @@ var svgEditor = (function () {
             if (pathData[i].values[0] != pathData[i - 1].values[0]
             && pathData[i].values[1] != pathData[i - 1].values[1]) {
                 pathData.push({"type":"L", values:[x, y]});
-                vertexPathData.pos = vertexPathData.pos + 1;
-                let c = addDraggableAnchors(i, [x, y], path, ()=>{}, dragged, ()=>{});
+                //vertexPathData.pos = vertexPathData.pos + 1;
+                let c = addDraggableAnchors(vertexPathData.pos + 1, [x, y], path, edAnchorRad/vScale, ()=>{}, dragged, dragEnded);
                 activeGeometries.get(path).push(c);
+				d3.select(this).on(".drag", null);
+				d3.select(this).call(
+									d3.drag()
+									.on("start", ()=>{})
+									.on("drag", dragged)
+									.on("end", ()=>{})
+									);
             }
         }
 
@@ -842,12 +905,12 @@ var svgEditor = (function () {
 		//i = vertexPathData.pos - 1;
 		//[x, y] = pathData[i].values;
 		//let c = addDraggableAnchors(i, [x, y], path, ()=>{}, dragged, ()=>{});
-		d3.select(this).raise();
 	}
 
 	function dragged() {
 		x = d3.event.x;
-		y = d3.event.y;    
+		y = d3.event.y;   
+		m = d3.mouse(drawingNode);
 		
 		let vertexPathData = anchorNodes.get(this);  
 		path = vertexPathData.path;
@@ -900,7 +963,7 @@ var svgEditor = (function () {
 				}
 			}
 		);
-		decorators = activeGeometries[path];
+		decorators = activeGeometries.get(path);
 		decorators.splice(decorators.indexOf(this), 1);
 		anchorNodes.delete(this);
 		d3.select(this).remove();
@@ -938,7 +1001,7 @@ var svgEditor = (function () {
 			pathData.push({"type":pathData[0].type, "values":pathData[0].values});
 			pathData[0].type = "M";
 			path.setPathData(pathData);
-			let c = addDraggableAnchors(pathData.length - 1, values, path, ()=>{}, dragged, ()=>{});
+			let c = addDraggableAnchors(pathData.length - 1, values, path, edAnchorRad/vScale, ()=>{}, dragged, ()=>{});
 		}
 		else {
 			let temp_svg_edit_nodes = new Map();
@@ -976,7 +1039,7 @@ var svgEditor = (function () {
 			d3.select(path).remove();
 			leftLength = leftPathData.length - 1;
 			lastLeftValues = leftPathData[leftPathData.length - 1].values;
-			let c = addDraggableAnchors(leftLength, lastLeftValues, leftPath, ()=>{}, dragged, ()=>{});
+			let c = addDraggableAnchors(leftLength, lastLeftValues, leftPath, edAnchorRad/vScale, ()=>{}, dragged, ()=>{});
 		}
 	}
 
@@ -1011,9 +1074,8 @@ var svgEditor = (function () {
 					}
 				}
 			);
-			let c = addDraggableAnchors(i + 1, [x, y], path, ()=>{}, dragged, ()=>{});
-			c.attr('r', anchor_radius + 1)
-			 .on("contextmenu", split_node);
+			let c = addDraggableAnchors(i + 1, [x, y], path, edAnchorRad/vScale, ()=>{}, dragged, ()=>{});
+			    c.on("contextmenu", split_node);
 		}
 	}
 
