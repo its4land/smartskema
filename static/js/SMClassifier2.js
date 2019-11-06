@@ -436,6 +436,8 @@ $(function () {
  * removes the disable property of the svg tool buttons
  */
 function enable_svg_edit_tool() {
+    svgEditor.init('sketch')
+/*
     $('#editor_div').prop("style", "visibility: visible");
     $('#svg_edit_bnts').prop("style", "visibility: visible");
 
@@ -474,7 +476,7 @@ function enable_svg_edit_tool() {
     d3.select(save).on("click", function () {
         editor.save()
     });
-
+*/
     console.log("SVG Editor Activating...");
 
 }
