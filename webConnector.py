@@ -829,6 +829,7 @@ def processSketchMap():
     """ comment out if using full alignment in debug mode """
     if app.debug:
         svg = svgutils.transform.fromfile(modified_filepath)
+        print("returned: ", json.dumps({'svgPath': Path(modified_filepath).as_posix(), 'svgHeight': int(svg.height), 'svgWidth': int(svg.width)}))
         return json.dumps({'svgPath': Path(modified_filepath).as_posix(), 'svgHeight': int(svg.height), 'svgWidth': int(svg.width)})
 
     try:
@@ -1034,6 +1035,8 @@ def align_orthophoto_sketch_map():
         # with io.open(loaded_GCP_File_name, 'r+') as file:
         #     loaded_GCP_File = json.loads(file.read())
         #     print("GCPs:",loaded_GCP_File)
+
+        print("GCP file:", gcp_file_name)
         geo_data_properties, geo_data = load_geo(read_map_data_from_path(gcp_file_name, "geojson"), "geojson")
         svg_data_properties, svg_data = load_svg(read_map_data_from_path(svg_file_path, "svg"), "svg")
 
@@ -1050,6 +1053,11 @@ def align_orthophoto_sketch_map():
     # pair up the gcps
     svg_gcps = [d for d in svg_data if d['attributes']['feat_type'] == 'gcp']
     geo_gcps = [d for d in geo_data if d['attributes']['feat_type'] == 'gcp']
+
+    print('svg_gcps', svg_gcps)
+    print('geo_data', geo_data)
+    print('geo_gcps', geo_gcps)
+
     # svg_feature_data = svg_data  # [d for d in svg_data if d['attributes']['feat_type']]
 
     for d in svg_data:
@@ -1063,6 +1071,9 @@ def align_orthophoto_sketch_map():
 
     x_coordinate_data_input = np.array([ps.coords[:][0] for (ps, pg) in point_pairs])
     y_coordinate_data_input = np.array([pg.coords[:][0] for (ps, pg) in point_pairs])
+
+    print(x_coordinate_data_input)
+    print(y_coordinate_data_input)
 
     if len(svg_gcps) < 6:
         reg = linear_regression()
