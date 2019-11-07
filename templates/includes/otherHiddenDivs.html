@@ -414,6 +414,39 @@
 
         </div>
     </div>
+
+    <div id = "svg_new_element_div" class="w3-card-4 w3-round " style="visibility: hidden;position: absolute">
+        <header class="w3-container w3-round w3-teal" style="padding: 3px;margin: auto">
+            <h6>
+                <b style="margin: 2px">Feature ID & Name :</b><a></a>
+                <i class="fa fa-close"
+                   onclick="document.getElementById('svg_new_element_div').style.visibility='hidden'"
+                   style="float: right" ;></i>
+            </h6>
+        </header>
+
+        <div id="svg_new_element_div_inner" class="w3-container w3-round"style="padding: 2px">
+            <form action="" onsubmit="svgEditor.save_svg_new_elements_attributes()">
+
+                        <div style="padding: 3px">
+                        <input type="text" id="svg_new_ele_id" class=form-control
+                               placeholder="Please enter feature ID..."
+                               minlength="2" maxlength="15" size="15" required>
+                        </div>
+                        <div STYLE="padding: 3px">
+                        <input type="text" id="svg_new_ele_name" class=form-control
+                               placeholder="Please enter feature NAME..."
+                               minlength="5" maxlength="30" size="35" required>
+                        </div>
+                    <div  style="float: right;padding: 5px" >
+                        <button class="btn btn-outline-info" type="submit">Save</button>
+                    </div>
+
+            </form>
+
+        </div>
+
+    </div>
     <!-- div contains editable buttons and -->
     <span id="svg_editor_bnt" style="visibility: hidden;position: absolute;margin-left:4px ">
         <button id="draw_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
