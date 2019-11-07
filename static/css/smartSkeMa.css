@@ -98,17 +98,15 @@ ul {
 
 
 
-#file_loader{
-    background: white;
-    padding: 3px;
-    margin: 3px;
-}
 #SM_project_div{
     position: absolute;
     width: 450px;
     margin: auto;
     z-index: 10;
     background: white;
+}
+#file_loader{
+    padding: 3px;
 }
 
 

@@ -184,7 +184,7 @@
         </header>
         <div id="file_loader" class="w3-container w3-round">
             <div class="row" style="padding: 1px">
-                <div class="col-8">
+                <div class="col-8" style="width: 60%">
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="SM_checked" disabled="disabled">
                         <label class="custom-control-label" for="SM_checked"><i> Load Sketch Map...</i></label>
@@ -201,7 +201,7 @@
             </div>
 
             <div class="row" style="padding: 1px">
-                <div class="col-8">
+                <div class="col-8" style="width: 60%">
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="MM_checked" disabled="disabled">
                         <label class="custom-control-label" for="SM_checked"><i> Load Base Map...</i></label>
@@ -209,11 +209,18 @@
                     </div>
                 </div>
                 <div class="col-4">
+
+                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+                        load
+                        <input id="downloadMetrichMapInputbutton" accept=".geojson, .GEOJSON" style="display: none" type=Button
+                               onchange="download_MetricMap_from_pnS()">
+                    </label>
                     <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
                         Browse
                         <input id="MetrichMapInputbutton" accept=".geojson, .GEOJSON" style="display: none" type="file"
                                onchange="loadMetricMap()">
                     </label>
+
                 </div>
             </div>
 
@@ -462,8 +469,12 @@
             <img id="join_endPoints_img" src="../static/imgs/join_endPoints.png" width="20" height="18">
         </button>
         <button id="split_endPoints" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                        data-placement="bottom" title="Split EndPoints">
+            <img src="../static/imgs/split_endPoints.png" width="20" height="18">
+        </button>
+        <button id="move_object" type="button" class="btn btn-outline-info" data-toggle="tooltip"
                 data-placement="bottom" title="Move Object">
-            <img id="split_endPoints_img" src="../static/imgs/split_endPoints.png" width="20" height="18">
+            <img  src="../static/imgs/move_object.png" width="20" height="18">
         </button>
         <button id="delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
                 data-placement="bottom" title="Delete">
