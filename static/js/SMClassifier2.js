@@ -411,63 +411,52 @@ $(function () {
 /**
  * removes the disable property of the svg tool buttons
  */
-function enable_svg_edit_tool() {
-    svgEditor.init('sketch')
-/*
-    $('#editor_div').prop("style", "visibility: visible");
-    $('#svg_edit_bnts').prop("style", "visibility: visible");
+function enable_svg_edit_tool(event,ele) {
 
-    $('#ladm_interaction_bnts').prop("style", "visibility: hidden");
-    $('#json_edit_bnts').prop("style", "visibility: hidden");
+    $('#toggle_interaction_bnt').prop("style", "visibility: hidden");
+    $('#spatial_query_processor_bnt').prop("style", "visibility: hidden");
 
-
-    popup = document.getElementById("popup_div");
-    popup.style.visibility = "hidden";
+    document.getElementById("editor_tools_col_left").appendChild(document.getElementById("svg_editor_bnt"));
+    $('#svg_editor_bnt').prop("style", "visibility: visible");
+    $('#svg_editor_bnt').prop("style", "position: relative");
+    $('#editor_tools_col_left').prop("style", "visibility: visible");
 
 
+    toolTipManager.displayToolTip(ele);
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
 
-    $('.bnt').prop("disabled", false);
-    let svg = d3.select("#loadedSVG");
 
-    $('.bnt').prop("disabled", false);
-    let svg = d3.select("#loadedSVG");
-
-    let img = d3.select("#bgImg");
-
-    var editor = new MODE_EDIT_SVG(svg, img, [0, 1, 2, 3, 4]).init();
-
-    svgEditor.init(MODE_EDIT_SKETCHMAP)
-
-    d3.select(draw_geom).on("click", function () {
-        editor.change_mode(0)
+    $(document).on('keydown', function (e) {
+        if (e.keyCode === 27) { // ESC
+            $("#editor_tools_col_left").hide();
+        }
     });
-    d3.select(edit_geom).on("click", function () {
-        editor.change_mode(1)
-    });
-    d3.select(join_endPoints).on("click", function () {
-        editor.change_mode(2)
-    });
-    d3.select(split_endPoints).on("click", function () {
-        editor.change_mode(3)
-    });
-    d3.select(delete_geom).on("click", function () {
-        editor.change_mode(4)
-    });
-    d3.select(save).on("click", function () {
-        editor.save()
-    });
-*/
-    console.log("SVG Editor Activating...");
+
+    svgEditor.init('sketch');
+
 
 }
 
 /**
  * enable geoJSON interaction buttons
  */
-function enable_json_svg_edit_tool() {
-    svgEditor.init('base')
+function enable_spatialUnit_bnt_tools(event,ele){
 
-    console.log("JSON_SVG Editor MODE is Activated...");
+    toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+    toolTipManager.displayToolTip(ele);
+
+    spatialUnitManager.showSpatialUnitBnts(event);
+
+
+    $(document).on('keydown', function (e) {
+        if (e.keyCode === 27) { // ESC
+            $('#editor_tools_col_right').hide();
+
+        }
+    });
+
+    svgEditor.init('base');
+    console.log("SVG Editor for Base Map is Activate...");
 
 }
 

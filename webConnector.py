@@ -856,10 +856,10 @@ def processSketchMap():
 
     #comment out if using full alignment in debug mode
 
-    #if app.debug:
-     #    svg = svgutils.transform.fromfile(modified_filepath)
-      #   modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
-       #  return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
+    if app.debug:
+      svg = svgutils.transform.fromfile(modified_filepath)
+      modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+      return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
 
     #else:
     try:

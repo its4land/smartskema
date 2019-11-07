@@ -42,18 +42,18 @@ line {
     stroke: red;
 }
 
-/*.polygon {
-    fill: sandybrown;
-    stroke-width: 2px;
-    stroke: black;
+.polygon {
+    fill: lightgrey;
+    stroke-width: 1px;
+    stroke: red;
 
 }
 
 .polyline {
-    stroke-width: 20px;
     fill: none;
+    stroke-width: 1px;
     stroke: red;
-}*/
+}
 
 ul#number-btns {
   color: #fff;

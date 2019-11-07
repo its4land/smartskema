@@ -1,6 +1,5 @@
 var svgEditor = (function () {
 
-
 	let anchor_radius = 5;
 	let regexp = /\s+|,/;
 
@@ -38,7 +37,7 @@ var svgEditor = (function () {
     /**
 	 * create popup to enter id and feature type for the added geom
      */
-    create_popoup_4_feat_ID_type();
+    //create_popoup_4_feat_ID_type();
 
 	let activeMode = -1;
 	let activeEditMode = -1;
@@ -100,21 +99,11 @@ var svgEditor = (function () {
 	}
 
 	function setUpEditorMenu(){
-        $('#editor_div').prop("style", "visibility:visible");
-        $('#svg_edit_bnts').prop("style", "overflow:hidden;visibility:visible");
-
-        $('#ladm_interaction_bnts').prop("style", "visibility: hidden");
-        $('#json_edit_bnts').prop("style", "visibility: hidden");
-
-
-        popup = document.getElementById("popup_div");
-        popup.style.visibility = "hidden";
-
 
         $('.bnt').prop("disabled", false);
-        let svg = d3.select("#loadedSVG");
 
-        let img = d3.select("#bgImg");
+       // let svg = d3.select("#loadedSVG");
+       //let img = d3.select("#bgImg");
 
         d3.select("#draw_geom").on("click", function () {
             setMode(MODE_DRAW)
@@ -296,7 +285,8 @@ var svgEditor = (function () {
         activeGeometries.forEach(
             (v, k, m) => {
                 deactivateGeometry(k);
-                updateFeatureAttributes(k);
+                //updateFeatureAttributes(k);
+                update_SVG_new_element_attributues(k);
             }
         );
 
@@ -369,50 +359,9 @@ var svgEditor = (function () {
         path.setPathData(pathData);
 	}
 
-
-	function updateFeatureAttributes(path) {
-        let feat_id_div = document.createElement("div");
-        feat_id_div.setAttribute("class", "input-group mb-3 input-group-sm");
-
-        feat_id_div_text = document.createElement("input");
-        feat_id_div_text.setAttribute("id","feature_id");
-        feat_id_div_text.setAttribute("class", "form-control");
-
-        feat_id_div_label = document.createElement("label");
-        feat_id_div_label.setAttribute("class","input-group-text");
-        feat_id_div_label.textContent = "Feature ID:";
-
-        feat_id_div.appendChild(feat_id_div_label);
-        feat_id_div.appendChild(feat_id_div_text);
-
-
-        feat_type_div = document.createElement("div");
-        feat_type_div.setAttribute("class", "input-group mb-3 input-group-sm");
-
-        feat_type_div_text = document.createElement("input");
-        feat_type_div_text.setAttribute("id","feature_type");
-        feat_type_div_text.setAttribute("class", "form-control");
-
-        feat_type_div_label = document.createElement("label");
-        feat_type_div_label.setAttribute("class","input-group-text");
-        feat_type_div_label.textContent = "Feature Type:";
-
-
-        feat_type_div.appendChild(feat_type_div_label);
-        feat_type_div.appendChild(feat_type_div_text);
-
-        let Ok_bnt = document.createElement("button");
-        Ok_bnt.setAttribute("id", "Ok_bnt");
-        Ok_bnt.setAttribute("class", "w3-button w3-blue w3-round-large");
-        Ok_bnt.textContent = "Save";
-        Ok_bnt.setAttribute("style", "align:center");
-
-        let svg_popup_div = document.getElementById("edit_svg_popup_div");
-        svg_popup_div.setAttribute("draggable",true);
-        svg_popup_div.appendChild(feat_id_div);
-        svg_popup_div.appendChild(feat_type_div);
-        svg_popup_div.appendChild(Ok_bnt);
-
+    let newPath = "";
+    function update_SVG_new_element_attributues(path) {
+	    newPath = path;
         d3.select(path).classed("highlight", true);
 
         pathData = path.getPathData();
@@ -422,41 +371,32 @@ var svgEditor = (function () {
         x = s[0];
         y = s[1];
 
+        $('#svg_new_element_div').prop("style", "visibility: visible");
 
-        $('#edit_svg_popup_div').offset({
-            top: y*vScale,
-            left: x*vScale
-        })
-/*        .on("drag", (event) => {
-            curOffset = $('#edit_svg_popup_div').offset();
-            $('#edit_svg_popup_div').offset()
-            top: event.pageX);
-            left: event.pageY);
-        })*/
-        ;
+        $('#svg_new_element_div').offset({
+           top: y*vScale+10,
+           left: x*vScale
 
-        svg_popup_div.style.visibility = "visible";
+        });
+        $(document).on('keydown', function (e) {
+            if (e.keyCode === 27) { // ESC
+                $('#svg_new_element_div').hide();
 
-        Ok_bnt.addEventListener("click", () => {
-            d3.select(path)
-                .attr("id", $('#feature_id').val())
-                .attr("name", $('#feature_id').val())
-                .attr("feat_type", $('#feature_type').val())
-                .attr("description", $('#feature_type').val())
-                .attr("hidden_", "")
-                .classed("highlight", false);
-
-            $('#edit_svg_popup_div').prop("style","visibility: hidden");
-            $('#feature_id').val("");
-            $('#feature_type').val("");
-			
-			edDiv = document.getElementById('edit_svg_popup_div')
-			
-			while (edDiv.hasChildNodes()) {
-				edDiv.removeChild(edDiv.lastChild);
             }
-	    });
+        });
 	}
+
+	function save_svg_new_elements_attributes(){
+        console.log("newPath....",newPath);
+        d3.select(newPath)
+            .attr("id", $('#svg_new_ele_id').val())
+            .attr("name", $('#svg_new_ele_id').val())
+            .attr("feat_type", $('#svg_new_ele_name').val())
+            .attr("description", $('#svg_new_ele_name').val())
+            .attr("hidden_", "")
+            .classed("highlight", false);
+        $('#svg_new_element_div').prop("style", "visibility: hidden");
+    }
 
 	function inview(x, y) {
 		let xInview = (0 < x) && (x < drawingNode.parentNode.parentNode.getAttribute("width"));
@@ -625,7 +565,7 @@ var svgEditor = (function () {
 		activeGeometries.forEach(
 			(v, k, m) => {
 				deactivateGeometry(k);
-				updateFeatureAttributes(k);
+				update_SVG_new_element_attributues(k);
 				displayManager.moveVectorToLayer(k, DRAWING_LAYER_NAME, DRAWING_LAYER_NAME)
 			}
 		);
@@ -1383,6 +1323,7 @@ var svgEditor = (function () {
 
     return {
         init: init,
+        save_svg_new_elements_attributes:save_svg_new_elements_attributes,
         changeMode: setMode,
         save: ()=>{}//saveChanges
     }
