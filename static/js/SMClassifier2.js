@@ -204,6 +204,7 @@ function renderSketchMapRaster(image) {
 }
 
 
+
 /**
  * loads the svg image from th image processed with Cristhian's code
  * @returns

@@ -835,6 +835,46 @@ def uploadBaseMap():
 
     return ""
 
+"""
+    - download baseMap geometries from PnS platform 
+"""
+
+@app.route("/download_MetricMap_from_pnS",methods = ["POST"])
+def download_MetricMap_from_pnS():
+    global MODIF_DIR_PATH
+    global UPLOADED_DIR_PATH
+    global VECTOR_BASEMAP
+
+    project_files_path = path_to_project(request.form)
+    upload_filepath = os.path.join(project_files_path, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
+    modified_filepath = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)
+
+    boundingBox = "35,-1,37,-1,37,-3,35,-3,35,-1"
+
+    baseMap_json_content = get_metric_map_features(boundingBox)
+    if baseMap_json_content is not None:
+        try:
+             if os.path.exists(upload_filepath):
+                 os.remove(upload_filepath)
+             f = open(upload_filepath, "w")
+             f.write(json.dumps(baseMap_json_content, indent=4))
+             f.close()
+
+             if os.path.exists(modified_filepath):
+                 os.remove(modified_filepath)
+             f = open(modified_filepath, "w")
+             f.write(json.dumps(baseMap_json_content, indent=4))
+             f.close()
+
+        except IOError:
+             return json.dumps({"error": IOError})
+
+        modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+        baseMap_path = Path(modified_filepath_relative)
+        return json.dumps({"baseMapPath":baseMap_path.as_posix(),"baseMapContents": baseMap_json_content})
+    else:
+        return json.dumps({"error": IOError})
+
 
 """
     - process sketch map
