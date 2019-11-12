@@ -91,7 +91,7 @@ function align_Sketch_Map(event) {
 
 
     let svgContent = sketchMapDisplayManager.getVectorSVG().outerHTML;
-    let geojsonContent = baseMapDisplayManager.getVectorGeojson().outerHTML;
+    let geojsonContent = baseMapDisplayManager.getVectorsLayersAsGeojson();
     //console.log("here base map contants",geojsonContent)
     //console.log("here svgContent contants",svgContent)
 

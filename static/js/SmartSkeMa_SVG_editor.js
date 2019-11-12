@@ -26,8 +26,11 @@ var svgEditor = (function () {
 	const MODE_EDIT = 1;
 
 	const EDIT_MODE_BASIC = 0;
-	const EDIT_MODE_JOIN = 1;
-	const EDIT_MODE_SPLIT = 2;
+	const EDIT_MODE_MOVE = 1;
+	const EDIT_MODE_DELETE = 2;
+	const EDIT_MODE_JOIN = 3;
+	const EDIT_MODE_SPLIT = 4;
+
 
     let num = Number;
 	let lineFunction = d3.line()
@@ -51,7 +54,7 @@ var svgEditor = (function () {
 	
 	var init = function(mapType) {
 	    activeMode = -1;
-	    activeEditMode = -1
+	    activeEditMode = -1;
 
 	    switch (mapType){
 	    case 'sketch':
