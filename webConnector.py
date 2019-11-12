@@ -108,8 +108,8 @@ def path_to_project(d):
         print("i am comming PnS_Proj_MODE", os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE, SUB_PROJ_NAME))
         return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE, SUB_PROJ_NAME)
     else:
-        print("i am in SmartSkeMa Proj_Mode",os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE))
-        return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE)
+        print("i am in SmartSkeMa Proj_Mode",os.path.join(USER_SESSIONS_DIR, PROJ_TYPE))
+        return os.path.join(USER_SESSIONS_DIR, PROJ_TYPE)
 
 
 
@@ -735,11 +735,9 @@ def uploadSketchMap():
     try:
 
         #comment out if using full alignment in debug mode
-        """
+
         if app.debug:
-            
-          
-             #copy folder with fileName to currentUserSession/projectType
+            #copy folder with fileName to currentUserSession/projectType
             preRunFiles = os.path.join("preRunSessions", imageFileName)
             try:
                 #print("copying from preRun", project_files_path)
@@ -751,7 +749,7 @@ def uploadSketchMap():
             # Any error saying that the directory doesn't exist
             except OSError as e:
                 print('Directory not copied. Error: %s' % e)
-                """
+
         #else:
         if os.path.exists(upload_filepath):
             os.remove(upload_filepath)
