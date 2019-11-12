@@ -887,6 +887,8 @@ def processSketchMap():
     global INPUT_RASTER_SKETCH
     global VECTORIZED_SKETCH
     global SMARTSKEMA_PATH
+    global PROJ_TYPE
+    global USER_SESSIONS_DIR
 
     project_files_path = path_to_project(request.args)
     uploaded_filepath = os.path.join(project_files_path, UPLOADED_DIR_PATH, INPUT_RASTER_SKETCH)
@@ -897,9 +899,19 @@ def processSketchMap():
     #comment out if using full alignment in debug mode
 
     if app.debug:
-      svg = svgutils.transform.fromfile(modified_filepath)
-      modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
-      return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
+        if PROJ_TYPE =="plainSketchProject":
+            shutil.copyfile(os.path.join("preRunSessions","Mailua_Ranch_Map01.png","output",VECTORIZED_SKETCH),output_file_path)
+            shutil.copyfile(os.path.join("preRunSessions", "Mailua_Ranch_Map01.png", "output", VECTORIZED_SKETCH),
+                            modified_filepath)
+            svg = svgutils.transform.fromfile(modified_filepath)
+            modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+            return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
+        if PROJ_TYPE == "orthoSketchProject":
+            shutil.copyfile (os.path.join(USER_SESSIONS_DIR,VECTORIZED_SKETCH),output_file_path)
+            shutil.copyfile(os.path.join(USER_SESSIONS_DIR, VECTORIZED_SKETCH), modified_filepath)
+            modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+            return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': "",
+                               'svgWidth': ""})
 
     #else:
     try:
@@ -963,9 +975,9 @@ def align_plain_sketch_map():
     #print(matches_file_path)
 
     """ comment out if using full alignment in debug mode """
-    if app.debug:
-        matches_file_path = os.path.join(USER_SESSIONS_DIR, "matches.json")
-        return debug_align_plain_sketch(matches_file_path)
+    #if app.debug:
+     #   matches_file_path = os.path.join(USER_SESSIONS_DIR, "matches.json")
+      #  return debug_align_plain_sketch(matches_file_path)
 
     svg_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
     geojson_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)

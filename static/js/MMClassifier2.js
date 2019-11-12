@@ -130,8 +130,8 @@ function align_Sketch_Map(event) {
 
     let svgContent = sketchMapDisplayManager.getVectorSVG().outerHTML;
     let geojsonContent = baseMapDisplayManager.getVectorGeojson().outerHTML;
-    //console.log("here base map contants",geojsonContent)
-    //console.log("here svgContent contants",svgContent)
+    console.log("here base map contants",geojsonContent)
+    console.log("here svgContent contants",svgContent)
 
     let ajaxParams = {
         url: '/align_plain',
