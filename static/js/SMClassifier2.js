@@ -117,6 +117,7 @@ function alignment_mouse_over(d, i) {
 
     fid = this.getAttribute('id');
     mid = mapmatches[fid];
+
     mel = document.getElementById(mid);
     console.log(mid);
 
@@ -202,6 +203,7 @@ function renderSketchMapRaster(image) {
     new communicator(ajaxParams).sendRequest(callbackParams, callback);
 
 }
+
 
 
 /**
@@ -424,6 +426,8 @@ function enable_svg_edit_tool(event,ele) {
 
     toolTipManager.displayToolTip(ele);
     toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
+
+    svgEditor_button_Manager.enable_SVGEdit_bnts();
 
 
     $(document).on('keydown', function (e) {

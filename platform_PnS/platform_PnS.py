@@ -297,3 +297,19 @@ def download_additional_documents(spatialSourceList,kwargs):
         print("Problem in downloading Additional Documents")
 
 
+def get_metric_map_features(boundingBox):
+    response = requests.get("http://platform.its4land.com:80/api/metricmapfeature?querywindow=" + boundingBox)
+    # print(response.status_code)
+    if response.status_code == 200:
+        json_content = response.json()
+        for feature in json_content['features']:
+            # print(feature)
+            properties = feature["properties"]
+            UID = feature["properties"]["UID"]
+            ftype = feature["properties"]["ftype"]
+            # print(UID, ftype)
+            properties.update([('id', UID), ('class', ftype), ('feat_type', ftype)])
+
+        return json_content
+    else:
+        return None

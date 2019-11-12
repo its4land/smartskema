@@ -5,6 +5,44 @@ var finalResult;
 var json;
 
 
+/**
+ * Downloading Base map features from PnS platform
+ * - the PnS must have features for the selected project location
+ */
+function download_MetricMap_from_pnS(){
+    createProcessingRing();
+
+    let ajaxParams = {
+        url : "/download_MetricMap_from_pnS",
+        type : "POST",
+        data : {
+            baseMapContant : ""
+        }
+
+    };
+    new communicator(ajaxParams).sendRequest({}, function(resp){
+        deleteProcessingRing();
+        var json = JSON.parse(resp);
+        var baseMapVectorData;
+        if (json.baseMapContents != null){
+            let sourceFormat = sessionData.projectType == "orthoSketchProject"? "tms": "openstreetmap";
+            let tilemap_format = sessionData.projectType == "orthoSketchProject"? TMS_TILE_MAP: OSM_TILE_MAP;
+            baseMapDisplayManager = baseMapDisplayManagerTemplate(tilemap_format);
+            let url = sourceFormat  == "tms"?
+                "./static/data/modified/tiles_256_raster/": "tile.openstreetmap.org/";
+
+            baseMapDisplayManager.tilesFromURL(url).then(
+                function(done){
+                    baseMapDisplayManager.vectorFromGeoJSONContent(json.baseMapContents) //"baseLayer")
+
+                    dataManager.addData("baseMapVector", json.baseMapContents);
+                    button_manager.enable_interactive_bnts();
+                });
+        }
+        mm_checked = new Boolean($("#MM_checked").prop("checked", true));
+    });
+}
+
 
 
 

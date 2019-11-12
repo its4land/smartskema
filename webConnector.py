@@ -833,6 +833,46 @@ def uploadBaseMap():
 
     return ""
 
+"""
+    - download baseMap geometries from PnS platform 
+"""
+
+@app.route("/download_MetricMap_from_pnS",methods = ["POST"])
+def download_MetricMap_from_pnS():
+    global MODIF_DIR_PATH
+    global UPLOADED_DIR_PATH
+    global VECTOR_BASEMAP
+
+    project_files_path = path_to_project(request.form)
+    upload_filepath = os.path.join(project_files_path, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
+    modified_filepath = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)
+
+    boundingBox = "35,-1,37,-1,37,-3,35,-3,35,-1"
+
+    baseMap_json_content = get_metric_map_features(boundingBox)
+    if baseMap_json_content is not None:
+        try:
+             if os.path.exists(upload_filepath):
+                 os.remove(upload_filepath)
+             f = open(upload_filepath, "w")
+             f.write(json.dumps(baseMap_json_content, indent=4))
+             f.close()
+
+             if os.path.exists(modified_filepath):
+                 os.remove(modified_filepath)
+             f = open(modified_filepath, "w")
+             f.write(json.dumps(baseMap_json_content, indent=4))
+             f.close()
+
+        except IOError:
+             return json.dumps({"error": IOError})
+
+        modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+        baseMap_path = Path(modified_filepath_relative)
+        return json.dumps({"baseMapPath":baseMap_path.as_posix(),"baseMapContents": baseMap_json_content})
+    else:
+        return json.dumps({"error": IOError})
+
 
 """
     - process sketch map
@@ -845,6 +885,8 @@ def processSketchMap():
     global INPUT_RASTER_SKETCH
     global VECTORIZED_SKETCH
     global SMARTSKEMA_PATH
+    global PROJ_TYPE
+    global USER_SESSIONS_DIR
 
     project_files_path = path_to_project(request.args)
     uploaded_filepath = os.path.join(project_files_path, UPLOADED_DIR_PATH, INPUT_RASTER_SKETCH)
@@ -855,9 +897,19 @@ def processSketchMap():
     #comment out if using full alignment in debug mode
 
     if app.debug:
-      svg = svgutils.transform.fromfile(modified_filepath)
-      modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
-      return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
+        if PROJ_TYPE =="plainSketchProject":
+            shutil.copyfile(os.path.join("preRunSessions","Mailua_Ranch_Map01.png","output",VECTORIZED_SKETCH),output_file_path)
+            shutil.copyfile(os.path.join("preRunSessions", "Mailua_Ranch_Map01.png", "output", VECTORIZED_SKETCH),
+                            modified_filepath)
+            svg = svgutils.transform.fromfile(modified_filepath)
+            modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+            return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
+        if PROJ_TYPE == "orthoSketchProject":
+            shutil.copyfile (os.path.join(USER_SESSIONS_DIR,VECTORIZED_SKETCH),output_file_path)
+            shutil.copyfile(os.path.join(USER_SESSIONS_DIR, VECTORIZED_SKETCH), modified_filepath)
+            modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+            return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': "",
+                               'svgWidth': ""})
 
     #else:
     try:
@@ -921,9 +973,9 @@ def align_plain_sketch_map():
     #print(matches_file_path)
 
     """ comment out if using full alignment in debug mode """
-    if app.debug:
-        matches_file_path = os.path.join(USER_SESSIONS_DIR, "matches.json")
-        return debug_align_plain_sketch(matches_file_path)
+    #if app.debug:
+     #   matches_file_path = os.path.join(USER_SESSIONS_DIR, "matches.json")
+      #  return debug_align_plain_sketch(matches_file_path)
 
     svg_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
     geojson_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)

@@ -64,26 +64,49 @@ function nonSpatial_query_result_popup() {
     feat_type = $(this).attr('smart_skema_type');
 
     metric_id = mapmatches[feat_id];
-    //console.log("id of matched object in base map:", metric_id);
 
 
-    if ((feat_id != null) && (metric_id != null)) {
+    console.log("id of matched object in base map:", metric_id);
+    if (sessionData.projectType =="plainSketchProject"){
+        if (feat_id != null){
+            if (metric_id == undefined){
+                x = d3.event.pageX;
+                y = d3.event.pageY;
+            }else{
+                mmelement = document.getElementById(metric_id);
+                var rect = mmelement.getBoundingClientRect();
+                x = rect.left;
+                y = rect.top;
+            }
+        }
+
+    }if (sessionData.projectType == "orthoSketchProject"){
+        if (feat_id != null){
+            if (metric_id == undefined){
+                x = d3.event.pageX;
+                y = d3.event.pageY;
+            }
+        }
+    }
+
+
+
+    /*if ((feat_id != null) && (metric_id != undefined)) {
+        console.log("i am in first if ",metric_id, feat_id);
         mmelement = document.getElementById(metric_id);
         var rect = mmelement.getBoundingClientRect();
-        //console.log(rect.top,rect.left);
+
         x = rect.left;
         y = rect.top;
 
     }
 
-    if ((feat_id != null) && (metric_id == null)) {
+    if ((feat_id != null) && (metric_id == undefined)) {
+        console.log("i am in second if ");
         x = d3.event.pageX;
         y = d3.event.pageY;
 
-    }
-    if (feat_id == null) {
-        $(query_popup).hide();
-    }
+    }*/
 
     $('#nonSpatial_query_popup_div').prop("style", "visibility: visible");
     //$(query_popup).show();
@@ -92,7 +115,6 @@ function nonSpatial_query_result_popup() {
 
     get_tenure_record(feat_id, feat_type);
 
-    console.log(x, y);
     $('#nonSpatial_query_popup_div').offset({
         top: y,
         left: x

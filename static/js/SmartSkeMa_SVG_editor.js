@@ -110,15 +110,25 @@ var svgEditor = (function () {
 
         d3.select("#draw_geom").on("click", function () {
             setMode(MODE_DRAW)
+            svgEditor_status_Manager.addStatus("draw_geom","clicked");
+            svgEditor_button_Manager.disable_SVGEdit_bnts();
+
+
         });
         d3.select("#edit_geom").on("click", function () {
             setMode(MODE_EDIT)
+            svgEditor_status_Manager.addStatus("edit_geom","clicked");
+            svgEditor_button_Manager.disable_SVGEdit_bnts();
         });
         d3.select("#join_endPoints").on("click", function () {
             setSecondaryMode(EDIT_MODE_JOIN)
+            svgEditor_status_Manager.addStatus("join_endPoints","clicked");
+            svgEditor_button_Manager.disable_SVGEdit_bnts();
         });
         d3.select("#split_endPoints").on("click", function () {
             setMode(EDIT_MODE_SPLIT)
+            svgEditor_status_Manager.addStatus("split_endPoints","clicked");
+            svgEditor_button_Manager.disable_SVGEdit_bnts();
         });
         d3.select("#save_edits").on("click", function () {
             save()
@@ -129,6 +139,9 @@ var svgEditor = (function () {
 
 	function save() {
 		saveAllEdits();
+
+		svgEditor_button_Manager.enable_SVGEdit_bnts();
+
         drawingLayer.selectAll("path").remove().each(
             function(d, i ,g){
                 vectorLayer.append(() => g[i]);
@@ -569,7 +582,7 @@ var svgEditor = (function () {
 			(v, k, m) => {
 				deactivateGeometry(k);
 				update_SVG_new_element_attributues(k);
-				displayManager.moveVectorToLayer(k, DRAWING_LAYER_NAME, DRAWING_LAYER_NAME)
+				displayManager.moveVectorToLayer(k, DRAWING_LAYER_NAME, DRAWING_LAYER_NAME);
 			}
 		);
 	}

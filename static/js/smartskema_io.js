@@ -134,6 +134,7 @@ var sessionData = (function(){
         type: 'GET',
         success: function (resp) {
             button_manager.disable_all_interavtive_bnts();
+
             sessionData.sessID = resp;
 
         }
