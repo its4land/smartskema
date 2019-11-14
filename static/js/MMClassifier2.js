@@ -191,6 +191,7 @@ function align_Satellite_Drawing(event) {
     let callback = function(resp) {
         let json = JSON.parse(resp);
         finalResult = json;
+        mapmatches = json;
         // console.log("here is matching json:",json);
         baseMapDisplayManager.vectorFromGeoJSONContent(json, "alignedSketchMapData");
     };

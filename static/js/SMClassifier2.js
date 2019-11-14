@@ -13,7 +13,7 @@ var k;
 var sketch_bbox;
 var feat_id;
 var feat_type;
-var fileName;
+//var fileName;
 
 var svg_elements;
 var overlay;
@@ -115,32 +115,56 @@ function toggle_interaction(event,ele) {
 //svg elelment interaction
 function alignment_mouse_over(d, i) {
 
+
     fid = this.getAttribute('id');
     mid = mapmatches[fid];
+    if (mid == undefined){
+        mel = d3.select("#baseSVG").selectAll("#"+fid).node();
+        d3.select(this)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "8px");
+        d3.select(mel)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "1px");
 
-    mel = document.getElementById(mid);
-    console.log(mid);
+    }else{
+        mel = document.getElementById(mid);
+        d3.select(this)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "10px");
+        d3.select(mel)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "10px");
+    }
 
-    d3.select(this)
-        .style("stroke", "#039BE5")
-        .style("stroke-width", "10px");
-    d3.select(mel)
-        .style("stroke", "#039BE5")
-        .style("stroke-width", "10px");
+
 }
 
 
 function alignment_mouse_out(d, i) {
     fid = this.getAttribute('id');
     mid = mapmatches[fid];
-    mel = document.getElementById(mid);
 
-    d3.select(this)
-        .style("stroke", "#455A64")
-        .style("stroke-width", "1px");
-    d3.select(mel)
-        .style("stroke", "#455A64")
-        .style("stroke-width", "1px");
+    if (mid == undefined){
+        mel = d3.select("#baseSVG").selectAll("#"+fid).node();
+        mel_class =mel.getAttribute("class");
+        d3.select(this)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+        d3.select(mel)
+            .style("stroke", "none")
+            .style("stroke-width", "1px")
+            .attr("class", mel_class);
+    }else{
+        mel = document.getElementById(mid);
+        d3.select(this)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+        d3.select(mel)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+    }
+
 }
 
 
@@ -153,6 +177,7 @@ function loadSketchMap() {
     var callbackParams = {};
 
     openReadFromFile(event.target, renderSketchMapRaster, callbackParams);
+    loaded_fileName = callbackParams.fileName;
 
     $("#SMLinks").show();
     $("#MMLinks").hide();
@@ -166,6 +191,7 @@ function renderSketchMapRaster(image) {
     toolTipCounter= toolTipCounter+1;
 
 
+    console.log(loaded_fileName);
     if(toolTipCounter==4){
         toolTipManager.hideToolTip();
     };
