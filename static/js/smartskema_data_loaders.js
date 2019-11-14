@@ -253,6 +253,7 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
     var tileLayer = {};
     var zoom = d3.zoom().on("zoom", tileZoom);
     var zoomTransform;
+    var crs = {"type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4326" }};
     var tileLoad;
     var method = {
         getProjection : {
@@ -272,6 +273,12 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
 		toScreenCoordinates: {},
 		toGeoRefCoordinates: {}
     };
+
+    var bounds_scale = 1;
+    var translate_x = 0;
+    var translate_y = 0;
+    var center_x = 0;
+    var center_y = 0;
 //        tileLayer.getProjection = function(){};
 
     var init = function(refFormat) {
@@ -447,34 +454,35 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
 
     var vectorLoad = function(geojson, layerName){
         let t = tileLayer;
-        let geoLayer = layer(layerName);
         let width = baseCanvas.attr("width");
         let height = baseCanvas.attr("height");
-        let translate_x = 0;
-        let translate_y = 0;
-        let center_x = 0;
-        let center_y = 0;
 
+        let geoLayer = layer(layerName, geojson);
         geoLayer.path.pointRadius(0.5);
         geoLayer.loading = true;
 
-        let scaled_bounds = geoLayer.path.bounds(geojson);
-        let center = geoLayer.path.centroid(geojson);
-        let map_width = scaled_bounds[1][0] - scaled_bounds[0][0];
-        let map_height = scaled_bounds[1][1] - scaled_bounds[0][1];
-        let map_center = [scaled_bounds[0][0] + map_width / 2, scaled_bounds[0][1] + map_height / 2
-                                                                                        + t.initialOffset];
-        let bounds_scale = Math.min(t.width / map_width, t.height / map_height);
-
-        centerAndTranslate = t.vectorCAT(center, map_center);
-        center_x = centerAndTranslate[0];
-        center_y = centerAndTranslate[1];
-        translate_x = centerAndTranslate[2];
-        translate_y = centerAndTranslate[3];
-
         let topo = topojson.topology({mapFeatures: geojson});
             topo = topojson.feature(topo, topo.objects.mapFeatures);
-			topo = topo.features ? topo.features : [topo];
+
+        if (topo.features){
+            topo = topo.features;
+
+            let scaled_bounds = geoLayer.path.bounds(geojson);
+            let center = geoLayer.path.centroid(geojson);
+            let map_width = scaled_bounds[1][0] - scaled_bounds[0][0];
+            let map_height = scaled_bounds[1][1] - scaled_bounds[0][1];
+            let map_center = [scaled_bounds[0][0] + map_width / 2, scaled_bounds[0][1] + map_height / 2
+                                                                                            + t.initialOffset];
+            bounds_scale = Math.min(t.width / map_width, t.height / map_height);
+
+            centerAndTranslate = t.vectorCAT(center, map_center);
+            center_x = centerAndTranslate[0];
+            center_y = centerAndTranslate[1];
+            translate_x = centerAndTranslate[2];
+            translate_y = centerAndTranslate[3];
+        } else {
+            topo = [topo];
+        }
 
         geoLayer.selection.selectAll("path")
             .data(topo, function (a, b) {
@@ -549,7 +557,7 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
 		return screenCoords.length === 0 ? [NaN, NaN] : layer(forLayer).projection.invert(screenCoords);
     };
 
-    var layer = function(layerName) {
+    var layer = function(layerName, geojson) {
         let geoLayer;
         let t = tileLayer;
 
@@ -560,6 +568,9 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         if (layers[layerName]) {
             geoLayer = layers[layerName];
         } else {
+            if (layerName ==="baseLayer") {
+                crs = geojson.crs;
+            }
             layers[layerName] = {
                                  selection: baseCanvas.select("#vector")
                                               .append("g")
@@ -636,6 +647,24 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
 		
         return geojson
     }
+
+    var getVectorLayersAsGeojson = function(){
+        // setup the geojson object
+        let geojson = {
+			"type": "FeatureCollection",
+            "crs": crs,
+            "features": []
+        };
+
+        for (let k of Object.keys(layers)){
+            let vectorLayer = layers[k].selection;
+            vectorLayer.selectAll("path").each((d, i, g) => {
+                geojson.features.push(d);
+            })
+        }
+
+	    return geojson;
+	}
 	
 	var moveVectorToLayer = function(v, fromLayer, toLayer) {
 		let f = getVectorAsGeojson(v);
@@ -675,6 +704,7 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         zoom: zoomCallback,
         removeVectorLayer: removeVectorSelection,
         getVectorGeojson: getVectorAsGeojson,
+        getVectorsLayersAsGeojson: getVectorLayersAsGeojson,
 		moveVectorToLayer: moveVectorToLayer //PENDING
         /*,
         rasterFromContent: loadSketchMapRasterFromContent, //PENDING
