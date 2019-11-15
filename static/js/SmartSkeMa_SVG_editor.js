@@ -616,6 +616,8 @@ var svgEditor = (function () {
 		the geometry's shape.
     */
 	function makeEditable(geom) {
+	    let transform = d3.select(geom).attr("transform");
+
         switch(geom.tagName.toLowerCase()) {
 
 		case 'path':
@@ -643,6 +645,13 @@ var svgEditor = (function () {
                     .attr("d", lineFunction(d))
 					.attr("geom_type", 'polygon')
 					.attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
+                    .attr("feat_type", geom.getAttribute("feat_type") || "NA")
+                    .attr("smart_skema_type", geom.getAttribute("smart_skema_type") || "NA")
+                    .attr("name", geom.getAttribute("name") || "NA")
+                    .attr("description", geom.getAttribute("description") || "NA")
+                    .attr("hidden_", geom.getAttribute("hidden_") || "NA")
+					.attr("transform", transform || "scale(1)")
+                    .classed(geom.getAttribute("class"), true)
                     .classed('polygon', true)
                     .node();
           break;
@@ -664,6 +673,13 @@ var svgEditor = (function () {
                     .attr("d", lineFunction(d))
 					.attr("geom_type", 'polyline')
 					.attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
+                    .attr("feat_type", geom.getAttribute("feat_type") || "NA")
+                    .attr("smart_skema_type", geom.getAttribute("smart_skema_type") || "NA")
+                    .attr("name", geom.getAttribute("name") || "NA")
+                    .attr("description", geom.getAttribute("description") || "NA")
+                    .attr("hidden_", geom.getAttribute("hidden_") || "NA")
+					.attr("transform", transform || "scale(1)")
+                    .classed(geom.getAttribute("class"), true)
                     .classed('polyline', true)
                     .node();
           break;
@@ -682,6 +698,13 @@ var svgEditor = (function () {
                     .attr("d", lineFunction(d))
 					.attr("geom_type", 'polyline')
 					.attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
+                    .attr("feat_type", geom.getAttribute("feat_type") || "NA")
+                    .attr("smart_skema_type", geom.getAttribute("smart_skema_type") || "NA")
+                    .attr("name", geom.getAttribute("name") || "NA")
+                    .attr("description", geom.getAttribute("description") || "NA")
+                    .attr("hidden_", geom.getAttribute("hidden_") || "NA")
+					.attr("transform", transform || "scale(1)")
+                    .classed(geom.getAttribute("class"), true)
                     .classed('polyline', true)
                     .node();
           break;
@@ -699,6 +722,13 @@ var svgEditor = (function () {
                     .attr("d", lineFunction(d))
 					.attr("geom_type", 'polygon')
 					.attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
+                    .attr("feat_type", geom.getAttribute("feat_type") || "NA")
+                    .attr("smart_skema_type", geom.getAttribute("smart_skema_type") || "NA")
+                    .attr("name", geom.getAttribute("name") || "NA")
+                    .attr("description", geom.getAttribute("description") || "NA")
+                    .attr("hidden_", geom.getAttribute("hidden_") || "NA")
+					.attr("transform", transform || "scale(1)")
+                    .classed(geom.getAttribute("class"), true)
                     .classed('polygon', true)
                     .node();
           break;
@@ -713,7 +743,8 @@ var svgEditor = (function () {
             let seg = pathData[i];
             let [x, y] = seg.values;
             if (x && y){
-                let c = addDraggableAnchors(i, [x, y], geom, edAnchorRad/vScale, ()=>{}, dragged, ()=>{});
+                let c = addDraggableAnchors(i, [x, y], geom, edAnchorRad/vScale, ()=>{}, dragged, ()=>{})
+					        .attr("transform", transform || "scale(1)");
                 decorators.push(c);
             }
         }

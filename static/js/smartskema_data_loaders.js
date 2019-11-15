@@ -178,7 +178,7 @@ var sketchMapDisplayManager = (function(){
 		fromLayer = layer(fromLayer);
 		toLayer = layer(toLayer);
 		let f = fromLayer.selection.select(()=>v).remove();
-		toLayer.selection.append(()=>f.node());
+		toLayer.selection.append(() => v);
 		return f.node();
 	}
 
