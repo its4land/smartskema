@@ -427,9 +427,6 @@ function enable_svg_edit_tool(event,ele) {
     toolTipManager.displayToolTip(ele);
     toolTipManager.movableToolTip(document.getElementById("tooltipdiv"));
 
-    svgEditor_button_Manager.enable_SVGEdit_bnts();
-
-
     $(document).on('keydown', function (e) {
         if (e.keyCode === 27) { // ESC
             $("#editor_tools_col_left").hide();
@@ -437,8 +434,6 @@ function enable_svg_edit_tool(event,ele) {
     });
 
     svgEditor.init('sketch');
-
-
 }
 
 /**

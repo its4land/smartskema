@@ -3,7 +3,6 @@ var svgEditor = (function () {
 	let anchor_radius = 5;
 	let regexp = /\s+|,/;
 
-
 	var displayManager;
 
     var rasterLayer, vectorLayer, drawingLayer, decoratorsLayer;
@@ -16,14 +15,16 @@ var svgEditor = (function () {
 
     var editModeOnClick = null;
 
+    const BASE_LAYER_NAME = "baseLayer"
     const DRAWING_LAYER_NAME = "drawingLayer"
     const DECORATORS_LAYER_NAME = "decoratorsLayer"
 
 	const GEOM_TYPES = "path,polygon,circle,rect,line,polyline";
 	const GEOM_POLY_TYPES = "path,polygon,rect,line,polyline";
 
-	const MODE_DRAW = 0;
-	const MODE_EDIT = 1;
+	const MODE_BASIC = 0;
+	const MODE_DRAW = 1;
+	const MODE_EDIT = 2;
 
 	const EDIT_MODE_BASIC = 0;
 	const EDIT_MODE_MOVE = 1;
@@ -31,6 +32,13 @@ var svgEditor = (function () {
 	const EDIT_MODE_JOIN = 3;
 	const EDIT_MODE_SPLIT = 4;
 
+	let activeGeometries = new Map([]);
+
+    var state = {
+        mode: MODE_BASIC,
+        secondaryMode: EDIT_MODE_BASIC,
+        activeGeometries: activeGeometries
+    }
 
     let num = Number;
 	let lineFunction = d3.line()
@@ -49,9 +57,6 @@ var svgEditor = (function () {
 	let join_data = {"first_seg":{"path":null, "point":null}, 
 					"second_seg":{"path":null, "point":null}};
 
-	let activeGeometries = new Map([]);
-	let activeMarkers = [];
-	
 	var init = function(mapType) {
 	    activeMode = -1;
 	    activeEditMode = -1;
@@ -96,42 +101,42 @@ var svgEditor = (function () {
         // svg_elements.on('click', feat_mouseClick_4_gcps);
         setUpEditorMenu();
 
-		setMode(MODE_DRAW);
+		setMode(MODE_BASIC);
 
 		return this;
 	}
 
 	function setUpEditorMenu(){
+        let inactive_btns = svg_editor_button_manager.inactive_btns();
+	    svg_editor_button_manager.disable_btns();
+	    svg_editor_button_manager.enable_btns_except(...inactive_btns);
 
         $('.bnt').prop("disabled", false);
 
-       // let svg = d3.select("#loadedSVG");
-       //let img = d3.select("#bgImg");
-
         d3.select("#draw_geom").on("click", function () {
-            setMode(MODE_DRAW)
-            svgEditor_status_Manager.addStatus("draw_geom","clicked");
-            svgEditor_button_Manager.disable_SVGEdit_bnts();
-
-
+            setMode(MODE_DRAW);
         });
+
         d3.select("#edit_geom").on("click", function () {
-            setMode(MODE_EDIT)
-            svgEditor_status_Manager.addStatus("edit_geom","clicked");
-            svgEditor_button_Manager.disable_SVGEdit_bnts();
+            setMode(MODE_EDIT);
         });
+
+        d3.select("#move_object").on("click", function () {
+            setMode(EDIT_MODE_MOVE);
+        });
+
+        d3.select("#delete_geom").on("click", deleteGeometries);
+
         d3.select("#join_endPoints").on("click", function () {
-            setSecondaryMode(EDIT_MODE_JOIN)
-            svgEditor_status_Manager.addStatus("join_endPoints","clicked");
-            svgEditor_button_Manager.disable_SVGEdit_bnts();
+            setSecondaryMode(EDIT_MODE_JOIN);
         });
+
         d3.select("#split_endPoints").on("click", function () {
-            setMode(EDIT_MODE_SPLIT)
-            svgEditor_status_Manager.addStatus("split_endPoints","clicked");
-            svgEditor_button_Manager.disable_SVGEdit_bnts();
+            setMode(EDIT_MODE_SPLIT);
         });
-        d3.select("#save_edits").on("click", function () {
-            save()
+
+        d3.select("#save_geom").on("click", function () {
+            save();
         });
 
         console.log("SVG Editor Activating...");
@@ -139,14 +144,6 @@ var svgEditor = (function () {
 
 	function save() {
 		saveAllEdits();
-
-		svgEditor_button_Manager.enable_SVGEdit_bnts();
-
-        drawingLayer.selectAll("path").remove().each(
-            function(d, i ,g){
-                vectorLayer.append(() => g[i]);
-            }
-        );
 	}
 
 
@@ -205,9 +202,6 @@ var svgEditor = (function () {
 		case MODE_EDIT:
 			finalizeEditMode();
 			break;
-		case EDIT_MODE_SPLIT:
-			finalizeSplitMode();
-			break;
 		default:
             break;
 		}
@@ -218,9 +212,6 @@ var svgEditor = (function () {
 			break;
 		case MODE_EDIT:
 			activateEditMode();
-			break;
-		case EDIT_MODE_SPLIT:
-			activateSplitMode();
 			break;
 		default:
             break;
@@ -233,6 +224,12 @@ var svgEditor = (function () {
 
 	    if (mode == activeEditMode) {
 	        switch(activeEditMode) {
+            case EDIT_MODE_MOVE:
+                finalizeEditMoveMode();
+                break;
+            case EDIT_MODE_DELETE:
+                finalizeEditDeleteMode();
+                break;
             case EDIT_MODE_JOIN:
                 finalizeEditJoinMode();
                 break;
@@ -244,6 +241,12 @@ var svgEditor = (function () {
             }
 	    } else {
             switch(mode) {
+            case EDIT_MODE_MOVE:
+                activateEditMoveMode();
+                break;
+            case EDIT_MODE_DELETE:
+                activateEditDeleteMode();
+                break;
             case EDIT_MODE_JOIN:
                 activateEditJoinMode();
                 break;
@@ -254,7 +257,6 @@ var svgEditor = (function () {
                 break;
             }
 	    }
-
 	}
 
 	function activateDrawingMode() {
@@ -267,9 +269,22 @@ var svgEditor = (function () {
         drawingLayer.on("mousedown", drawingMousedown);
 
         d3.select("body").on("keypress", drawingKeypressed);
+
+        svg_editor_button_manager.disable_btns_except("draw_geom", "edit_geom");
 	}
 
 	function activateEditMode() {
+	    // if active geometry list is not empty then alert - save changes and continue in edit mode? YES/NO
+	    if (activeGeometries.size > 0){
+            if (!confirm('Save any changes and continue in edit mode?')) {
+                return;
+            }
+            else {
+                //save active geometries
+
+            }
+	    }
+
         lineFunction.curve(d3.curveLinear);
         drawingLayer.selectAll(GEOM_POLY_TYPES)
             .on("click", editGeomOnClick);
@@ -280,6 +295,12 @@ var svgEditor = (function () {
                 (v, k, m) => {deactivateGeometry(k)}
             )
 	    });
+
+        svg_editor_button_manager.disable_btns_except("draw_geom", "edit_geom", "move_object");
+    }
+
+    function activateEditMoveMode(){
+
     }
 
     function activateEditJoinMode(){
@@ -366,19 +387,20 @@ var svgEditor = (function () {
             pathData.push({"type":"Z", "values":[]});
             d3.select(path).classed("polyline", false);
             d3.select(path).classed("polygon",true);
+            d3.select(path).attr("geom_type", "polygon");
         }
         else {
             d3.select(path).classed("polygon", false);
             d3.select(path).classed("polyline", true);
+            d3.select(path).classed("geom_type", "polyline");
         }
 
         path.setPathData(pathData);
 	}
 
-    let newPath = "";
-    function update_SVG_new_element_attributues(path) {
-	    newPath = path;
+    function update_SVG_new_element_attributes(path) {
         d3.select(path).classed("highlight", true);
+        save_svg_new_elements_attributes.path = path;
 
         pathData = path.getPathData();
 
@@ -403,15 +425,17 @@ var svgEditor = (function () {
 	}
 
 	function save_svg_new_elements_attributes(){
-        console.log("newPath....",newPath);
-        d3.select(newPath)
-            .attr("id", $('#svg_new_ele_id').val())
-            .attr("name", $('#svg_new_ele_id').val())
-            .attr("feat_type", $('#svg_new_ele_name').val())
-            .attr("description", $('#svg_new_ele_name').val())
-            .attr("hidden_", "")
-            .classed("highlight", false);
-        $('#svg_new_element_div').prop("style", "visibility: hidden");
+	    let path = save_svg_new_elements_attributes.path;
+        if (path){
+            d3.select(path)
+                .attr("id", $('#svg_new_ele_id').val())
+                .attr("name", $('#svg_new_ele_id').val())
+                .attr("feat_type", $('#svg_new_ele_name').val())
+                .attr("description", $('#svg_new_ele_name').val())
+                .attr("hidden_", "")
+                .classed("highlight", false);
+            $('#svg_new_element_div').prop("style", "visibility: hidden");
+        }
     }
 
 	function inview(x, y) {
@@ -437,6 +461,7 @@ var svgEditor = (function () {
 				.attr("y1", y)
 				.attr("x2", x)
 				.attr("y2", y)
+				.attr("id", "userGeom" + Math.round(Math.random() * Math.pow(10, 10)))
 				.classed("line", true).node();
 			path = activateGeometry(path);
 			let pathAnchors = activeGeometries.get(path);
@@ -450,11 +475,11 @@ var svgEditor = (function () {
 			let c = addDraggableAnchors(1, [x, y], path, ()=>{}, dragged, dragEnded)
 						.attr("r", anchor_radius + 1)
 			c.raise()
-						//.call(d3.drag().on("start", dragStarted)*/
+						//.call(d3.drag().on("start", dragStarted)
 						//			   .on("drag", dragged)
 						//			   .on("end", dragEnded)
 						//		);
-			//activeGeometries[path] = [c];
+			//activeGeometries[path] = [c]; //*/
 		}
 	}
 
@@ -503,13 +528,12 @@ var svgEditor = (function () {
 
 	function editGeomOnClick() {
 	    if (!d3.event.ctrlKey) { //deactivate all other geometries
-            activeGeometries.forEach(
-                (v, k, m) => {
-                    deactivateGeometry(k);
-                }
-            );
+            saveAllEdits();
 	    }
 	    activateGeometry(this);
+        d3.select("body").on("keypress", drawingKeypressed);
+
+	    svg_editor_button_manager.disable_btns_except("draw_geom", "edit_geom", "join_endPoints", "split_endPoints", "move_object", "delete_geom");
 	}
 
 	function activateGeometry(geom) {
@@ -520,11 +544,6 @@ var svgEditor = (function () {
                             .on("start", geomDragStart)
                             .on("drag", geomDrag)
                             .on("end", geomDragEnd))
-                       .on("contextmenu", addPoint)
-                       .on("click", editModeOnClick);
-
-        d3.select(delete_geom).attr("opacity", 1)
-                              .on("click", deleteGeometry);
 	    return path;
 	}
 
@@ -542,26 +561,27 @@ var svgEditor = (function () {
                        .on(".drag", null);
 
         if (activeGeometries.size == 0) {
-            d3.select(delete_geom).attr("opacity", 0.5)
-                                  .on("click", null);
+            svg_editor_button_manager.disable_btn("delete_geom");
         }
 
 	    return path;
 	}
 
     function deleteGeometries() {
-        activeGeometries.forEach(
-            (v, k, m) => {
-                d3.select(k).classed("active", true);
-                deleteGeometry(k);
-                deactivateGeometry(k);
-                d3.select(k).classed("active", false);
-            }
-        );
+		del = confirm("Do you want to delete the selected objects?");
+		if (del) {
+            activeGeometries.forEach(
+                (v, k, m) => {
+                    d3.select(k).classed("active", false);
+                    deactivateGeometry(k);
+                    deleteGeometry(k, true);
+                }
+            );
+        }
 	}
 
 	function deleteGeometry(geom) {
-		del = confirm("Are you sure you want to delete this object?");
+		del = arguments[0]? arguments[0]: confirm("Are you sure you want to delete this object?");
 		if (del) {
 			deleteSVGElement(geom);
 		}
@@ -574,6 +594,7 @@ var svgEditor = (function () {
 	function drawingKeypressed() {
 	    if (d3.event.keyCode = 13) { //key == Enter
 			saveAllEdits();
+
 	    }
 	}
 
@@ -581,8 +602,8 @@ var svgEditor = (function () {
 		activeGeometries.forEach(
 			(v, k, m) => {
 				deactivateGeometry(k);
-				update_SVG_new_element_attributues(k);
-				displayManager.moveVectorToLayer(k, DRAWING_LAYER_NAME, DRAWING_LAYER_NAME);
+				k = displayManager.moveVectorToLayer(k, DRAWING_LAYER_NAME, BASE_LAYER_NAME);
+				update_SVG_new_element_attributes(k);
 			}
 		);
 	}
@@ -595,13 +616,14 @@ var svgEditor = (function () {
 		the geometry's shape.
     */
 	function makeEditable(geom) {
-        switch( geom.tagName.toLowerCase() ) {
+        switch(geom.tagName.toLowerCase()) {
 
 		case 'path':
           lineFunction.curve(d3.curveLinear);
 		  geom = d3.select(geom).remove().node();
 		  drawingLayer.append(()=>geom);
 		  break;
+
         case 'rect':
           lineFunction.curve(d3.curveLinearClosed);
           x = geom.getAttribute("x");
@@ -620,6 +642,7 @@ var svgEditor = (function () {
           geom = drawingLayer.append("path")
                     .attr("d", lineFunction(d))
 					.attr("geom_type", 'polygon')
+					.attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
                     .classed('polygon', true)
                     .node();
           break;
@@ -640,6 +663,7 @@ var svgEditor = (function () {
           geom = drawingLayer.append("path")
                     .attr("d", lineFunction(d))
 					.attr("geom_type", 'polyline')
+					.attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
                     .classed('polyline', true)
                     .node();
           break;
@@ -657,6 +681,7 @@ var svgEditor = (function () {
           geom = drawingLayer.append("path")
                     .attr("d", lineFunction(d))
 					.attr("geom_type", 'polyline')
+					.attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
                     .classed('polyline', true)
                     .node();
           break;
@@ -673,6 +698,7 @@ var svgEditor = (function () {
           geom = drawingLayer.append("path")
                     .attr("d", lineFunction(d))
 					.attr("geom_type", 'polygon')
+					.attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
                     .classed('polygon', true)
                     .node();
           break;
@@ -808,6 +834,15 @@ var svgEditor = (function () {
           break;
       }
 
+      let decorators = activeGeometries.get(this);
+      if (decorators) {
+          decorators.forEach(function(e, i){
+            let dn = e.node();
+            let x = parseFloat(dn.getAttribute("cx"));
+            let y = parseFloat(dn.getAttribute("cy"));
+            e.attr("cx", x + dx).attr("cy", y + dy);
+          });
+      }
     }
 
 	function dragEnded() {

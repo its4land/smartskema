@@ -179,6 +179,7 @@ var sketchMapDisplayManager = (function(){
 		toLayer = layer(toLayer);
 		let f = fromLayer.selection.select(()=>v).remove();
 		toLayer.selection.append(()=>f.node());
+		return f.node();
 	}
 
     var layer = function(layerName) {
@@ -466,6 +467,9 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
 
         if (topo.features){
             topo = topo.features;
+            // reset the projection
+            geoLayer.projection.scale(t.getProjection().scale());
+            geoLayer.projection.translate(t.getProjection().translate());
 
             let scaled_bounds = geoLayer.path.bounds(geojson);
             let center = geoLayer.path.centroid(geojson);
@@ -497,12 +501,20 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
             .attr("class", function (d, i) {
                 return (topo[i].properties.feat_type || topo[i].properties.class)
             })
-            .each((d, i, g) =>
-                    {
-                        Object.keys(topo[i].properties).forEach(
-                            (key) => g[i].setAttribute(key, topo[i].properties[key])
-                        );
-					if (!topo[i].properties.id) {g[i].setAttribute('id', topo[i].properties['ssm_id'])};
+            .attr("id", function (d, i) {
+                return (topo[i].properties.id || topo[i].properties.ssm_id || topo[i].properties.feat_id)
+            })
+            .attr("feat_type", function (d, i) {
+                return (topo[i].properties.feat_type || topo[i].properties.FType || topo[i].properties.ftype)
+            })
+            .attr("name", function (d, i) {
+                return (topo[i].properties.name || topo[i].properties.label || topo[i].properties.description || "NA")
+            })
+            .attr("description", function (d, i) {
+                return (topo[i].properties.description || topo[i].properties.name || topo[i].properties.label || "NA")
+            })
+            .attr("hidden_", function (d, i) {
+                return (topo[i].properties.hidden_ || "_")
             });
 
         baseCanvas.call(zoom)
@@ -626,6 +638,7 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
 
         if (e.type == "Z") {
             coords.pop();
+            coords.push(s);
         }
 		
 		switch (geojson.geometry.type){
@@ -648,6 +661,23 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         return geojson
     }
 
+
+    var getVectorLayerAsGeojson = function(l){
+        // setup the geojson object
+        let geojson = {
+			"type": "FeatureCollection",
+            "crs": crs,
+            "features": []
+        };
+
+        let vectorLayer = layer(l).selection;
+        vectorLayer.selectAll("path").each((d, i, g) => {
+            geojson.features.push(d);
+        });
+
+        return geojson;
+    }
+
     var getVectorLayersAsGeojson = function(){
         // setup the geojson object
         let geojson = {
@@ -667,9 +697,18 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
 	}
 	
 	var moveVectorToLayer = function(v, fromLayer, toLayer) {
+	    let fid = d3.select(v).attr("id");
 		let f = getVectorAsGeojson(v);
-		layer(fromLayer).selection.select(()=>v).remove();
-		vectorLoad(f, toLayer);
+		let fromLayerSel = layer(fromLayer).selection
+		    fromLayerSel.select(()=>v).remove();
+
+        let geojson = getVectorLayerAsGeojson(toLayer);
+            geojson.features.push(f);
+		    vectorLoad(geojson, toLayer);
+
+		let toLayerSel = layer(toLayer).selection
+
+		return toLayerSel.select("#"+fid).node();
 	}
 
     var getVectorSelection = function(layerName) {
@@ -704,7 +743,7 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         zoom: zoomCallback,
         removeVectorLayer: removeVectorSelection,
         getVectorGeojson: getVectorAsGeojson,
-        getVectorsLayersAsGeojson: getVectorLayersAsGeojson,
+        getVectorLayersAsGeojson: getVectorLayersAsGeojson,
 		moveVectorToLayer: moveVectorToLayer //PENDING
         /*,
         rasterFromContent: loadSketchMapRasterFromContent, //PENDING
