@@ -209,19 +209,21 @@
                     </div>
                 </div>
                 <div class="col-4">
-
-                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
-                        load
-                        <input id="downloadMetrichMapInputbutton" accept=".geojson, .GEOJSON" style="display: none" type=Button
-                               onchange="download_MetricMap_from_pnS()">
+                    <span style="float: right" >
+                    <label id = "downloadMetrichMapInputbutton_label" class="btn btn-outline-info btn-file btn-sm">
+                       <i class="fa fa-download" data-toggle="tooltip" title="Download from PnS!"></i>
+                        <button id="downloadMetrichMapInputbutton"  style="display: none" type="button"
+                                onclick="download_MetricMap_from_pnS()"></button>
                     </label>
-                    <label class="btn btn-outline-info btn-file btn-sm" style="float: right">
+
+                    <label class="btn btn-outline-info btn-file btn-sm" >
                         Browse
                         <input id="MetrichMapInputbutton" accept=".geojson, .GEOJSON" style="display: none" type="file"
                                onchange="loadMetricMap()">
                     </label>
 
-                </div>
+                </span>
+            </div>
             </div>
 
             <div class="row" style="padding: 1px">
@@ -300,8 +302,7 @@
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="ortho_GCP_checked"
                                disabled="disabled">
-                        <label class="custom-control-label" for="ortho_GCP_checked"><i> Load Base Map
-                            GCPs...</i></label>
+                        <label class="custom-control-label" for="ortho_GCP_checked"><i> Load Ground Control Points (GCPs) ...</i></label>
                     </div>
                 </div>
                 <div class="col-4">
@@ -479,6 +480,10 @@
         <button id="delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
                 data-placement="bottom" title="Delete">
             <img id="delete_geom_image" src="../static/imgs/delelte.png" width="20" height="18">
+        </button>
+        <button id="save_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                data-placement="bottom" title="Save" style="text-align:justify">&nbsp;Save
+
         </button>
 
     </span>

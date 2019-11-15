@@ -94,22 +94,22 @@ def path_to_project(d):
     global PROJ_TYPE_SUB_PROJ_NAME
     global PnS_PROJ_Mode
 
-    PnS_PROJ_ID =  d.get("sessID")
+    #PnS_PROJ_ID =  d.get("sessID")
     PROJ_TYPE = d.get("projectType")
     print("PnS_PROJ_Mode",PnS_PROJ_Mode)
-    if PnS_PROJ_Mode == True:
 
-        PnS_PROJ_ID = os.getenv("I4L_PROJECTUID")
-        if PnS_PROJ_ID == None:
-            PnS_PROJ_ID = "4da0d7ad-952d-4308-a7f4-7ff1dc8672d4"
+    if PnS_PROJ_Mode == True:
+        #PnS_PROJ_ID = os.getenv("I4L_PROJECTUID")
+        #if PnS_PROJ_ID == None:
+         #   PnS_PROJ_ID = "4da0d7ad-952d-4308-a7f4-7ff1dc8672d4"
         temp = PROJ_TYPE_SUB_PROJ_NAME.split(":")
         PROJ_TYPE = ":".join(temp[:1])
         SUB_PROJ_NAME = ":".join(temp[1:])
         print("i am comming PnS_Proj_MODE", os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE, SUB_PROJ_NAME))
         return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE, SUB_PROJ_NAME)
     else:
-        print("i am in SmartSkeMa Proj_Mode",os.path.join(USER_SESSIONS_DIR, PROJ_TYPE))
-        return os.path.join(USER_SESSIONS_DIR, PROJ_TYPE)
+        print("i am in SmartSkeMa Proj_Mode",os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID,PROJ_TYPE))
+        return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID,PROJ_TYPE)
 
 
 
@@ -503,8 +503,8 @@ def get_tenure_record():
                             rrrs = relation["rrrs"]
 
                     return json.dumps([{"Record no.": record_no, "Spatial Source": spatial_source,
-                                       "Feature ID": feat_id, "Feature Type": feat_type,"Aligned Object":matched_feat,
-                                       "Party": party,"Right": ownership,  "Condition": rrrs}])
+                                       "Feature ID": feat_id, "Feature Type": feat_type,
+                                       "Party": party,"Right": ownership,  "Condition": rrrs,"Aligned Object":matched_feat}])
                 else:
                        return "Tenure record not found"
         else:
@@ -736,19 +736,19 @@ def uploadSketchMap():
 
         #comment out if using full alignment in debug mode
 
-        if app.debug:
-            #copy folder with fileName to currentUserSession/projectType
-            preRunFiles = os.path.join("preRunSessions", imageFileName)
-            try:
-                #print("copying from preRun", project_files_path)
-                shutil.rmtree(project_files_path, ignore_errors=False, onerror=None)
-                shutil.copytree(preRunFiles, project_files_path)
-            # Directories are the same
-            except shutil.Error as e:
-                print('Directory not copied. Error: %s' % e)
-            # Any error saying that the directory doesn't exist
-            except OSError as e:
-                print('Directory not copied. Error: %s' % e)
+        # if app.debug:
+        #     #copy folder with fileName to currentUserSession/projectType
+        #     preRunFiles = os.path.join("preRunSessions", imageFileName)
+        #     try:
+        #         #print("copying from preRun", project_files_path)
+        #         shutil.rmtree(project_files_path, ignore_errors=False, onerror=None)
+        #         shutil.copytree(preRunFiles, project_files_path)
+        #     # Directories are the same
+        #     except shutil.Error as e:
+        #         print('Directory not copied. Error: %s' % e)
+        #     # Any error saying that the directory doesn't exist
+        #     except OSError as e:
+        #         print('Directory not copied. Error: %s' % e)
 
         #else:
         if os.path.exists(upload_filepath):

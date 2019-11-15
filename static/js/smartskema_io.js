@@ -1,4 +1,5 @@
 var projectMode = -1;
+var loaded_fileName ="";
 
 const MODE_FREEHAND_SKETCH = 0;
 const MODE_MAP_TRACE_SKETCH = 1;

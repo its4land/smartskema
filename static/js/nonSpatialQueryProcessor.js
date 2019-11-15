@@ -30,6 +30,27 @@ function nonSpatial_query_processor_mode() {
 function nonSpatial_query_mouse_over(d, i) {
     fid = this.getAttribute('id');
     mid = mapmatches[fid];
+    if (mid == undefined){
+        mel = d3.select("#baseSVG").selectAll("#"+fid).node();
+        d3.select(this)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "8px");
+        d3.select(mel)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "1px");
+
+    }else{
+        mel = document.getElementById(mid);
+        d3.select(this)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "10px");
+        d3.select(mel)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "10px");
+    }
+
+/*    fid = this.getAttribute('id');
+    mid = mapmatches[fid];
     mel = document.getElementById(mid);
 
     d3.select(this)
@@ -38,11 +59,33 @@ function nonSpatial_query_mouse_over(d, i) {
 
     d3.select(mel)
         .style("stroke", "#039BE5")
-        .style("stroke-width", "10px");
+        .style("stroke-width", "10px");*/
 }
 
 function nonSpatial_query_mouse_out(d, i) {
     fid = this.getAttribute('id');
+    mid = mapmatches[fid];
+
+    if (mid == undefined){
+        mel = d3.select("#baseSVG").selectAll("#"+fid).node();
+        mel_class =mel.getAttribute("class");
+        d3.select(this)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+        d3.select(mel)
+            .style("stroke", "none")
+            .style("stroke-width", "1px")
+            .attr("class", mel_class);
+    }else{
+        mel = document.getElementById(mid);
+        d3.select(this)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+        d3.select(mel)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+    }
+    /*fid = this.getAttribute('id');
     mid = mapmatches[fid];
     mel = document.getElementById(mid);
 
@@ -51,7 +94,7 @@ function nonSpatial_query_mouse_out(d, i) {
         .style("stroke-width", "1px");
     d3.select(mel)
         .style("stroke", "#455A64")
-        .style("stroke-width", "1px");
+        .style("stroke-width", "1px");*/
 }
 
 function nonSpatial_query_result_popup() {
@@ -65,31 +108,20 @@ function nonSpatial_query_result_popup() {
 
     metric_id = mapmatches[feat_id];
 
-
-    console.log("id of matched object in base map:", metric_id);
-    if (sessionData.projectType =="plainSketchProject"){
-        if (feat_id != null){
-            if (metric_id == undefined){
-                x = d3.event.pageX;
-                y = d3.event.pageY;
-            }else{
-                mmelement = document.getElementById(metric_id);
-                var rect = mmelement.getBoundingClientRect();
-                x = rect.left;
-                y = rect.top;
-            }
+    if (feat_id != null){
+        if (metric_id == undefined){
+            mmelement = d3.select("#baseSVG").selectAll("#"+feat_id).node();
+            var rect = mmelement.getBoundingClientRect();
+            x = rect.left;
+            y = rect.top;
+        }else{
+            mmelement = document.getElementById(metric_id);
+            var rect = mmelement.getBoundingClientRect();
+            x = rect.left;
+            y = rect.top;
         }
 
-    }if (sessionData.projectType == "orthoSketchProject"){
-        if (feat_id != null){
-            if (metric_id == undefined){
-                x = d3.event.pageX;
-                y = d3.event.pageY;
-            }
-        }
     }
-
-
 
     /*if ((feat_id != null) && (metric_id != undefined)) {
         console.log("i am in first if ",metric_id, feat_id);
