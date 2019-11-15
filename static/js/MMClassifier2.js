@@ -40,6 +40,11 @@ function download_MetricMap_from_pnS(){
                 });
         }
         mm_checked = new Boolean($("#MM_checked").prop("checked", true));
+        toolTipCounter = toolTipCounter+1;
+
+        if(toolTipCounter==4){
+            toolTipManager.hideToolTip();
+        };
     });
 }
 
@@ -129,6 +134,7 @@ function align_Sketch_Map(event) {
 
 
     let svgContent = sketchMapDisplayManager.getVectorSVG().outerHTML;
+    //console.log( "final svg............",svgContent);
     let geojsonContent = baseMapDisplayManager.getVectorLayersAsGeojson();
     //console.log("here base map contants",geojsonContent)
     //console.log("here svgContent contants",svgContent)

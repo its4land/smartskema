@@ -65,20 +65,65 @@ function spatial_query_processor_mode() {
             deleteProcessingRing();
         }
     });
+
 }
 
 //svg elelment interaction
 function spatial_query_mouse_over(d, i) {
 
-    d3.select(this)
+    fid = this.getAttribute('id');
+    mid = mapmatches[fid];
+    if (mid == undefined){
+        mel = d3.select("#baseSVG").selectAll("#"+fid).node();
+        d3.select(this)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "8px");
+        d3.select(mel)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "1px");
+
+    }else{
+        mel = document.getElementById(mid);
+        d3.select(this)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "10px");
+        d3.select(mel)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "10px");
+    }
+
+
+    /*d3.select(this)
         .style("stroke", "#039BE5")
-        .style("stroke-width", "30px");
+        .style("stroke-width", "30px");*/
 }
 
 function spatial_query_mouse_out(d, i) {
-    d3.select(this)
+    fid = this.getAttribute('id');
+    mid = mapmatches[fid];
+
+    if (mid == undefined){
+        mel = d3.select("#baseSVG").selectAll("#"+fid).node();
+        mel_class =mel.getAttribute("class");
+        d3.select(this)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+        d3.select(mel)
+            .style("stroke", "none")
+            .style("stroke-width", "1px")
+            .attr("class", mel_class);
+    }else{
+        mel = document.getElementById(mid);
+        d3.select(this)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+        d3.select(mel)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+    }
+    /*d3.select(this)
         .style("stroke", "#455A64")
-        .style("stroke-width", "10px");
+        .style("stroke-width", "10px");*/
 }
 
 function get_spatial_query_popup() {
@@ -261,28 +306,35 @@ function load_computed_tiles_as_svg(tilesType,tilesAsjson){
         "./static/data/modified/tiles_256_raster/": "tile.openstreetmap.org/";
     if (tilesType ==="left_right"){
         date_time = (new Date()).toISOString();
-        baseMapDisplayManager.tilesFromURL(url).then(
-            function(done){
-                baseMapDisplayManager.vectorFromGeoJSONContent(tilesAsjson, "Approx_tiles_leftRight_"+date_time) //"baseLayer")
-            });
+        //baseMapDisplayManager.tilesFromURL(url).then(
+        //    function(done){
+                baseMapDisplayManager.vectorFromGeoJSONContent(tilesAsjson, "Approx_tiles_leftRight_"+date_time)
+                    .then(svgEditor.init('base')); //"baseLayer")
+        //    });
 
     }if (tilesType ==="RCC8"){
         date_time = (new Date()).toISOString();
         console.log("i am in the RCC if for tiles ")
 
-        baseMapDisplayManager.tilesFromURL(url).then(
-            function(done){
-                baseMapDisplayManager.vectorFromGeoJSONContent(tilesAsjson, "Approx_tiles_RCC_"+date_time) //"baseLayer")
-            });
+        //baseMapDisplayManager.tilesFromURL(url).then(
+        //    function(done){
+                baseMapDisplayManager.vectorFromGeoJSONContent(tilesAsjson, "Approx_tiles_RCC_"+date_time)
+                    .then(svgEditor.init('base')); //"baseLayer")
+        //    });
     }if (tilesType ==="REL_DIST"){
         date_time = (new Date()).toISOString();
         console.log("i am in the reldist if for tiles ")
 
-        baseMapDisplayManager.tilesFromURL(url).then(
-            function(done){
-                baseMapDisplayManager.vectorFromGeoJSONContent(tilesAsjson, "Approx_tiles_relDist_"+date_time) //"baseLayer")
-            });
+        //baseMapDisplayManager.tilesFromURL(url).then(
+        //    function(done){
+                baseMapDisplayManager.vectorFromGeoJSONContent(tilesAsjson, "Approx_tiles_relDist_"+date_time)
+                    .then(svgEditor.init('base')); //"baseLayer")
+        //    });
     }
+
+
+    svgEditor.init('base');
+    console.log("SVG Editor for Base Map is Activate...");
 
     //baseMapDisplayManager.vectorFromGeoJSONContent(json) //"baseLayer")
    /* var topo = topojson.topology({foo: tilesAsjson});

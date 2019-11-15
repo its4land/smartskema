@@ -208,9 +208,33 @@ var sketchMapDisplayManager = (function(){
         return layer(layerName).selection;
     }
 
+/*
+
     var getVectorSelections = function(layerName) {
 
         return Object.keys(layers).map(k => layers[k].selection);
+    }
+
+*/
+
+    var getVectorSelections = function() {
+
+        return getVectorSelectionsExcept([]);
+    }
+
+    var getVectorSelectionsExcept = function() {
+
+        let args = [...arguments];
+        let vectorSelections = Object.keys(layers).reduce(function(accum, curr, i, arr){
+            if (!args.includes(curr)){
+                accum.push(layers[curr].selection);
+            }
+
+        }, []);
+
+        return vectorSelections? vectorSelections: [];
+
+        //return Object.keys(layers).map(k => layers[k].selection);
     }
 
     var removeVectorSelection = function(layerName) {
@@ -239,6 +263,7 @@ var sketchMapDisplayManager = (function(){
         getVectorSVG: getVectorAsSVG,
         getVectorLayer: getVectorSelection,
         getVectorLayers: getVectorSelections,
+        getVectorLayersExcept: getVectorSelectionsExcept,
 		moveVectorToLayer: moveVectorToLayer//PENDING
     }
 
@@ -453,8 +478,9 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         return [center[0], center[1], 0, 0];
     }
 
-    var vectorLoad = function(geojson, layerName){
+    var vectorLoad = async function(geojson, layerName){
         let t = tileLayer;
+        let vectorLoaded = false;
         let width = baseCanvas.attr("width");
         let height = baseCanvas.attr("height");
 
@@ -521,7 +547,10 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
                   .call(zoom.transform, zoomTransform)
                   .call(zoom.translateBy, translate_x, translate_y)
                   .call(zoom.scaleBy, bounds_scale)
-                  .call(zoom.translateBy, -center_x, -center_y);
+                  .call(zoom.translateBy, -center_x, -center_y)
+                  .call(function(){vectorLoaded = true});
+
+        return new Promise((resolve, reject) => { if (vectorLoaded) {resolve(vectorLoaded)} else {reject(vectorLoaded)}});
     }
 
     method.vectorZoom.tms = function(transform, tiles) {
@@ -715,9 +744,24 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         return layer(layerName).selection;
     }
 
-    var getVectorSelections = function(layerName) {
+    var getVectorSelections = function() {
 
-        return Object.keys(layers).map(k => layers[k].selection);
+        return getVectorSelectionsExcept([]);
+    }
+
+    var getVectorSelectionsExcept = function() {
+
+        let args = [...arguments];
+        let vectorSelections = Object.keys(layers).reduce(function(accum, curr, i, arr){
+            if (!args.includes(curr)){
+                accum.push(layers[curr].selection);
+            }
+            return accum;
+        }, []);
+
+        return vectorSelections? vectorSelections: [];
+
+        //return Object.keys(layers).map(k => layers[k].selection);
     }
 
     var removeVectorSelection = function(layerName) {
@@ -740,6 +784,7 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         getRaster: getRasterSelection,
         getVectorLayer: getVectorSelection,
         getVectorLayers: getVectorSelections,
+        getVectorLayersExcept: getVectorSelectionsExcept,
         zoom: zoomCallback,
         removeVectorLayer: removeVectorSelection,
         getVectorGeojson: getVectorAsGeojson,

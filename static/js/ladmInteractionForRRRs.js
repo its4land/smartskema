@@ -70,6 +70,11 @@ function ortho_loadPartyFile(element) {
             var party = JSON.parse(resp)
         });
         ortho_party_checked = new Boolean($("#ortho_Party_checked").prop("checked", true));
+        if(toolTipCounter==4){
+            toolTipManager.hideToolTip();
+            $('#orthophoto_project_div').prop("style", "visibility: hidden");
+
+        };
     };
 
 }
@@ -164,16 +169,58 @@ function ladm_interaction_for_RRR_mode() {
 
 //svg elelment interaction
 function ladm_mouse_over(d, i) {
+    fid = this.getAttribute('id');
+    mid = mapmatches[fid];
+    if (mid == undefined){
+        mel = d3.select("#baseSVG").selectAll("#"+fid).node();
+        d3.select(this)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "8px");
+        d3.select(mel)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "1px");
 
+    }else{
+        mel = document.getElementById(mid);
+        d3.select(this)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "10px");
+        d3.select(mel)
+            .style("stroke", "#039BE5")
+            .style("stroke-width", "10px");
+    }
+/*
     d3.select(this)
         .style("stroke", "#039BE5")
-        .style("stroke-width", "30px");
+        .style("stroke-width", "30px");*/
 }
 
 function ladm_mouse_out(d, i) {
-    d3.select(this)
+    fid = this.getAttribute('id');
+    mid = mapmatches[fid];
+
+    if (mid == undefined){
+        mel = d3.select("#baseSVG").selectAll("#"+fid).node();
+        mel_class =mel.getAttribute("class");
+        d3.select(this)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+        d3.select(mel)
+            .style("stroke", "none")
+            .style("stroke-width", "1px")
+            .attr("class", mel_class);
+    }else{
+        mel = document.getElementById(mid);
+        d3.select(this)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+        d3.select(mel)
+            .style("stroke", "#455A64")
+            .style("stroke-width", "1px");
+    }
+    /*d3.select(this)
         .style("stroke", "#455A64")
-        .style("stroke-width", "1px");
+        .style("stroke-width", "1px");*/
 }
 
 
@@ -437,7 +484,7 @@ function add_land_tenure_record() {
         url: '/add_tenure_record',
         type: 'GET',
         data: {
-            spatialSource: fileName,
+            spatialSource: loaded_fileName,
             feat_id: feat_id,
             feat_type: feat_type,
             ownership_type: ownership_type,

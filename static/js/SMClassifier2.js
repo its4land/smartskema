@@ -479,10 +479,8 @@ function enable_spatialUnit_bnt_tools(event,ele){
 
         }
     });
-
     svgEditor.init('base');
     console.log("SVG Editor for Base Map is Activate...");
-
 }
 
 /**

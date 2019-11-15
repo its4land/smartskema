@@ -7,6 +7,7 @@ var svgEditor = (function () {
 
     var rasterLayer, vectorLayer, drawingLayer, decoratorsLayer;
     var rasterNode, vectorNode, drawingNode, decoratorsNode;
+    var otherLayers = [], otherLayerNodes = [];
     var vScale = 1;
     var iScale = 1;
 	
@@ -15,9 +16,9 @@ var svgEditor = (function () {
 
     var editModeOnClick = null;
 
-    const BASE_LAYER_NAME = "baseLayer"
-    const DRAWING_LAYER_NAME = "drawingLayer"
-    const DECORATORS_LAYER_NAME = "decoratorsLayer"
+    const BASE_LAYER_NAME = "baseLayer";
+    const DRAWING_LAYER_NAME = "drawingLayer";
+    const DECORATORS_LAYER_NAME = "decoratorsLayer";
 
 	const GEOM_TYPES = "path,polygon,circle,rect,line,polyline";
 	const GEOM_POLY_TYPES = "path,polygon,rect,line,polyline";
@@ -72,16 +73,21 @@ var svgEditor = (function () {
             displayManager = sketchMapDisplayManager;
         }
 
-        rasterLayer = displayManager.getRaster();
-        vectorLayer = displayManager.getVectorLayer();
         drawingLayer = displayManager.getVectorLayer(DRAWING_LAYER_NAME);
         decoratorsLayer = displayManager.getVectorLayer(DECORATORS_LAYER_NAME);
+        vectorLayer = displayManager.getVectorLayer();
+        rasterLayer = displayManager.getRaster();
+        otherLayers  = displayManager.getVectorLayersExcept(BASE_LAYER_NAME, DRAWING_LAYER_NAME, DECORATORS_LAYER_NAME);
 
 	    vectorNode = vectorLayer.node();
 	    rasterNode = rasterLayer.node()
         drawingNode = drawingLayer.node();
         decoratorsNode = decoratorsLayer.node();
+        otherLayerNodes = otherLayers.map((lyr) => lyr.node());
 
+        vectorLayer.raise();
+        drawingLayer.raise();
+        decoratorsLayer.raise();
 
         if (vectorNode.transform.baseVal.consolidate()){
             vScale = vectorNode.transform.baseVal.consolidate().matrix.a;
@@ -193,8 +199,6 @@ var svgEditor = (function () {
 	
 	var setMode = function(mode) {
 
-		if (mode == activeMode) {return}
-
 		switch(activeMode) {
 		case MODE_DRAW:
             finalizeDrawingMode();
@@ -267,6 +271,7 @@ var svgEditor = (function () {
         //rasterLayer.selectAll('image').on("mousedown", drawingMousedown);
 		rasterLayer.on("mousedown", drawingMousedown);
         drawingLayer.on("mousedown", drawingMousedown);
+        otherLayers.forEach((lyr) => lyr.on("mousedown", drawingMousedown));
 
         d3.select("body").on("keypress", drawingKeypressed);
 
@@ -317,21 +322,12 @@ var svgEditor = (function () {
                    .on("mouseover", null).on("mouseout", null)
                    .on("mouseup", null).on("mousemove", null);
 
+        otherLayers.forEach((lyr) => lyr.on("mousedown", null).on("click", null)
+                                        .on("mouseover", null).on("mouseout", null)
+                                        .on("mouseup", null).on("mousemove", null));
         lineFunction.curve(null);
 
-        activeGeometries.forEach(
-            (v, k, m) => {
-                deactivateGeometry(k);
-                //updateFeatureAttributes(k);
-                update_SVG_new_element_attributues(k);
-            }
-        );
-
-        drawingLayer.selectAll("path").remove().each(
-            function(d, i ,g){
-                vectorLayer.append(() => g[i]);
-            }
-        );
+        drawingLayer.selectAll("path").each((d, i, g) => activateGeometry(g[i])).call(saveAllEdits);
 	}
 
 	function finalizeEditMode() {
@@ -340,9 +336,15 @@ var svgEditor = (function () {
                    .on("mouseover", null).on("mouseout", null)
                    .on("mouseup", null).on("mousemove", null);
 
+        otherLayers.forEach((lyr) => lyr.on("mousedown", null).on("click", null)
+            .on("mouseover", null).on("mouseout", null)
+            .on("mouseup", null).on("mousemove", null));
+
         lineFunction.curve(null);
 
-        activeGeometries.forEach(
+        drawingLayer.selectAll("path").each((d, i, g) => activateGeometry(g[i])).call(saveAllEdits);
+
+/*        activeGeometries.forEach(
             (v, k, m) => {
                 deactivateGeometry(k);
             }
@@ -352,7 +354,7 @@ var svgEditor = (function () {
             function(d, i ,g){
                 vectorLayer.append(() => g[i]);
             }
-        );
+        );*/
 	}
 
 	function finalizeEditJoinMode(){
@@ -429,8 +431,12 @@ var svgEditor = (function () {
         if (path){
             d3.select(path)
                 .attr("id", $('#svg_new_ele_id').val())
+                .attr("ssm_id", $('#svg_new_ele_id').val())
                 .attr("name", $('#svg_new_ele_id').val())
                 .attr("feat_type", $('#svg_new_ele_name').val())
+                .attr("sm_sk_type", $('#svg_new_ele_name').val())
+                .attr("smart_skema_type", $('#svg_new_ele_name').val())
+                .attr("descriptn", $('#svg_new_ele_name').val())
                 .attr("description", $('#svg_new_ele_name').val())
                 .attr("hidden_", "")
                 .classed("highlight", false);

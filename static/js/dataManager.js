@@ -83,16 +83,16 @@ var button_manager = (function (){
     };
 
     var button_list = [
-        //"Vectorize_Image_menu",
-        //"Vectorize_Image",
-        //"Editor",
+        "Vectorize_Image_menu",
+        "Vectorize_Image",
+        "Editor",
         "Add_Land_Tenure_Info.",
         "ladm_interaction_for_RRR_bnt",
         "nonSpatial_query_processor_bnt",
         "align_geometries",
-        //"Add_Spatial_Unit",
-        //"spatial_query_processor_bnt",
-        //"toggle_interaction_bnt",
+        "Add_Spatial_Unit",
+        "spatial_query_processor_bnt",
+        "toggle_interaction_bnt",
         "save_PnS",
         "download_alignedResult"
     ];

@@ -77,7 +77,6 @@ ALIGNED_RESULT = "alignedResult.json"
 app = Flask(__name__)
 
 
-
 """
 This belongs to the utils modules but is here for quickly constructing directory/file paths from path lists
 """
@@ -94,7 +93,7 @@ def path_to_project(d):
     global PROJ_TYPE_SUB_PROJ_NAME
     global PnS_PROJ_Mode
 
-    #PnS_PROJ_ID =  d.get("sessID")
+    PnS_PROJ_ID =  d.get("sessID")
     PROJ_TYPE = d.get("projectType")
     print("PnS_PROJ_Mode",PnS_PROJ_Mode)
 
@@ -1308,12 +1307,12 @@ def save_PnS ():
     tenure_record_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,TENURE_RECORD_FILE)
     approx_tile_file = os.path.join(project_files_path, OUTPUT_DIR_PATH, APROX_TILE)
 
-    if os.path.exists(upladed_sketch_original):
-        upladed_sketch_original = change_original_sketchfile_name(project_files_path,SUB_PROJ_NAME)
-    if os.path.exists(reduced_raster_sketch):
-        reduced_raster_sketch = change_reduced_sketchfile_name(project_files_path,SUB_PROJ_NAME)
-
-    print(upladed_sketch_original,reduced_raster_sketch)
+    # if os.path.exists(upladed_sketch_original):
+    #     upladed_sketch_original = change_original_sketchfile_name(project_files_path,SUB_PROJ_NAME)
+    # if os.path.exists(reduced_raster_sketch):
+    #     reduced_raster_sketch = change_reduced_sketchfile_name(project_files_path,SUB_PROJ_NAME)
+    #
+    # print(upladed_sketch_original,reduced_raster_sketch)
     try:
         files = [upladed_sketch_original,uploaded_base_map]
         for file in files:

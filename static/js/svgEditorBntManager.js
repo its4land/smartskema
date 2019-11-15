@@ -3,11 +3,11 @@ var svgEditor_status_Manager = (function () {
     var svgEditorButtons = {
         draw_geom: null,
         edit_geom: null,
-        join_endPoints: null,
-        split_endPoints: null,
+        //join_endPoints: null,
+        //split_endPoints: null,
         move_geom: null,
         delete_geom: null,
-        save_edits:null
+        //save_edits:null
 
     }
 
@@ -45,40 +45,40 @@ var svgEditor_button_Manager = (function () {
         "plainSketchProject": {
             draw_geom: ["edit_geom", "join_endPoints", "split_endPoints"],
             edit_geom: ["draw_geom"],
-            join_endPoints: ["draw_geom"],
-            split_endPoints: ["draw_geom"],
+            //join_endPoints: ["draw_geom"],
+            //split_endPoints: ["draw_geom"],
             move_geom: ["draw_geom", "edit_geom", "join_endPoints", "split_endPoints"],
             delete_geom: [],
-            save_edits: []
+            //save_edits: []
         },
         "orthoSketchProject": {
             draw_geom: ["edit_geom", "join_endPoints", "split_endPoints"],
             edit_geom: ["draw_geom"],
-            join_endPoints: ["draw_geom"],
-            split_endPoints: ["draw_geom"],
+            //join_endPoints: ["draw_geom"],
+            //split_endPoints: ["draw_geom"],
             move_geom: ["draw_geom", "edit_geom", "join_endPoints", "split_endPoints"],
             delete_geom: [],
-            save_edits: []
+            //save_edits: []
         },
         "both": {
             draw_geom: ["edit_geom"],
             edit_geom: ["draw_geom"],
-            join_endPoints: [],
-            split_endPoints: [],
+            //join_endPoints: [],
+            //split_endPoints: [],
             move_geom: [],
             delete_geom: ["draw_geom", "edit_geom"],
-            save_edits: []
+            //save_edits: []
         }
     };
 
     var svg_button_list = [
         "draw_geom",
         "edit_geom",
-        "join_endPoints",
-        "split_endPoints",
+        //"join_endPoints",
+        //"split_endPoints",
         "move_object",
         "delete_geom",
-        "save_geom"
+        //"save_geom"
     ];
 
     var enable_SVGEdit_bnts = function enable_SVGEdit_bnts() {
@@ -120,11 +120,11 @@ var svg_editor_button_manager = (function () {
     var svg_editor_button_list = [
         "draw_geom",
         "edit_geom",
-        "join_endPoints",
-        "split_endPoints",
+       // "join_endPoints",
+       // "split_endPoints",
         "move_object",
         "delete_geom",
-        "save_geom"
+       // "save_geom"
     ];
 
     var active_btns = function(){
