@@ -456,6 +456,7 @@ function enable_svg_edit_tool(event,ele) {
     $(document).on('keydown', function (e) {
         if (e.keyCode === 27) { // ESC
             $("#editor_tools_col_left").hide();
+            svgEditor.finalize();
         }
     });
 
