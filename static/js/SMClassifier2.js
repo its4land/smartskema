@@ -162,7 +162,8 @@ function alignment_mouse_out(d, i) {
             .style("stroke-width", "1px");
         d3.select(mel)
             .style("stroke", "#455A64")
-            .style("stroke-width", "1px");
+            .style("stroke-width", "1px")
+            .attr("class", mel.getAttribute("class"));
     }
 
 }
