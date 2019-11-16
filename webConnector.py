@@ -895,60 +895,60 @@ def processSketchMap():
 
     #comment out if using full alignment in debug mode
 
-    if app.debug:
-        if PROJ_TYPE =="plainSketchProject":
-            shutil.copyfile(os.path.join("preRunSessions","Mailua_Ranch_Map01.png","output",VECTORIZED_SKETCH),output_file_path)
-            shutil.copyfile(os.path.join("preRunSessions", "Mailua_Ranch_Map01.png", "output", VECTORIZED_SKETCH),
-                            modified_filepath)
-            svg = svgutils.transform.fromfile(modified_filepath)
-            modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
-            return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
-        if PROJ_TYPE == "orthoSketchProject":
-            shutil.copyfile (os.path.join(USER_SESSIONS_DIR,VECTORIZED_SKETCH),output_file_path)
-            shutil.copyfile(os.path.join(USER_SESSIONS_DIR, VECTORIZED_SKETCH), modified_filepath)
-            modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
-            return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': "",
-                               'svgWidth': ""})
-
-    #else:
-    try:
-        """ load image from uploaded folder"""
-        img2 = cv2.imread(uploaded_filepath)
-
-        """Save the recognized objects as svg in the output and modified folders"""
-        print("Object Detection STARTED...")
-        classified_strokes = cc.completeClassification(img2, output_file_path)
-        svgstring = cc.strokesToSVG(classified_strokes,"abc", img2, output_file_path)
-        #print("svgString...:",svgstring)
-        print("Object Detection END")
-        svg = svgutils.transform.fromstring(svgstring)
-        """ write the SVG to modified_filepath  as well as in the output_file_path """
-        svg.save(modified_filepath)
-
-        svg.save(output_file_path)
-        # originalSVG = svgutils.compose.SVG(svg_file_path)
-        # originalSVG.move(0, 0)
-
-        h = int(svg.height)
-        w = int(svg.width)
-
-        # scaleFact = 800/w
-        # print (scaleFact)
-        # scaledSVG = originalSVG.scale(scaleFact)
-        # newY = float(scaleFact*float(svg.height))
-        # newX = float(scaleFact*float(svg.width))
-        # figure = svgutils.compose.Figure(newY, newX, originalSVG)
-        #print("h and w of svg..:",h,w)
-        #newY = 6586
-        #newX = 10023
-        # modifiy the path to relative path for front-end
+    #if app.debug:
+        # if PROJ_TYPE =="plainSketchProject":
+        #     shutil.copyfile(os.path.join("preRunSessions","Mailua_Ranch_Map01.png","output",VECTORIZED_SKETCH),output_file_path)
+        #     shutil.copyfile(os.path.join("preRunSessions", "Mailua_Ranch_Map01.png", "output", VECTORIZED_SKETCH),
+        #                     modified_filepath)
+        #     svg = svgutils.transform.fromfile(modified_filepath)
+        #     modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+        #     return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
+    if PROJ_TYPE == "orthoSketchProject":
+        shutil.copyfile (os.path.join(USER_SESSIONS_DIR,VECTORIZED_SKETCH),output_file_path)
+        shutil.copyfile(os.path.join(USER_SESSIONS_DIR, VECTORIZED_SKETCH), modified_filepath)
         modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+        return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': "",
+                           'svgWidth': ""})
 
-        return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': h, 'svgWidth': w})
+    else:
+        try:
+            """ load image from uploaded folder"""
+            img2 = cv2.imread(uploaded_filepath)
 
-    except IOError as ioe:
-        print("problem in Reading original Image from loaded DIR function: /processSketchMap..\n", ioe)
-        return json.dumps({"error": ioe.__dict__})
+            """Save the recognized objects as svg in the output and modified folders"""
+            print("Object Detection STARTED...")
+            classified_strokes = cc.completeClassification(img2, output_file_path)
+            svgstring = cc.strokesToSVG(classified_strokes,"abc", img2, output_file_path)
+            #print("svgString...:",svgstring)
+            print("Object Detection END")
+            svg = svgutils.transform.fromstring(svgstring)
+            """ write the SVG to modified_filepath  as well as in the output_file_path """
+            svg.save(modified_filepath)
+
+            svg.save(output_file_path)
+            # originalSVG = svgutils.compose.SVG(svg_file_path)
+            # originalSVG.move(0, 0)
+
+            h = int(svg.height)
+            w = int(svg.width)
+
+            # scaleFact = 800/w
+            # print (scaleFact)
+            # scaledSVG = originalSVG.scale(scaleFact)
+            # newY = float(scaleFact*float(svg.height))
+            # newX = float(scaleFact*float(svg.width))
+            # figure = svgutils.compose.Figure(newY, newX, originalSVG)
+            #print("h and w of svg..:",h,w)
+            #newY = 6586
+            #newX = 10023
+            # modifiy the path to relative path for front-end
+            modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+
+            return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': h, 'svgWidth': w})
+
+        except IOError as ioe:
+            print("problem in Reading original Image from loaded DIR function: /processSketchMap..\n", ioe)
+            return json.dumps({"error": ioe.__dict__})
 
 
 """
@@ -1336,27 +1336,28 @@ def save_PnS ():
                                  sketch_svg_file,
                                  modified_sketch_svg_file,
                                  sketch_qcn]
-        for file in sketchMapRelatedFiles:
-            if os.path.exists(file):
+        for file1 in sketchMapRelatedFiles:
+            if os.path.exists(file1):
                 #fileName = os.path.basename(file)
-                fileName = get_fileName_with_prefix(file,os.path.basename(project_files_path),SUB_PROJ_NAME)
-                #name, ext = os.path.splitext(file)
+                fileName = get_fileName_with_prefix(file1,os.path.basename(project_files_path),SUB_PROJ_NAME)
+                print("get_fileName_with_prefix related dock",fileName)
                 fileType = fileName
-                resp = post_related_files_to_PnS_ADocs (file,fileType,PnS_PROJ_ID,SPATIALSOURCE_SKETCH_UID )
-
+                resp = post_related_files_to_PnS_ADocs (file1,fileType,PnS_PROJ_ID,SPATIALSOURCE_SKETCH_UID )
+                print("posting related file to PnS_addttionalDOC-sketch",resp)
 
         baseMapRelatedFiles = [matches_file,
                                modified_base_map,
                                geoReferenced_sketch_matches_file,
                                tenure_record_file,
                                baseMap_qcn ]
-        for file in baseMapRelatedFiles:
-            if os.path.exists(file):
-                fileName = get_fileName_with_prefix(file,os.path.basename(project_files_path),SUB_PROJ_NAME)
+        for file2 in baseMapRelatedFiles:
+            if os.path.exists(file2):
+                fileName = get_fileName_with_prefix(file2,os.path.basename(project_files_path),SUB_PROJ_NAME)
                 #fileName = os.path.basename(file)
                 #name, ext = os.path.splitext(fileName)
                 fileType = fileName
-                resp = post_related_files_to_PnS_ADocs(file, fileType, PnS_PROJ_ID, SPATIALSOURCE_BASE_UID)
+                resp = post_related_files_to_PnS_ADocs(file2, fileType, PnS_PROJ_ID, SPATIALSOURCE_BASE_UID)
+                print("posting related file to PnS_addttionalDOC-basemap", resp)
         return "Data has been Pushed to PnS platform successfully!"
     except PnSError as e:
         print("Problem in pushing SmartSkeMa project data to PnS platform")
@@ -1395,7 +1396,8 @@ def download_project_items_from_PnS():
     PROJ_TYPE_SUB_PROJ_NAME = request.form.get('sub_project_name')
     project_files_path = path_to_project(request.form)
 
-    print("path_to_project", project_files_path)
+    print("path_to_project in download", project_files_path)
+    print("PROJ_TYPE_SUB_PROJ_NAME in download", PROJ_TYPE_SUB_PROJ_NAME)
     resp = get_projects_items_from_PnS(pns_proj_id=PnS_PROJ_ID,
                                      user_session_dir=USER_SESSIONS_DIR,
                                      proj_dir_path = project_files_path,
@@ -1443,11 +1445,12 @@ def render_downloaded_files_on_client():
     fileList = []
     for file in downloaded_files:
         if os.path.exists(file):
-            print(file)
+            print("file is here ",file)
             fileContent = ""
             file_rel = os.path.relpath(file, SMARTSKEMA_PATH)
             fileBaseName = os.path.basename(file)
             name, ext = os.path.splitext(file)
+            print("name",name,ext)
             if ext == ".png":
                 img = cv2.imread(file, -1)
                 if img is not None:
