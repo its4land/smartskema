@@ -1,0 +1,193 @@
+{% extends 'layout_SmartSkeMa.html'%}
+<!--{{ JSGlue.include() }}-->
+{% block body %}
+
+<<<<<<< HEAD
+<div >
+    <div>
+        {% include "includes/toolTip.html" %}
+        {% include "contact.html" %}
+        {% include "editor.html" %}
+
+
+=======
+                             </label>
+
+                         </div>
+                     </li>-->
+
+                    <li class="nav-item dropdown active">
+                        <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="align"
+                           role="button"
+                           aria-haspopup="true" aria-expanded="true">
+                            Align-to-Geometry
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="Preview">
+                            <label class="dropdown-item">
+                                <img id="align_sm_img" src="../static/imgs/align_St_drawing.png" width="20" height="20"
+                                     alt="">
+                                <input id="align_sm" type="" style="display: none;"
+                                       onclick="align_Sketch_Map()"/><span>Align Sketch Map </span>
+                            </label>
+                            <label class="dropdown-item">
+                                <img id="align_mm_img" src="../static/imgs/align_St_drawing.png" width="20" height="20"
+                                     alt="">
+                                <input id="align_mm" type="" style="display: none;"
+                                       onclick="align_Satellite_Drawing()"/><span>Align Orthophoto Drawing </span>
+                            </label>
+                            <label class="dropdown-item">
+                                <img id="toggle_interaction_img" src="../static/imgs/toggle_interaction.png" width="25"
+                                     height="25"
+                                     alt="">
+                                <input id="toggle_interaction" type="" style="display: none;"
+                                       onclick="toggle_interaction()"/><span>Toggle Interaction</span>
+                            </label>
+
+                        </div>
+                    </li>
+
+                    <!--              <li class="nav-item active">
+                                      <a id="alignMap" class="nav-link" href="#" role="button"
+                                         aria-haspopup="true" aria-expanded="true" onclick="align_Maps()">Align Maps </a>
+                                  </li>
+              -->
+                    <!--        <li class="nav-item dropdown active">
+                                <a class="dropdown-toggle" class="nav-link" href="#" data-toggle="dropdown" id="tool"
+                                   role="button"
+                                   aria-haspopup="true" aria-expanded="true">
+                                    Tools
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="Preview">
+                                    <label class="dropdown-item">
+                                        <img id="editorimg" src="../static/imgs/tool.png" width="25" height="25" alt="">
+                                        <input id="editor" type="" style="display: none;"
+                                               onclick="visibleEditor()"/><span>Editor </span>
+
+                                    </label>
+
+                                </div>
+                            </li>-->
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">help <span class="sr-only"></span></a>
+                    </li>
+                </ul>
+
+                <div class="navbar">
+                    <a class="active" href=""><i class="fa fa-fw fa-upload"></i> Upload @ PnS</a>
+                    <a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
+                    <a class="active" href="#"><i class="fa fa-fw fa-home"></i>Home</a>
+                    <a class="active" href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+                    <a class="active" href="#"><i class="fa fa-fw fa-user"></i> Login</a>
+
+                </div>
+
+
+            </ul>
+        </nav>
+    </div>
+
+    <div id="editor_div" class=container style="visibility: hidden">
+        <div id="edit_div" class="w3-panel w3-round w3-card">
+            <div id="editor_tools_row" class="row">
+                <div id="editor_tools_col_left" class="col">
+
+                    <div id="svg_edit_bnts" style="overflow:hidden;visibility: hidden">
+                        <button id="draw_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Draw Geometry">
+                            <img id="draw_geom_img" src="../static/imgs/draw_geom.png" width="22" height="20">
+                        </button>
+                        <button id="edit_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Edit Geometry">
+                            <img id="edit_geom_img" src="../static/imgs/edit_geom.png" width="22" height="20">
+                        </button>
+                        <button id="join_endPoints" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Join EndPoints">
+                            <img id="join_endPoints_img" src="../static/imgs/join_endPoints.png" width="22" height="20">
+                        </button>
+                        <button id="split_endPoints" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Move Object">
+                            <img id="split_endPoints_img" src="../static/imgs/split_endPoints.png" width="20"
+                                 height="20">
+                        </button>
+                        <button id="delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Delete">
+                            <img id="delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20">
+                        </button>
+                        <button id="save_edits" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Save Edits"  width="20" height="20">
+                            <i class="fa fa-save w3-large w3-text-black" ></i><!--img id="delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20"-->
+                        </button>
+                    </div>
+                    <!-- div for ladm interaction buttons-->
+                    <div id="ladm_interaction_bnts" style="visibility: hidden">
+                        <button id="ladm_interaction_for_RRR_bnt" type="button" class="btn btn-outline-info"
+                                onclick="ladm_interaction_for_RRR()">Add RRRs
+                        </button>
+                        <button id="nonSpatial_query_processor_bnt" type="button" class="btn btn-outline-info"
+                                onclick="nonSpatial_query_processor()">Non-spatial Query
+                        </button>
+                        <button id="spatial_query_processor_bnt" type="button" class="btn btn-outline-info"
+                                onclick="spatial_query_processor()">Spatial Query
+                        </button>
+                        <button id="reasoner_query_spatial_bnt" type="button" class="btn btn-outline-info"
+                                onclick="reasoner_process_spatial_queries()">Reasoner
+                        </button>
+                    </div>
+                </div>
+                <div id="editor_tools_col_right" class="col">
+                    <!-- div for geoJson interaction buttons-->
+                    <div id="json_edit_bnts" align="right" style="visibility: hidden">
+                        <button id="json_draw_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Draw Geometry" onclick="">
+                            <img id="json_draw_geom_img" src="../static/imgs/draw_geom.png" width="22" height="20">
+                        </button>
+                        <button id="json_edit_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Edit Geometry">
+                            <img id="json_edit_geom_img" src="../static/imgs/edit_geom.png" width="22" height="20">
+                        </button>
+                        <button id="json_join_endPoints" type="button" class="btn btn-outline-info"
+                                data-toggle="tooltip"
+                                data-placement="bottom" title="Join EndPoints">
+                            <img id="json_join_endPoints_img" src="../static/imgs/join_endPoints.png" width="22"
+                                 height="20">
+                        </button>
+                        <button id="json_split_endPoints" type="button" class="btn btn-outline-info"
+                                data-toggle="tooltip"
+                                data-placement="bottom" title="Move Object">
+                            <img id="json_split_endPoints_img" src="../static/imgs/split_endPoints.png" width="20"
+                                 height="20">
+                        </button>
+                        <button id="json_delete_geom" type="button" class="btn btn-outline-info" data-toggle="tooltip"
+                                data-placement="bottom" title="Delete">
+                            <img id="json_delete_geom_image" src="../static/imgs/delelte.png" width="20" height="20">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+>>>>>>> editorPlusGeocoords
+    </div>
+    <div id="w3_container_div" class="container-fluid">
+
+        <table id="main_table" class="table">
+
+            <tr>
+                <td id="sketchmapplaceholder" style="position: relative;padding: auto">
+
+                </td>
+                <td id="divider" class="vl" style="position: relative">
+                </td>
+
+                <td id="metricmapplaceholder" style="position: relative;padding: auto">
+
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+    {% include "includes/otherHiddenDivs.html" %}
+
+</div>
+{% endblock%}
+

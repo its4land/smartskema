@@ -186,10 +186,10 @@ std_calculi = {
 weights = {
     'RCC8': 1,
     'RCC11': 0.8,
-    'LEFT_RIGHT': 0.9,
+    'LEFT_RIGHT': 1,
     'ADJACENCY': 0.8,
-    'REL_DIST': 0.5,
-    'REGION_STAR_VARS': 0.9
+    'REL_DIST': 0.7,
+    'REGION_STAR_VARS': 0.001
 }
 
 

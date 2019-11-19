@@ -77,6 +77,7 @@ ALIGNED_RESULT = "alignedResult.json"
 app = Flask(__name__)
 
 
+
 """
 This belongs to the utils modules but is here for quickly constructing directory/file paths from path lists
 """
@@ -96,19 +97,19 @@ def path_to_project(d):
     PnS_PROJ_ID =  d.get("sessID")
     PROJ_TYPE = d.get("projectType")
     print("PnS_PROJ_Mode",PnS_PROJ_Mode)
-
     if PnS_PROJ_Mode == True:
-        #PnS_PROJ_ID = os.getenv("I4L_PROJECTUID")
-        #if PnS_PROJ_ID == None:
-         #   PnS_PROJ_ID = "4da0d7ad-952d-4308-a7f4-7ff1dc8672d4"
+
+        PnS_PROJ_ID = os.getenv("I4L_PROJECTUID")
+        if PnS_PROJ_ID == None:
+            PnS_PROJ_ID = "4da0d7ad-952d-4308-a7f4-7ff1dc8672d4"
         temp = PROJ_TYPE_SUB_PROJ_NAME.split(":")
         PROJ_TYPE = ":".join(temp[:1])
         SUB_PROJ_NAME = ":".join(temp[1:])
         print("i am comming PnS_Proj_MODE", os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE, SUB_PROJ_NAME))
         return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE, SUB_PROJ_NAME)
     else:
-        print("i am in SmartSkeMa Proj_Mode",os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID,PROJ_TYPE))
-        return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID,PROJ_TYPE)
+        print("i am in SmartSkeMa Proj_Mode",os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE))
+        return os.path.join(USER_SESSIONS_DIR, PnS_PROJ_ID, PROJ_TYPE)
 
 
 
@@ -150,7 +151,7 @@ def get_session_id():
         print("problem in createing session..")
 
     # print(url_for('.smartSkeMa'))
-    print("generated session ID - now returning!", PnS_PROJ_ID)
+    #print("generated session ID - now returning!")
     return PnS_PROJ_ID  # redirect("dashboard.html", sessId=sess_id)
 
 
@@ -502,8 +503,8 @@ def get_tenure_record():
                             rrrs = relation["rrrs"]
 
                     return json.dumps([{"Record no.": record_no, "Spatial Source": spatial_source,
-                                       "Feature ID": feat_id, "Feature Type": feat_type,
-                                       "Party": party,"Right": ownership,  "Condition": rrrs,"Aligned Object":matched_feat}])
+                                       "Feature ID": feat_id, "Feature Type": feat_type,"Aligned Object":matched_feat,
+                                       "Party": party,"Right": ownership,  "Condition": rrrs}])
                 else:
                        return "Tenure record not found"
         else:
@@ -734,21 +735,23 @@ def uploadSketchMap():
     try:
 
         #comment out if using full alignment in debug mode
-
-        # if app.debug:
-        #     #copy folder with fileName to currentUserSession/projectType
-        #     preRunFiles = os.path.join("preRunSessions", imageFileName)
-        #     try:
-        #         #print("copying from preRun", project_files_path)
-        #         shutil.rmtree(project_files_path, ignore_errors=False, onerror=None)
-        #         shutil.copytree(preRunFiles, project_files_path)
-        #     # Directories are the same
-        #     except shutil.Error as e:
-        #         print('Directory not copied. Error: %s' % e)
-        #     # Any error saying that the directory doesn't exist
-        #     except OSError as e:
-        #         print('Directory not copied. Error: %s' % e)
-
+        """
+        if app.debug:
+            
+          
+             #copy folder with fileName to currentUserSession/projectType
+            preRunFiles = os.path.join("preRunSessions", imageFileName)
+            try:
+                #print("copying from preRun", project_files_path)
+                shutil.rmtree(project_files_path, ignore_errors=False, onerror=None)
+                shutil.copytree(preRunFiles, project_files_path)
+            # Directories are the same
+            except shutil.Error as e:
+                print('Directory not copied. Error: %s' % e)
+            # Any error saying that the directory doesn't exist
+            except OSError as e:
+                print('Directory not copied. Error: %s' % e)
+                """
         #else:
         if os.path.exists(upload_filepath):
             os.remove(upload_filepath)
@@ -832,46 +835,6 @@ def uploadBaseMap():
 
     return ""
 
-"""
-    - download baseMap geometries from PnS platform 
-"""
-
-@app.route("/download_MetricMap_from_pnS",methods = ["POST"])
-def download_MetricMap_from_pnS():
-    global MODIF_DIR_PATH
-    global UPLOADED_DIR_PATH
-    global VECTOR_BASEMAP
-
-    project_files_path = path_to_project(request.form)
-    upload_filepath = os.path.join(project_files_path, UPLOADED_DIR_PATH, VECTOR_BASEMAP)
-    modified_filepath = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)
-
-    boundingBox = "35,-1,37,-1,37,-3,35,-3,35,-1"
-
-    baseMap_json_content = get_metric_map_features(boundingBox)
-    if baseMap_json_content is not None:
-        try:
-             if os.path.exists(upload_filepath):
-                 os.remove(upload_filepath)
-             f = open(upload_filepath, "w")
-             f.write(json.dumps(baseMap_json_content, indent=4))
-             f.close()
-
-             if os.path.exists(modified_filepath):
-                 os.remove(modified_filepath)
-             f = open(modified_filepath, "w")
-             f.write(json.dumps(baseMap_json_content, indent=4))
-             f.close()
-
-        except IOError:
-             return json.dumps({"error": IOError})
-
-        modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
-        baseMap_path = Path(modified_filepath_relative)
-        return json.dumps({"baseMapPath":baseMap_path.as_posix(),"baseMapContents": baseMap_json_content})
-    else:
-        return json.dumps({"error": IOError})
-
 
 """
     - process sketch map
@@ -884,8 +847,6 @@ def processSketchMap():
     global INPUT_RASTER_SKETCH
     global VECTORIZED_SKETCH
     global SMARTSKEMA_PATH
-    global PROJ_TYPE
-    global USER_SESSIONS_DIR
 
     project_files_path = path_to_project(request.args)
     uploaded_filepath = os.path.join(project_files_path, UPLOADED_DIR_PATH, INPUT_RASTER_SKETCH)
@@ -893,62 +854,60 @@ def processSketchMap():
     modified_filepath = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
 
 
+<<<<<<< HEAD
     #comment out if using full alignment in debug mode
+=======
+    """ comment out if using full alignment in debug mode """
+    if app.debug:
+        svg = svgutils.transform.fromfile(modified_filepath)
+        print("returned: ", json.dumps({'svgPath': Path(modified_filepath).as_posix(), 'svgHeight': int(svg.height), 'svgWidth': int(svg.width)}))
+        return json.dumps({'svgPath': Path(modified_filepath).as_posix(), 'svgHeight': int(svg.height), 'svgWidth': int(svg.width)})
+>>>>>>> editorPlusGeocoords
 
     #if app.debug:
-        # if PROJ_TYPE =="plainSketchProject":
-        #     shutil.copyfile(os.path.join("preRunSessions","Mailua_Ranch_Map01.png","output",VECTORIZED_SKETCH),output_file_path)
-        #     shutil.copyfile(os.path.join("preRunSessions", "Mailua_Ranch_Map01.png", "output", VECTORIZED_SKETCH),
-        #                     modified_filepath)
-        #     svg = svgutils.transform.fromfile(modified_filepath)
-        #     modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
-        #     return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
-    if PROJ_TYPE == "orthoSketchProject":
-        shutil.copyfile (os.path.join(USER_SESSIONS_DIR,VECTORIZED_SKETCH),output_file_path)
-        shutil.copyfile(os.path.join(USER_SESSIONS_DIR, VECTORIZED_SKETCH), modified_filepath)
+     #    svg = svgutils.transform.fromfile(modified_filepath)
+      #   modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
+       #  return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': float(svg.height), 'svgWidth': float(svg.width)})
+
+    #else:
+    try:
+        """ load image from uploaded folder"""
+        img2 = cv2.imread(uploaded_filepath)
+
+        """Save the recognized objects as svg in the output and modified folders"""
+        print("Object Detection STARTED...")
+        classified_strokes = cc.completeClassification(img2, output_file_path)
+        svgstring = cc.strokesToSVG(classified_strokes,"abc", img2, output_file_path)
+        #print("svgString...:",svgstring)
+        print("Object Detection END")
+        svg = svgutils.transform.fromstring(svgstring)
+        """ write the SVG to modified_filepath  as well as in the output_file_path """
+        svg.save(modified_filepath)
+
+        svg.save(output_file_path)
+        # originalSVG = svgutils.compose.SVG(svg_file_path)
+        # originalSVG.move(0, 0)
+
+        h = int(svg.height)
+        w = int(svg.width)
+
+        # scaleFact = 800/w
+        # print (scaleFact)
+        # scaledSVG = originalSVG.scale(scaleFact)
+        # newY = float(scaleFact*float(svg.height))
+        # newX = float(scaleFact*float(svg.width))
+        # figure = svgutils.compose.Figure(newY, newX, originalSVG)
+        #print("h and w of svg..:",h,w)
+        #newY = 6586
+        #newX = 10023
+        # modifiy the path to relative path for front-end
         modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
-        return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': "",
-                           'svgWidth': ""})
 
-    else:
-        try:
-            """ load image from uploaded folder"""
-            img2 = cv2.imread(uploaded_filepath)
+        return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': h, 'svgWidth': w})
 
-            """Save the recognized objects as svg in the output and modified folders"""
-            print("Object Detection STARTED...")
-            classified_strokes = cc.completeClassification(img2, output_file_path)
-            svgstring = cc.strokesToSVG(classified_strokes,"abc", img2, output_file_path)
-            print("svgString...:",svgstring)
-            print("Object Detection END")
-            svg = svgutils.transform.fromstring(svgstring)
-            """ write the SVG to modified_filepath  as well as in the output_file_path """
-            svg.save(modified_filepath)
-
-            svg.save(output_file_path)
-            # originalSVG = svgutils.compose.SVG(svg_file_path)
-            # originalSVG.move(0, 0)
-
-            h = int(svg.height)
-            w = int(svg.width)
-
-            # scaleFact = 800/w
-            # print (scaleFact)
-            # scaledSVG = originalSVG.scale(scaleFact)
-            # newY = float(scaleFact*float(svg.height))
-            # newX = float(scaleFact*float(svg.width))
-            # figure = svgutils.compose.Figure(newY, newX, originalSVG)
-            #print("h and w of svg..:",h,w)
-            #newY = 6586
-            #newX = 10023
-            # modifiy the path to relative path for front-end
-            modified_filepath_relative = os.path.relpath(modified_filepath, SMARTSKEMA_PATH)
-
-            return json.dumps({'svgPath': Path(modified_filepath_relative).as_posix(), 'svgHeight': h, 'svgWidth': w})
-
-        except IOError as ioe:
-            print("problem in Reading original Image from loaded DIR function: /processSketchMap..\n", ioe)
-            return json.dumps({"error": ioe.__dict__})
+    except IOError as ioe:
+        print("problem in Reading original Image from loaded DIR function: /processSketchMap..\n", ioe)
+        return json.dumps({"error": ioe.__dict__})
 
 
 """
@@ -972,9 +931,9 @@ def align_plain_sketch_map():
     #print(matches_file_path)
 
     """ comment out if using full alignment in debug mode """
-    #if app.debug:
-     #   matches_file_path = os.path.join(USER_SESSIONS_DIR, "matches.json")
-      #  return debug_align_plain_sketch(matches_file_path)
+    if app.debug:
+        matches_file_path = os.path.join(USER_SESSIONS_DIR, "matches.json")
+        return debug_align_plain_sketch(matches_file_path)
 
     svg_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTORIZED_SKETCH)
     geojson_file_path = os.path.join(project_files_path, MODIF_DIR_PATH, VECTOR_BASEMAP)
@@ -1061,10 +1020,7 @@ def align_plain_sketch_map():
         )
 
         # matcher = SpecMatch(sketch_map_size, similarity_matrix)
-        sm_ft_list = [[f['ssm_id'], f['feat_type']] for f in qualified_sketch_map['features']]
-        mm_ft_list = [[f['ssm_id'], f['feat_type']] for f in qualified_metric_map['features']]
-
-        matcher = SpecCenScore(similarity_matrix, sketch_map_size, sm_ft_list, mm_ft_list)
+        matcher = SpecCenScore(similarity_matrix, sketch_map_size)
 
         matchdict = {}  # dictionary with SM_ssm_id : MM_ssm_id
 
@@ -1147,6 +1103,8 @@ def align_orthophoto_sketch_map():
         # with io.open(loaded_GCP_File_name, 'r+') as file:
         #     loaded_GCP_File = json.loads(file.read())
         #     print("GCPs:",loaded_GCP_File)
+
+        print("GCP file:", gcp_file_name)
         geo_data_properties, geo_data = load_geo(read_map_data_from_path(gcp_file_name, "geojson"), "geojson")
         svg_data_properties, svg_data = load_svg(read_map_data_from_path(svg_file_path, "svg"), "svg")
 
@@ -1163,6 +1121,11 @@ def align_orthophoto_sketch_map():
     # pair up the gcps
     svg_gcps = [d for d in svg_data if d['attributes']['feat_type'] == 'gcp']
     geo_gcps = [d for d in geo_data if d['attributes']['feat_type'] == 'gcp']
+
+    print('svg_gcps', svg_gcps)
+    print('geo_data', geo_data)
+    print('geo_gcps', geo_gcps)
+
     # svg_feature_data = svg_data  # [d for d in svg_data if d['attributes']['feat_type']]
 
     for d in svg_data:
@@ -1176,6 +1139,9 @@ def align_orthophoto_sketch_map():
 
     x_coordinate_data_input = np.array([ps.coords[:][0] for (ps, pg) in point_pairs])
     y_coordinate_data_input = np.array([pg.coords[:][0] for (ps, pg) in point_pairs])
+
+    print(x_coordinate_data_input)
+    print(y_coordinate_data_input)
 
     if len(svg_gcps) < 6:
         reg = linear_regression()
@@ -1310,12 +1276,12 @@ def save_PnS ():
     tenure_record_file = os.path.join(project_files_path,OUTPUT_DIR_PATH,TENURE_RECORD_FILE)
     approx_tile_file = os.path.join(project_files_path, OUTPUT_DIR_PATH, APROX_TILE)
 
-    # if os.path.exists(upladed_sketch_original):
-    #     upladed_sketch_original = change_original_sketchfile_name(project_files_path,SUB_PROJ_NAME)
-    # if os.path.exists(reduced_raster_sketch):
-    #     reduced_raster_sketch = change_reduced_sketchfile_name(project_files_path,SUB_PROJ_NAME)
-    #
-    # print(upladed_sketch_original,reduced_raster_sketch)
+    if os.path.exists(upladed_sketch_original):
+        upladed_sketch_original = change_original_sketchfile_name(project_files_path,SUB_PROJ_NAME)
+    if os.path.exists(reduced_raster_sketch):
+        reduced_raster_sketch = change_reduced_sketchfile_name(project_files_path,SUB_PROJ_NAME)
+
+    print(upladed_sketch_original,reduced_raster_sketch)
     try:
         files = [upladed_sketch_original,uploaded_base_map]
         for file in files:
@@ -1339,28 +1305,27 @@ def save_PnS ():
                                  sketch_svg_file,
                                  modified_sketch_svg_file,
                                  sketch_qcn]
-        for file1 in sketchMapRelatedFiles:
-            if os.path.exists(file1):
+        for file in sketchMapRelatedFiles:
+            if os.path.exists(file):
                 #fileName = os.path.basename(file)
-                fileName = get_fileName_with_prefix(file1,os.path.basename(project_files_path),SUB_PROJ_NAME)
-                print("get_fileName_with_prefix related dock",fileName)
+                fileName = get_fileName_with_prefix(file,os.path.basename(project_files_path),SUB_PROJ_NAME)
+                #name, ext = os.path.splitext(file)
                 fileType = fileName
-                resp = post_related_files_to_PnS_ADocs (file1,fileType,PnS_PROJ_ID,SPATIALSOURCE_SKETCH_UID )
-                print("posting related file to PnS_addttionalDOC-sketch",resp)
+                resp = post_related_files_to_PnS_ADocs (file,fileType,PnS_PROJ_ID,SPATIALSOURCE_SKETCH_UID )
+
 
         baseMapRelatedFiles = [matches_file,
                                modified_base_map,
                                geoReferenced_sketch_matches_file,
                                tenure_record_file,
                                baseMap_qcn ]
-        for file2 in baseMapRelatedFiles:
-            if os.path.exists(file2):
-                fileName = get_fileName_with_prefix(file2,os.path.basename(project_files_path),SUB_PROJ_NAME)
+        for file in baseMapRelatedFiles:
+            if os.path.exists(file):
+                fileName = get_fileName_with_prefix(file,os.path.basename(project_files_path),SUB_PROJ_NAME)
                 #fileName = os.path.basename(file)
                 #name, ext = os.path.splitext(fileName)
                 fileType = fileName
-                resp = post_related_files_to_PnS_ADocs(file2, fileType, PnS_PROJ_ID, SPATIALSOURCE_BASE_UID)
-                print("posting related file to PnS_addttionalDOC-basemap", resp)
+                resp = post_related_files_to_PnS_ADocs(file, fileType, PnS_PROJ_ID, SPATIALSOURCE_BASE_UID)
         return "Data has been Pushed to PnS platform successfully!"
     except PnSError as e:
         print("Problem in pushing SmartSkeMa project data to PnS platform")
@@ -1399,8 +1364,7 @@ def download_project_items_from_PnS():
     PROJ_TYPE_SUB_PROJ_NAME = request.form.get('sub_project_name')
     project_files_path = path_to_project(request.form)
 
-    print("path_to_project in download", project_files_path)
-    print("PROJ_TYPE_SUB_PROJ_NAME in download", PROJ_TYPE_SUB_PROJ_NAME)
+    print("path_to_project", project_files_path)
     resp = get_projects_items_from_PnS(pns_proj_id=PnS_PROJ_ID,
                                      user_session_dir=USER_SESSIONS_DIR,
                                      proj_dir_path = project_files_path,
@@ -1448,12 +1412,11 @@ def render_downloaded_files_on_client():
     fileList = []
     for file in downloaded_files:
         if os.path.exists(file):
-            print("file is here ",file)
+            print(file)
             fileContent = ""
             file_rel = os.path.relpath(file, SMARTSKEMA_PATH)
             fileBaseName = os.path.basename(file)
             name, ext = os.path.splitext(file)
-            print("name",name,ext)
             if ext == ".png":
                 img = cv2.imread(file, -1)
                 if img is not None:
@@ -1476,4 +1439,4 @@ def render_downloaded_files_on_client():
 
     return json.dumps(fileList)
 if __name__ == '__main__':
-    app.run() #app.run(debug=False)
+    app.run(debug=True)

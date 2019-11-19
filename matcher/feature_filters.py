@@ -1,3 +1,5 @@
+import difflib
+
 # geometry type filter criteria
 FILTER_POINTS = 0
 FILTER_LINESTRINGS = 1
@@ -7,15 +9,28 @@ FILTER_POINTS_POLYGONS = 4
 FILTER_LINESTRINGS_POLYGONS = 5
 FILTER_ALL = 6
 
+def in_list(txt, lst, weak_compare):
+    thres = 1
+    if weak_compare:
+        thres = 0.8
+    for lst_entry in lst:
+        if similar_strings(txt, lst_entry, thres):
+            return True
+    return False
 
-def filter(data, filter_geoms=FILTER_ALL, type_list=[]):
+
+def similar_strings(seq1, seq2, thres):
+    return difflib.SequenceMatcher(a=seq1.lower(), b=seq2.lower()).ratio() >= thres
+
+
+def filter(data, filter_geoms=FILTER_ALL, type_list=[], weak_compare=False):
     # first extract the useful data - name, geometry_type, feature_type
     f_data = data
 
     try:
         # start with the attribute filter and then the names filter
         if len(type_list) != 0:
-            f_data = [d for d in f_data if d['attributes']['feat_type'] in type_list]
+            f_data = [d for d in f_data if in_list(d['attributes']['feat_type'], type_list, weak_compare)]
     except KeyError:
         print([d for d in f_data if 'feat_type' not in d['attributes']])
 

@@ -7,150 +7,6 @@ const MAP_TILE_DATA = 2
 
 const SVG_ELEMENT_TYPES = ['point', 'line', 'path', 'polyline', 'polygon', 'circle', 'ellipse', 'rect'];
 
-function geomToFlatPath(geom, svg) {
-    let num = Number;
-    let lineFunction = d3.line()
-                         .x(function(d) { return d.x; })
-                         .y(function(d) { return d.y; });
-
-    let svgDOM = geom.ownerSVGElement;
-    let consolidatedTransformMat = svgDOM.getScreenCTM().inverse().multiply(geom.getScreenCTM());
-    let scale_x = consolidatedTransformMat.a;
-    let scale_y = consolidatedTransformMat.d;
-
-    console.log(geom);
-
-    switch(geom.tagName.toLowerCase()) {
-
-    case 'path':
-      lineFunction.curve(d3.curveLinear);
-      geom = d3.select(geom).attr('transform', null).node().cloneNode(false);
-      svg.append(()=>geom);
-      break;
-
-    case 'rect':
-      lineFunction.curve(d3.curveLinearClosed);
-      x = geom.getAttribute("x");
-      y = geom.getAttribute("y");
-      h = geom.getAttribute("height");
-      w = geom.getAttribute("width");
-
-      d = [
-           {"x": x, "y": y},
-           {"x": x, "y": y + h},
-           {"x": x + w, "y": y + h},
-           {"x":x + w, "y": y}
-          ];
-
-      path = svg.append("path")
-                .attr("d", lineFunction(d))
-                .attr("geom_type", 'polygon')
-                .attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
-                .attr("feat_type", geom.getAttribute("feat_type") || "NA")
-                .attr("smart_skema_type", geom.getAttribute("smart_skema_type") || "NA")
-                .attr("name", geom.getAttribute("name") || "NA")
-                .attr("description", geom.getAttribute("description") || "NA")
-                .attr("hidden_", geom.getAttribute("hidden_") || "NA")
-                .attr('transform', null)
-                .classed(geom.getAttribute("class"), true)
-                .classed('polygon', true)
-                .node();
-      break;
-
-    case 'line':
-      lineFunction.curve(d3.curveLinear);
-      x1 = geom.getAttribute("x1");
-      y1 = geom.getAttribute("y1");
-      x2 = geom.getAttribute("x2");
-      y2 = geom.getAttribute("y2");
-
-      d = [
-           {"x":x1, "y":y1},
-           {"x":x2, "y":y2}
-          ];
-
-      geom = svg.append("path")
-                .attr("d", lineFunction(d))
-                .attr("geom_type", 'polyline')
-                .attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
-                .attr("feat_type", geom.getAttribute("feat_type") || "NA")
-                .attr("smart_skema_type", geom.getAttribute("smart_skema_type") || "NA")
-                .attr("name", geom.getAttribute("name") || "NA")
-                .attr("description", geom.getAttribute("description") || "NA")
-                .attr("hidden_", geom.getAttribute("hidden_") || "NA")
-                .attr('transform', null)
-                .classed(geom.getAttribute("class"), true)
-                .classed('polyline', true)
-                .node();
-      break;
-
-    case 'polyline':
-      lineFunction.curve(d3.curveLinear);
-      point_string = geom.getAttribute("points");
-      points = point_string.trim().split(/\s+/);
-      d = points.map((p, i) => {
-                                  coords = p.trim().split(/,/);
-                                  return {"x": num(coords[0]), "y": num(coords[1])};
-                               });
-
-      geom = svg.append("path")
-                .attr("d", lineFunction(d))
-                .attr("geom_type", 'polyline')
-                .attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
-                .attr("feat_type", geom.getAttribute("feat_type") || "NA")
-                .attr("smart_skema_type", geom.getAttribute("smart_skema_type") || "NA")
-                .attr("name", geom.getAttribute("name") || "NA")
-                .attr("description", geom.getAttribute("description") || "NA")
-                .attr("hidden_", geom.getAttribute("hidden_") || "NA")
-                .attr('transform', null)
-                .classed(geom.getAttribute("class"), true)
-                .classed('polyline', true)
-                .node();
-      break;
-
-    case 'polygon':
-      lineFunction.curve(d3.curveLinearClosed);
-      point_string = geom.getAttribute("points");
-      points = point_string.trim().split(/\s+/);
-      d = points.map((p, i) => {
-                                  coords = p.trim().split(/,/);
-                                  return {"x": num(coords[0]), "y": num(coords[1])};
-                               });
-
-      geom = svg.append("path")
-                .attr("d", lineFunction(d))
-                .attr("geom_type", 'polygon')
-                .attr("id", geom.getAttribute("id") || geom.getAttribute("feat_id"))
-                .attr("feat_type", geom.getAttribute("feat_type") || "NA")
-                .attr("smart_skema_type", geom.getAttribute("smart_skema_type") || "NA")
-                .attr("name", geom.getAttribute("name") || "NA")
-                .attr("description", geom.getAttribute("description") || "NA")
-                .attr("hidden_", geom.getAttribute("hidden_") || "NA")
-                .attr('transform', null)
-                .classed(geom.getAttribute("class"), true)
-                .classed('polygon', true)
-                .node();
-      break;
-    }
-
-    lineFunction.curve(null);
-
-    let pathData = geom.getPathData();
-    console.log(geom);
-
-    for (let i = 0; i < pathData.length; i++) {
-        let seg = pathData[i];
-        let [x, y] = seg.values;
-        if (x && y){
-            seg.values = [x*scale_x, y*scale_y];
-        }
-    }
-    geom.setPathData(pathData);
-    console.log(geom);
-    return geom;
-}
-
-
 var sketchMapDisplayManager = (function(){
     var sketchLoaded;
     var sketchCanvas;
@@ -184,9 +40,8 @@ var sketchMapDisplayManager = (function(){
         for (let k in layers){
             let vectorLayer = layers[k].selection;
             vectorLayer.selectAll("*").each((d, i, g) => {
-                let path = geomToFlatPath(g[i],svg);
-                //svg.append(() => path.cloneNode(false));
-            });
+                svg.append(() => g[i].cloneNode(false));
+            })
         }
 
         return svg.node();
@@ -323,8 +178,7 @@ var sketchMapDisplayManager = (function(){
 		fromLayer = layer(fromLayer);
 		toLayer = layer(toLayer);
 		let f = fromLayer.selection.select(()=>v).remove();
-		toLayer.selection.append(() => v);
-		return f.node();
+		toLayer.selection.append(()=>f.node());
 	}
 
     var layer = function(layerName) {
@@ -353,33 +207,9 @@ var sketchMapDisplayManager = (function(){
         return layer(layerName).selection;
     }
 
-/*
-
     var getVectorSelections = function(layerName) {
 
         return Object.keys(layers).map(k => layers[k].selection);
-    }
-
-*/
-
-    var getVectorSelections = function() {
-
-        return getVectorSelectionsExcept([]);
-    }
-
-    var getVectorSelectionsExcept = function() {
-
-        let args = [...arguments];
-        let vectorSelections = Object.keys(layers).reduce(function(accum, curr, i, arr){
-            if (!args.includes(curr)){
-                accum.push(layers[curr].selection);
-            }
-
-        }, []);
-
-        return vectorSelections? vectorSelections: [];
-
-        //return Object.keys(layers).map(k => layers[k].selection);
     }
 
     var removeVectorSelection = function(layerName) {
@@ -408,7 +238,6 @@ var sketchMapDisplayManager = (function(){
         getVectorSVG: getVectorAsSVG,
         getVectorLayer: getVectorSelection,
         getVectorLayers: getVectorSelections,
-        getVectorLayersExcept: getVectorSelectionsExcept,
 		moveVectorToLayer: moveVectorToLayer//PENDING
     }
 
@@ -424,7 +253,6 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
     var tileLayer = {};
     var zoom = d3.zoom().on("zoom", tileZoom);
     var zoomTransform;
-    var crs = {"type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4326" }};
     var tileLoad;
     var method = {
         getProjection : {
@@ -444,12 +272,6 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
 		toScreenCoordinates: {},
 		toGeoRefCoordinates: {}
     };
-
-    var bounds_scale = 1;
-    var translate_x = 0;
-    var translate_y = 0;
-    var center_x = 0;
-    var center_y = 0;
 //        tileLayer.getProjection = function(){};
 
     var init = function(refFormat) {
@@ -623,41 +445,36 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         return [center[0], center[1], 0, 0];
     }
 
-    var vectorLoad = async function(geojson, layerName){
+    var vectorLoad = function(geojson, layerName){
         let t = tileLayer;
-        let vectorLoaded = false;
+        let geoLayer = layer(layerName);
         let width = baseCanvas.attr("width");
         let height = baseCanvas.attr("height");
+        let translate_x = 0;
+        let translate_y = 0;
+        let center_x = 0;
+        let center_y = 0;
 
-        let geoLayer = layer(layerName, geojson);
         geoLayer.path.pointRadius(0.5);
         geoLayer.loading = true;
 
+        let scaled_bounds = geoLayer.path.bounds(geojson);
+        let center = geoLayer.path.centroid(geojson);
+        let map_width = scaled_bounds[1][0] - scaled_bounds[0][0];
+        let map_height = scaled_bounds[1][1] - scaled_bounds[0][1];
+        let map_center = [scaled_bounds[0][0] + map_width / 2, scaled_bounds[0][1] + map_height / 2
+                                                                                        + t.initialOffset];
+        let bounds_scale = Math.min(t.width / map_width, t.height / map_height);
+
+        centerAndTranslate = t.vectorCAT(center, map_center);
+        center_x = centerAndTranslate[0];
+        center_y = centerAndTranslate[1];
+        translate_x = centerAndTranslate[2];
+        translate_y = centerAndTranslate[3];
+
         let topo = topojson.topology({mapFeatures: geojson});
             topo = topojson.feature(topo, topo.objects.mapFeatures);
-
-        if (topo.features){
-            topo = topo.features;
-            // reset the projection
-            geoLayer.projection.scale(t.getProjection().scale());
-            geoLayer.projection.translate(t.getProjection().translate());
-
-            let scaled_bounds = geoLayer.path.bounds(geojson);
-            let center = geoLayer.path.centroid(geojson);
-            let map_width = scaled_bounds[1][0] - scaled_bounds[0][0];
-            let map_height = scaled_bounds[1][1] - scaled_bounds[0][1];
-            let map_center = [scaled_bounds[0][0] + map_width / 2, scaled_bounds[0][1] + map_height / 2
-                                                                                            + t.initialOffset];
-            bounds_scale = Math.min(t.width / map_width, t.height / map_height);
-
-            centerAndTranslate = t.vectorCAT(center, map_center);
-            center_x = centerAndTranslate[0];
-            center_y = centerAndTranslate[1];
-            translate_x = centerAndTranslate[2];
-            translate_y = centerAndTranslate[3];
-        } else {
-            topo = [topo];
-        }
+			topo = topo.features ? topo.features : [topo];
 
         geoLayer.selection.selectAll("path")
             .data(topo, function (a, b) {
@@ -672,30 +489,19 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
             .attr("class", function (d, i) {
                 return (topo[i].properties.feat_type || topo[i].properties.class)
             })
-            .attr("id", function (d, i) {
-                return (topo[i].properties.id || topo[i].properties.ssm_id || topo[i].properties.feat_id)
-            })
-            .attr("feat_type", function (d, i) {
-                return (topo[i].properties.feat_type || topo[i].properties.FType || topo[i].properties.ftype)
-            })
-            .attr("name", function (d, i) {
-                return (topo[i].properties.name || topo[i].properties.label || topo[i].properties.description || "NA")
-            })
-            .attr("description", function (d, i) {
-                return (topo[i].properties.description || topo[i].properties.name || topo[i].properties.label || "NA")
-            })
-            .attr("hidden_", function (d, i) {
-                return (topo[i].properties.hidden_ || "_")
+            .each((d, i, g) =>
+                    {
+                        Object.keys(topo[i].properties).forEach(
+                            (key) => g[i].setAttribute(key, topo[i].properties[key])
+                        );
+					if (!topo[i].properties.id) {g[i].setAttribute('id', topo[i].properties['ssm_id'])};
             });
 
         baseCanvas.call(zoom)
                   .call(zoom.transform, zoomTransform)
                   .call(zoom.translateBy, translate_x, translate_y)
                   .call(zoom.scaleBy, bounds_scale)
-                  .call(zoom.translateBy, -center_x, -center_y)
-                  .call(function(){vectorLoaded = true});
-
-        return new Promise((resolve, reject) => { if (vectorLoaded) {resolve(vectorLoaded)} else {reject(vectorLoaded)}});
+                  .call(zoom.translateBy, -center_x, -center_y);
     }
 
     method.vectorZoom.tms = function(transform, tiles) {
@@ -743,7 +549,7 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
 		return screenCoords.length === 0 ? [NaN, NaN] : layer(forLayer).projection.invert(screenCoords);
     };
 
-    var layer = function(layerName, geojson) {
+    var layer = function(layerName) {
         let geoLayer;
         let t = tileLayer;
 
@@ -754,9 +560,6 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         if (layers[layerName]) {
             geoLayer = layers[layerName];
         } else {
-            if (layerName ==="baseLayer") {
-                crs = geojson.crs;
-            }
             layers[layerName] = {
                                  selection: baseCanvas.select("#vector")
                                               .append("g")
@@ -812,7 +615,6 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
 
         if (e.type == "Z") {
             coords.pop();
-            coords.push(s);
         }
 		
 		switch (geojson.geometry.type){
@@ -831,82 +633,44 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         //   - apply projection.invert
         //   - apply the inverse transformation matrix of the consolidated transform matrix of the geometry
         //   - append the coordinate to coordinate list for the geojson object created.
-		
-        return geojson
-    }
+<<<<<<< HEAD
 
+        /**
+         * Retrieve every vector object from every svg as done in load vector maps.
+         *
+         **/
+        let svg = baseCanvas.node().cloneNode(false);
+        svg = d3.select(svg);
 
-    var getVectorLayerAsGeojson = function(l){
-        // setup the geojson object
-        let geojson = {
-			"type": "FeatureCollection",
-            "crs": crs,
-            "features": []
-        };
-
-        let vectorLayer = layer(l).selection;
-        vectorLayer.selectAll("path").each((d, i, g) => {
-            geojson.features.push(d);
-        });
-
-        return geojson;
-    }
-
-    var getVectorLayersAsGeojson = function(){
-        // setup the geojson object
-        let geojson = {
-			"type": "FeatureCollection",
-            "crs": crs,
-            "features": []
-        };
-
-        for (let k of Object.keys(layers)){
+        for (let k in layers){
             let vectorLayer = layers[k].selection;
-            vectorLayer.selectAll("path").each((d, i, g) => {
-                geojson.features.push(d);
-            })
+            vectorLayer.selectAll("*").each((d, i, g) => {
+                svg.append(() => g[i].cloneNode(false));
+        })
         }
 
-	    return geojson;
-	}
+        return svg.node();
+
+        //return geojson
+=======
+		
+        return geojson
+>>>>>>> editorPlusGeocoords
+    }
 	
 	var moveVectorToLayer = function(v, fromLayer, toLayer) {
-	    let fid = d3.select(v).attr("id");
 		let f = getVectorAsGeojson(v);
-		let fromLayerSel = layer(fromLayer).selection
-		    fromLayerSel.select(()=>v).remove();
-
-        let geojson = getVectorLayerAsGeojson(toLayer);
-            geojson.features.push(f);
-		    vectorLoad(geojson, toLayer);
-
-		let toLayerSel = layer(toLayer).selection
-
-		return toLayerSel.select("#"+fid).node();
+		layer(fromLayer).selection.select(()=>v).remove();
+		vectorLoad(f, toLayer);
 	}
 
     var getVectorSelection = function(layerName) {
         return layer(layerName).selection;
     }
 
-    var getVectorSelections = function() {
+    var getVectorSelections = function(layerName) {
 
-        return getVectorSelectionsExcept([]);
-    }
-
-    var getVectorSelectionsExcept = function() {
-
-        let args = [...arguments];
-        let vectorSelections = Object.keys(layers).reduce(function(accum, curr, i, arr){
-            if (!args.includes(curr)){
-                accum.push(layers[curr].selection);
-            }
-            return accum;
-        }, []);
-
-        return vectorSelections? vectorSelections: [];
-
-        //return Object.keys(layers).map(k => layers[k].selection);
+        return Object.keys(layers).map(k => layers[k].selection);
     }
 
     var removeVectorSelection = function(layerName) {
@@ -929,11 +693,9 @@ var baseMapDisplayManagerTemplate = (function(refFormat){
         getRaster: getRasterSelection,
         getVectorLayer: getVectorSelection,
         getVectorLayers: getVectorSelections,
-        getVectorLayersExcept: getVectorSelectionsExcept,
         zoom: zoomCallback,
         removeVectorLayer: removeVectorSelection,
         getVectorGeojson: getVectorAsGeojson,
-        getVectorLayersAsGeojson: getVectorLayersAsGeojson,
 		moveVectorToLayer: moveVectorToLayer //PENDING
         /*,
         rasterFromContent: loadSketchMapRasterFromContent, //PENDING

@@ -7,18 +7,21 @@ Last update : 19.09.18
 
 # from __future__ import print_function
 
+import heapq
 from time import time
-from scipy import sparse
 
 import numpy as np
 import scipy.linalg as linalg
-import heapq
+from scipy import sparse
+
+from matcher import similar_strings
 
 class SpecCenScore:
 
-    def __init__(self, ddarr, sketch_map_size):
+    def __init__(self, ddarr, sketch_map_size, sketch_map_feats, metric_map_feats):
         print('init')
-        self.slist,self.mlist = self.spectral(ddarr, sketch_map_size)
+        self.sketch_map_feats, self.metric_map_feats = sketch_map_feats, metric_map_feats
+        self.slist,self.mlist = self.spectral(ddarr, sketch_map_size, sketch_map_feats, metric_map_feats)
 
     def centrality_scores(self, X, alpha=0.85, max_iter=100, tol=1e-10):
         """Power iteration computation of the principal eigenvector
@@ -59,7 +62,7 @@ class SpecCenScore:
 
         return scores
 
-    def spectral(self,ddarr, sketch_map_size):
+    def spectral(self, ddarr, sketch_map_size, smfs, mmfs):
 
         eignres = linalg.eig(ddarr, right=True)
         eigval = eignres[0].astype(float)                        #copy_eigval is the 'x' in the paper, 1D array with size m*n && #astype() for removing the img part of the complex numbers
@@ -97,13 +100,17 @@ class SpecCenScore:
             maxind = np.where(scores == max5[0])[0][0]
             #print("Max = ", max5, " at index : ", maxind)
 
-            sm_feat_id = int(np.where(scores == max5[0])[0][0] / metric_map_size)
-            sm_feat_list.append(sm_feat_id)
-            mm_feat_id = np.where(scores == max5[0])[0][0] % metric_map_size
-            mm_feat_list.append(mm_feat_id)
+
+            sm_feat_id = int(maxind / metric_map_size)
+            mm_feat_id = maxind % metric_map_size
             # .append(np.where(scores == max5[9])[0][0] % metric_map_size)
             #print("sm_feat_id-",np.around(sm_feat_id,0))
             #print("mm_feat_id-",mm_feat_id)
+
+            if similar_strings(smfs[sm_feat_id][1], mmfs[mm_feat_id][1], 0.8):
+                sm_feat_list.append(sm_feat_id)
+                mm_feat_list.append(mm_feat_id)
+                X[maxind] = 1
 
             #reduce max score
             scores[maxind] = -1
@@ -119,7 +126,6 @@ class SpecCenScore:
                     scores[i] = -1
                     # if cnt < 10: print(i)
 
-            X[maxind] = 1
 
         #print("sm_feat_list-", np.around(sm_feat_list, 0))
         #print("mm_feat_list-",mm_feat_list)

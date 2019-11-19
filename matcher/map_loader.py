@@ -73,6 +73,7 @@ def load_map_qualify(mapID, map_data, data_format, map_type):
 
 
 def read_map_data_from_path(path, data_format):
+    print()
     if data_format.strip().lower() == 'svg'.lower():
         #print("SVG\n", path)
         data = svg2paths2(path)

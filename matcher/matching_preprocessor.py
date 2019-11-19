@@ -6,6 +6,7 @@ Created on Sun Jul  1 19:13:11 2018
 """
 import numpy as np
 import logging
+import difflib
 
 import matcher.qualitative_calculi as qc
 
@@ -34,6 +35,21 @@ def concept_distance(concept_1, concept_2, model):
 
 def concept_similarity(concept_1, concept_2, model=None):
     return 1 - concept_distance(concept_1, concept_2, model)
+
+
+def similar_strings(seq1, seq2, thres):
+    return string_similarity(seq1, seq2) > thres
+
+
+def string_similarity(seq1, seq2):
+    sim = difflib.SequenceMatcher(a=seq1.lower(), b=seq2.lower()).ratio()
+    return sim
+
+
+class string_distance:
+    def distance(self, seq1, seq2):
+        sim = string_similarity(seq1, seq2)
+        return 1 - sim
 
 
 def relation_distance_binary(relation_1, relation_2):
@@ -89,17 +105,17 @@ def compute_similarity_matrix(qualified_sketch_map, qualified_metric_map, sim_th
 
     num_pairs = sm_newfeats.shape[1] * mm_newfeats.shape[1]
     similarity_matrix = np.zeros(shape=(num_pairs, num_pairs), dtype=np.float32)
-
+    ftype_dist = string_distance()
     compatible_objects = []
     sm_object_interval = mm_newfeats.shape[1]
 
     for i in range(sm_newfeats.shape[1]):
         for j in range(mm_newfeats.shape[1]):
             pos = (i * sm_object_interval) + j
-            similarity_matrix[pos, pos] = concept_similarity(sm_newfeats[FEAT_TYPE, i], mm_newfeats[FEAT_TYPE, j])
+            similarity_matrix[pos, pos] = concept_similarity(sm_newfeats[FEAT_TYPE, i], mm_newfeats[FEAT_TYPE, j], ftype_dist)
             if threshold_simple(similarity_matrix[pos, pos], sim_threshold):
                 if sm_newfeats[FEAT_TYPE, i] != mm_newfeats[FEAT_TYPE, j]:
-                    print(sm_newfeats[FEAT_TYPE, i], "<==>",mm_newfeats[FEAT_TYPE, i])
+                    print(sm_newfeats[FEAT_TYPE, i], "<==>",mm_newfeats[FEAT_TYPE, j])
                     print("--")
                 compatible_objects.append(pos)
 

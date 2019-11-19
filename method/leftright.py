@@ -8,7 +8,7 @@ def qualify_left_right(data, **kwargs):
     arity = 2
 
     relata = ff.filter(data)
-    referents = ff.filter(relata, type_list=['river', 'road'])
+    referents = ff.filter(relata, type_list=['river', 'road'], weak_compare=True)
 
     for ref in referents:
         relata.remove(ref)

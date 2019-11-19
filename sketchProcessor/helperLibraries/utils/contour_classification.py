@@ -88,9 +88,10 @@ def completeClassification(image, svg_file_path):
     predictions = sd.detectSymbols(image, symbolType='stamp', method='t', filterColor='red')
     #print("predictions",predictions)
     beacons = sd.beaconCoordinates(predictions)
-    #print(beacons)
-    #if len(beacons)>0:
-    beaconsSVG = getBeacons(beacons, image)
+    print(beacons)
+    beaconsSVG = ""
+    if len(beacons)>0:
+        beaconsSVG = getBeacons(beacons, image)
     # Here we get rid of the symbols, clean and segmantate the sketch to obtain a clean image,
     # Contours are then extracted from this clean image
     contours = ss.segmentateSketch(image, 'skeleton')  #
@@ -153,7 +154,7 @@ def strokeToSVG(stroke, image, stroke_id='0'):
         internal += '" style="fill: rgb(' + str(color[2]) + ',' + str(color[1]) + ',' + str(color[0]) + ');' \
                                                                                                             ' stroke:rgb(' + str(
                 color[2]) + ',' + str(color[1]) + ',' + str(color[0]) + ');stroke-width:3"' \
-                                                                        ' id="' + stroke_id + '" smart_skema_type="' + name.lower() + '"  hidden_="" name="" description=""/>'
+                                                                        ' id="sm_' + stroke_id + '" smart_skema_type="' + name.lower() + '"  hidden_="" name="" description=""/>'
 
         #     internal += '(' + str(x) + ',' + str(y) + ') '
         #
@@ -180,7 +181,7 @@ def strokeToSVG(stroke, image, stroke_id='0'):
             internal += str(x) + ',' + str(y) + ' '
         internal += '" style="fill: rgb(' + str(color[2]) + ',' + str(color[1]) + ',' + str(color[0]) + ');' \
                     ' stroke:rgb(' + str(color[2]) + ',' + str(color[1]) + ',' + str(color[0]) + ');stroke-width:3"'\
-                    ' id="' + stroke_id + '" smart_skema_type="' + name.lower() + '"  hidden_="" name="" description=""/>'
+                    ' id="sm_' + stroke_id + '" smart_skema_type="' + name.lower() + '"  hidden_="" name="" description=""/>'
 
     elif name in ['Triangle']:
         hull = cv2.convexHull(contourTest)
@@ -194,7 +195,7 @@ def strokeToSVG(stroke, image, stroke_id='0'):
         internal += '" style="fill: rgb(' + str(color[2]) + ',' + str(color[1]) + ',' + str(color[0]) + ');' \
                                                                                                         'stroke:rgb(' + str(
             color[2]) + ',' + str(color[1]) + ',' + str(color[0]) + ');opacity:0.8;stroke-width:3"' \
-                                                                    ' id="' + stroke_id + '" smart_skema_type="' + 'boundary' + '"  hidden_="" name="" description=""/>'
+                                                                    ' id="sm_' + stroke_id + '" smart_skema_type="' + 'boundary' + '"  hidden_="" name="" description=""/>'
         #print('ADDED BOUNDARY TO SVG')
     elif name in ['Mountain', 'Marsh']:
         hull = cv2.convexHull(contourTest)
@@ -208,7 +209,7 @@ def strokeToSVG(stroke, image, stroke_id='0'):
             internal += str(x) + ',' + str(y) + ' '
         internal += '" style="fill: rgb(' + str(color[2]) + ',' + str(color[1]) + ',' + str(color[0]) + ');' \
                     'stroke:rgb(' + str(color[2]) + ',' + str(color[1]) + ',' + str(color[0]) + ');opacity:0.8;stroke-width:3"'\
-                    ' id="' + stroke_id + '" smart_skema_type="' + name.lower() + '"  hidden_="" name="" description=""/>'
+                    ' id="sm_' + stroke_id + '" smart_skema_type="' + name.lower() + '"  hidden_="" name="" description=""/>'
 
     else:
         internal += '<polyline points="'
@@ -218,7 +219,7 @@ def strokeToSVG(stroke, image, stroke_id='0'):
                 # #
             internal += str(x) + ',' + str(y) + ' '
         internal += '" style="fill:none;stroke:rgb(' + str(color[2]) + ',' + str(color[1]) + ',' + str(color[0]) + ');stroke-width:3"'\
-                    ' id="' + stroke_id + '" smart_skema_type="' + name.lower() + '"  hidden_="" name="" description=""/>'
+                    ' id="sm_' + stroke_id + '" smart_skema_type="' + name.lower() + '"  hidden_="" name="" description=""/>'
     return internal
 
 
