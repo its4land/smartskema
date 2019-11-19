@@ -179,13 +179,12 @@ def get_projects_items_from_PnS(**kwargs):
     spatialSource_list = []
     try:
         sub_proj_name = kwargs["sub_proj_name"]
+        print("sub_proj_name",sub_proj_name)
         response = requests.get(API_URL_PnS + "/projects/"+kwargs["pns_proj_id"]+"?embed=SpatialSources")
 
         if response.status_code ==200:
             resp_json = response.json()
             for i in resp_json['features']:
-                #print("\nPnS Item:")
-                #print(i)
                 if 'properties' in i:
                     if "SpatialSources" in i["properties"]:
                         spatialsource = i["properties"]["SpatialSources"]
@@ -198,7 +197,6 @@ def get_projects_items_from_PnS(**kwargs):
                                     contentItem = j["ContentItem"]
                                     spatialSource_ID = j["ObjectUUID"]
                                     spatialSource_list.append(spatialSource_ID)
-
                                     resp = get_and_save_contentItem(contentItem, contentDescription, kwargs)
 
                             else:
@@ -211,7 +209,9 @@ def get_projects_items_from_PnS(**kwargs):
 
 
             if len(spatialSource_list)>0:
+
                 resp = download_additional_documents(spatialSource_list,kwargs)
+                print(resp)
             else:
                 raise PnSError("No spatialsources found in the selected sub_project")
         else:
@@ -236,7 +236,7 @@ def get_and_save_contentItem(contentItem, desc,kwargs):
             #print("proj_type_dir_path", proj_type_dir_path)
 
         else:
-            proj_type_dir_path =  os.path.join(kwargs['proj_dir_path'],sub_subProj_type)
+            proj_type_dir_path =  kwargs['proj_dir_path']
 
 
         os.makedirs(proj_type_dir_path)
@@ -251,7 +251,7 @@ def get_and_save_contentItem(contentItem, desc,kwargs):
 
 
     location_list =desc.split(":")
-    #print(location_list)
+    #print("location_list",location_list)
     location = os.path.join(proj_type_dir_path,*location_list[3:])
     #print("locations",location)
 
@@ -264,7 +264,7 @@ def download_contentItem (contentID, location):
 
     #print("contentitem id ",contentID,location)
     resp = requests.get(API_URL_PnS+"/contentitems/"+contentID)
-    print(resp.status_code)
+
     try:
         with open(location, "wb") as file:
             file.write(resp.content)
@@ -277,12 +277,14 @@ def download_contentItem (contentID, location):
 def download_additional_documents(spatialSourceList,kwargs):
     try:
         for i in spatialSourceList:
+            print("i = spatialSourceList ",i)
             resp =  requests.get(API_URL_PnS+"/spatialsource/"+i+"?embed=AdditionalDocuments")
-            print(resp.status_code)
             if resp.status_code==200:
                 response = resp.json()
+                print("response for Additional doc",response)
                 if 'AdditionalDocuments' in response:
                     for doc in response["AdditionalDocuments"]:
+                        print("DOCs", doc)
                         if "ContentItem" in doc:
                             contentItem = doc["ContentItem"]
                             contentDescription = doc["Description"]
