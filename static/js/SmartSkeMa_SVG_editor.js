@@ -158,38 +158,43 @@ var svgEditor = (function () {
 //		d3.select("body").on("keypress", null);
 
 	var finalize = function() {
-	    removeVectorLayer
+        let layers = [rasterLayer, vectorLayer, drawingLayer, decoratorsLayer];
 
-	    img.on("click", null)
-		   .on("mouseover", null)
-		   .on("mouseout", null)
-		   .on("mousedown", null)
-		   .on("mouseup", null)
-		   .on("mousemove", null);
+        layers.forEach(function(lyr, i){
+            lyr.on("click", null)
+		       .on("mouseover", null)
+		       .on("mouseout", null)
+		       .on("mousedown", null)
+		       .on("mouseup", null)
+		       .on("mousemove", null);
 
-		vector.on("click", null)
-		   .on("mouseover", null)
-		   .on("mouseout", null)
-		   .on("mousedown", null)
-		   .on("mouseup", null)
-		   .on("mousemove", null);
-		
-		d3.select(SVG_NODE).selectAll(GEOM_TYPES)
-		                    .on("click", null)
-							.on(".drag", null)
-							.on("mouseover", null)
-							.on("mouseout", null)
-							.on("mousedown", null)
-							.on("mouseup", null)
-							.on("mousemove", null);
+		    lyr.selectAll("*")
+		       .on("click", null)
+               .on(".drag", null)
+			   .on("mouseover", null)
+			   .on("mouseout", null)
+			   .on("mousedown", null)
+			   .on("mouseup", null)
+			   .on("mousemove", null);
+        });
 
 		lineFunction.curve(null);
 
 		anchorNodes.forEach(function(value, key, map) {
 				d3.select(key).remove();
-			}
-		);
+		});
+
 		anchorNodes.clear();
+
+		otherLayers.forEach(function(lyr, i, arr) {
+		    lyr.selectAll("*").on("click", null)
+							  .on(".drag", null)
+							  .on("mouseover", null)
+							  .on("mouseout", null)
+							  .on("mousedown", null)
+							  .on("mouseup", null)
+							  .on("mousemove", null);
+		});
 	}
 
 	var LPoint = function(x, y) {
@@ -1411,6 +1416,7 @@ var svgEditor = (function () {
 
     return {
         init: init,
+        finalize: finalize,
         save_svg_new_elements_attributes:save_svg_new_elements_attributes,
         changeMode: setMode,
         save: ()=>{}//saveChanges
